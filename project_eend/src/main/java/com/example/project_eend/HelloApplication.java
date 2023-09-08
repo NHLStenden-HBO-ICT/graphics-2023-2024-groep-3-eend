@@ -20,7 +20,16 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+        /* //testcode
+        Vec vector = new Vec(1.1,2.2,3.3);
+        System.out.println(Double.toString(vector.x()));
+        Vec inverse = vector.inverse();
+        System.out.println(Double.toString(inverse.x()));
+        double[] darray = inverse.getAll();
+        for (double d:darray) {
+            System.out.println(Double.toString(d));
+        }
+         */
         launch();
-        Vec Vector = new Vec();
     }
 }
