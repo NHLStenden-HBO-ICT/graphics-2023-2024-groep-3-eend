@@ -1,0 +1,40 @@
+package classes;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Camera {
+
+    public static int image_width = 256;
+    public static int image_height = 256;
+
+    //gooit een plaatje 'renderimage.ppm' in de src folder
+    public static void render(){
+
+        String image = """
+P3
+256 256
+255
+                        """;
+        File output = new File("renderimage.ppm");
+
+        for (int j = 0; j < image_height; ++j){
+            for (int i = 0; i < image_width; ++i){
+                image = image + Integer.toString(i) + " " + Integer.toString(j) + " 0" + "\n";
+            }
+        }
+
+        try {
+            FileWriter writer = new FileWriter(output);
+            writer.write(image);
+            writer.close();
+            //System.out.println(image);
+        } catch (IOException e){
+            e.printStackTrace();
+            }
+
+        System.out.println("image gerenderd");
+    }
+
+}

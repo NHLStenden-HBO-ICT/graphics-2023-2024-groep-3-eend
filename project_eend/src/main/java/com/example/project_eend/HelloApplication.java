@@ -1,5 +1,6 @@
 package com.example.project_eend;
 
+import classes.Camera;
 import classes.Vec;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,8 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+
+        Camera.render();
         /* //testcode
         Vec vector = new Vec(1.1,2.2,3.3);
         System.out.println(Double.toString(vector.x()));
@@ -30,6 +33,6 @@ public class HelloApplication extends Application {
             System.out.println(Double.toString(d));
         }
          */
-        launch();
+        //launch();
     }
 }
