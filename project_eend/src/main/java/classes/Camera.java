@@ -34,6 +34,13 @@ P3
             e.printStackTrace();
             }
 
+        String currentPath = null;
+        try {
+            currentPath = new File(".").getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Current dir:" + currentPath);
         System.out.println("image gerenderd");
     }
 
