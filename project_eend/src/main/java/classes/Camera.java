@@ -9,15 +9,11 @@ public class Camera {
     public static int image_width = 256;
     public static int image_height = 256;
 
-    //gooit een plaatje 'renderimage.ppm' in de src folder
+    //gooit een plaatje 'render.ppm' in de src folder
     public static void render(){
 
-        String image = """
-P3
-256 256
-255
-                        """;
-        File output = new File("renderimage.ppm");
+        String image = "P3\n" + image_width + " " + image_height + "\n" + "255\n";
+        File output = new File("render.ppm");
 
         for (int j = 0; j < image_height; ++j){
             for (int i = 0; i < image_width; ++i){
