@@ -23,7 +23,9 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
 
-        Camera.render();
+        Camera camera = new Camera();
+        camera.image_width = 256;
+        camera.render();
         Utility.Convert();
 
         /* //testcode

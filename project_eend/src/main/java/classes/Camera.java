@@ -6,21 +6,25 @@ import java.io.IOException;
 
 public class Camera {
 
+    public double aspectRatio = 1.0;
     public int image_width = 256;
-    public int image_height = 256;
+    private int image_height;
 
-    //gooit een plaatje 'renderimage.ppm' in de src folder
+    private void init() {
+        image_height = (int)(image_width/aspectRatio);
+        image_height = (image_height<1)? 1 : image_height;
+
+    }
+
+    //gooit een plaatje 'render.ppm' in de src folder
     public void render(){
 
-        String image = """
-P3
-256 256
-255
-                        """;
-        File output = new File("renderimage.ppm");
+        init();
+        String image = "P3\n" + image_width + " " + image_height + "\n" + "255\n";
+        File output = new File("render.ppm");
 
         for (int j = 0; j < image_height; ++j){
-            System.out.println("Lines remaining"+Integer.toString(image_height-j));
+            System.out.println("Lines remaining "+Integer.toString(image_height-j));
             for (int i = 0; i < image_width; ++i){
                 image = image + Integer.toString(i) + " " + Integer.toString(j) + " 0" + "\n";
             }
