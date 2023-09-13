@@ -19,7 +19,29 @@ public class Vec {
     public double[] getAll(){
         return d;
     }
-    public Vec inverse(){
-        return new Vec(-d[0],-d[1],-d[2]);
+    //draait bestaande vector om
+    public void invert(){
+        Vec vec = scale(-1, this);
+        this.d[0]= vec.x();
+        this.d[1]= vec.y();
+        this.d[2]= vec.z();
     }
+    //voeg twee vectoren bij elkaar (of haalt van elkaar af)
+    public static Vec add(Vec vector1, Vec vector2) {
+        return new Vec(vector1.x()+vector2.x(), vector1.y()+vector2.y(), vector1.z()+vector2.z());
+    }
+    //schaal een vector met scalar
+    public static Vec scale(double scalar, Vec scaled) {
+        return new Vec(scaled.x()*scalar, scaled.y()*scalar, scaled.z()*scalar);
+    }
+    //dotproduct
+    public static double dot(Vec vector1, Vec vector2) {
+        return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
+    }
+    //TODO crossproduct
+    public static Vec cross(Vec vector1, Vec vector2) {
+        return new Vec();
+    }
+
+
 }

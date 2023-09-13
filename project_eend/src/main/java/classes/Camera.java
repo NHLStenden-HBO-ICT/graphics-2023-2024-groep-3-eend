@@ -6,11 +6,11 @@ import java.io.IOException;
 
 public class Camera {
 
-    public static int image_width = 256;
-    public static int image_height = 256;
+    public int image_width = 256;
+    public int image_height = 256;
 
     //gooit een plaatje 'renderimage.ppm' in de src folder
-    public static void render(){
+    public void render(){
 
         String image = """
 P3
@@ -20,6 +20,7 @@ P3
         File output = new File("renderimage.ppm");
 
         for (int j = 0; j < image_height; ++j){
+            System.out.println("Lines remaining"+Integer.toString(image_height-j));
             for (int i = 0; i < image_width; ++i){
                 image = image + Integer.toString(i) + " " + Integer.toString(j) + " 0" + "\n";
             }
