@@ -135,7 +135,10 @@ public class Vector {
         );
     }
 
-
+    /**
+     * Calculate length of the vector.
+     * @return length of the vector.
+     */
     public double GetLenght(){
         double result = 0.0;
         for (int i = 0; i < coordinates.length; i++){
