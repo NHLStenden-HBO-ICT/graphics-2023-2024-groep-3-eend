@@ -99,10 +99,25 @@ public class Vector {
         return new Vector(x, y, z);
     }
 
-    //dotproductz
-    public static double dot(Vec vector1, Vec vector2) {
-        return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
+    /**
+     * Calculate dot product of two vectors.
+     * @param vectorA is vector A.
+     * @param vectorB is vector B.
+     * @return result of dot product calculation.
+     */
+
+    public static double dotProduct(Vector vectorA, Vector vectorB) {
+        double result = 0.0;
+        double[] coordsA = vectorA.coordinates;
+        double[] coordsB = vectorB.coordinates;
+
+        for (int i = 0; i < coordsA.length; i++) {
+            result += coordsA[i] * coordsB[i];
+        }
+
+        return result;
     }
+
     //TODO crossproduct
     public static Vec cross(Vec vector1, Vec vector2) {
         return new Vec();
