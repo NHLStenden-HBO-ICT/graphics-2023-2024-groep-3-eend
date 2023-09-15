@@ -1,13 +1,13 @@
 package classes;
 
 public class Vector {
-    private final double[] Coordinates;
+    private final double[] coordinates;
 
     /**
      * Constructor for a standard vector, has no length.
      */
     public Vector(){
-        this.Coordinates = new double[]{0.0, 0.0, 0.0};
+        this.coordinates = new double[]{0.0, 0.0, 0.0};
     }
 
     /**
@@ -16,7 +16,7 @@ public class Vector {
      * @param y The y-coordinate
      */
     public Vector(double x, double y){
-        this.Coordinates = new double[]{x,y, 0.0};
+        this.coordinates = new double[]{x,y, 0.0};
     }
 
     /**
@@ -26,31 +26,31 @@ public class Vector {
      * @param z The z-coordinate
      */
     public Vector(double x, double y, double z){
-        this.Coordinates = new double[]{x,y,z};
+        this.coordinates = new double[]{x,y,z};
     }
 
     /**
      * Get X-coordinate from vector.
      * @return X-coordinate from vector
      */
-    public double getX() {return Coordinates[0];}
+    public double getX() {return coordinates[0];}
     /**
      * Get Y-coordinate from vector.
      * @return Y-coordinate from vector
      */
-    public double getY() {return Coordinates[1];}
+    public double getY() {return coordinates[1];}
     /**
      * Get Z-coordinate from vector.
      * @return Z-coordinate from vector
      */
-    public double getZ() {return Coordinates[2];}
+    public double getZ() {return coordinates[2];}
 
     /**
      * Get all coordinates from vector.
      * @return all coordinates from vector
      */
     public double[] getCoordinates(){
-        return Coordinates;
+        return coordinates;
     }
 
     /**
@@ -58,6 +58,45 @@ public class Vector {
      * @return Inversed coordinates from vector.
      */
     public classes.Vector inverse(){
-        return new Vector(-Coordinates[0],-Coordinates[1],-Coordinates[2]);
+        return new Vector(-coordinates[0],-coordinates[1],-coordinates[2]);
     }
+
+    /**
+     * Add first vector to second vector.
+     * @param secondVector is the second vector.
+     * @return the result of the vector addition.
+     */
+    public Vector add(Vector secondVector) {
+        double x = this.coordinates[0] + secondVector.coordinates[0];
+        double y = this.coordinates[1] + secondVector.coordinates[1];
+        double z = this.coordinates[2] + secondVector.coordinates[2];
+        return new Vector(x, y, z);
+    }
+
+    /**
+     * Subtract second vector from first vector.
+     * @param secondVector is the second vector.
+     * @return the result of the vector subtraction.
+     */
+    public Vector subtract(Vector secondVector) {
+        double x = this.coordinates[0] - secondVector.coordinates[0];
+        double y = this.coordinates[1] - secondVector.coordinates[1];
+        double z = this.coordinates[2] - secondVector.coordinates[2];
+        return new Vector(x, y, z);
+    }
+
+
+    //schaal een vector met scalar
+    public static Vec scale(double scalar, Vec scaled) {
+        return new Vec(scaled.x()*scalar, scaled.y()*scalar, scaled.z()*scalar);
+    }
+    //dotproductz
+    public static double dot(Vec vector1, Vec vector2) {
+        return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
+    }
+    //TODO crossproduct
+    public static Vec cross(Vec vector1, Vec vector2) {
+        return new Vec();
+    }
+
 }
