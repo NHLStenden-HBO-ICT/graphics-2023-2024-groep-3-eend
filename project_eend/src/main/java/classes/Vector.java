@@ -62,26 +62,28 @@ public class Vector {
     }
 
     /**
-     * Add first vector to second vector.
-     * @param secondVector is the second vector.
+     * Add second vector to first vector.
+     * @param vectorA is the first vector.
+     * @param vectorB is the second vector to add.
      * @return the result of the vector addition.
      */
-    public Vector add(Vector secondVector) {
-        double x = this.coordinates[0] + secondVector.coordinates[0];
-        double y = this.coordinates[1] + secondVector.coordinates[1];
-        double z = this.coordinates[2] + secondVector.coordinates[2];
+    public static Vector add(Vector vectorA, Vector vectorB) {
+        double x = vectorA.coordinates[0] + vectorB.coordinates[0];
+        double y = vectorA.coordinates[1] + vectorB.coordinates[1];
+        double z = vectorA.coordinates[2] + vectorB.coordinates[2];
         return new Vector(x, y, z);
     }
 
     /**
-     * Subtract second vector from first vector.
-     * @param secondVector is the second vector.
+     * Subtract second vector to first vector.
+     * @param vectorA is the first vector.
+     * @param vectorB is the second vector to subtract.
      * @return the result of the vector subtraction.
      */
-    public Vector subtract(Vector secondVector) {
-        double x = this.coordinates[0] - secondVector.coordinates[0];
-        double y = this.coordinates[1] - secondVector.coordinates[1];
-        double z = this.coordinates[2] - secondVector.coordinates[2];
+    public static Vector subtract(Vector vectorA, Vector vectorB) {
+        double x = vectorA.coordinates[0] - vectorB.coordinates[0];
+        double y = vectorA.coordinates[1] - vectorB.coordinates[1];
+        double z = vectorA.coordinates[2] - vectorB.coordinates[2];
         return new Vector(x, y, z);
     }
 
