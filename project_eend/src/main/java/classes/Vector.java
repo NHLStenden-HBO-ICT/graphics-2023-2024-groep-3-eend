@@ -118,9 +118,15 @@ public class Vector {
         return result;
     }
 
-    //TODO crossproduct
-    public static Vec cross(Vec vector1, Vec vector2) {
-        return new Vec();
+    public static Vector crossProduct(Vector vectorA, Vector vectorB) {
+        double[] coordsA = vectorA.coordinates;
+        double[] coordsB = vectorB.coordinates;
+
+        return new Vector(
+                coordsA[1] * coordsB[2] - coordsA[2] * coordsB[1],
+                coordsA[2] * coordsB[0] - coordsA[0] * coordsB[2],
+                coordsA[0] * coordsB[1] - coordsA[1] * coordsB[0]
+        );
     }
 
 }
