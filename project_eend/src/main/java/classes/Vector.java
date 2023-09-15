@@ -106,7 +106,7 @@ public class Vector {
      * @return result of dot product calculation.
      */
 
-    public static double dotProduct(Vector vectorA, Vector vectorB) {
+    public static double GetDotProduct(Vector vectorA, Vector vectorB) {
         double result = 0.0;
         double[] coordsA = vectorA.coordinates;
         double[] coordsB = vectorB.coordinates;
@@ -118,7 +118,13 @@ public class Vector {
         return result;
     }
 
-    public static Vector crossProduct(Vector vectorA, Vector vectorB) {
+    /**
+     * Calculate cross product of two vectors.
+     * @param vectorA is first vector.
+     * @param vectorB is second vector.
+     * @return cross product.
+     */
+    public static Vector GetCrossProduct(Vector vectorA, Vector vectorB) {
         double[] coordsA = vectorA.coordinates;
         double[] coordsB = vectorB.coordinates;
 
@@ -127,6 +133,15 @@ public class Vector {
                 coordsA[2] * coordsB[0] - coordsA[0] * coordsB[2],
                 coordsA[0] * coordsB[1] - coordsA[1] * coordsB[0]
         );
+    }
+
+
+    public double GetLenght(){
+        double result = 0.0;
+        for (int i = 0; i < coordinates.length; i++){
+            result += Math.pow(coordinates[i], 2);
+        }
+        return Math.sqrt(result);
     }
 
 }
