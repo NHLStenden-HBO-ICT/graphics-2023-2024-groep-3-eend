@@ -21,9 +21,9 @@ public class Vector {
 
     /**
      * Constructor for three-dimensional vector.
-     * @param x The x-coordinate
-     * @param y The y-coordinate
-     * @param z The z-coordinate
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @param z The z-coordinate.
      */
     public Vector(double x, double y, double z){
         this.coordinates = new double[]{x,y,z};
@@ -31,23 +31,23 @@ public class Vector {
 
     /**
      * Get X-coordinate from vector.
-     * @return X-coordinate from vector
+     * @return X-coordinate from vector.
      */
     public double getX() {return coordinates[0];}
     /**
      * Get Y-coordinate from vector.
-     * @return Y-coordinate from vector
+     * @return Y-coordinate from vector.
      */
     public double getY() {return coordinates[1];}
     /**
      * Get Z-coordinate from vector.
-     * @return Z-coordinate from vector
+     * @return Z-coordinate from vector.
      */
     public double getZ() {return coordinates[2];}
 
     /**
      * Get all coordinates from vector.
-     * @return all coordinates from vector
+     * @return all coordinates from vector.
      */
     public double[] getCoordinates(){
         return coordinates;
@@ -85,11 +85,18 @@ public class Vector {
         return new Vector(x, y, z);
     }
 
-
-    //schaal een vector met scalar
-    public static Vec scale(double scalar, Vec scaled) {
-        return new Vec(scaled.x()*scalar, scaled.y()*scalar, scaled.z()*scalar);
+    /**
+     * Scale the vector by a scalar factor.
+     * @param scalar is the scalar factor.
+     * @return the scaled vector.
+     */
+    public Vector scale(double scalar) {
+        double x = coordinates[0] * scalar;
+        double y = coordinates[1] * scalar;
+        double z = coordinates[2] * scalar;
+        return new Vector(x, y, z);
     }
+
     //dotproductz
     public static double dot(Vec vector1, Vec vector2) {
         return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
