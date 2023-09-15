@@ -1,5 +1,7 @@
 package classes;
 
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import javax.imageio.ImageIO;
@@ -8,41 +10,47 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.Image;
-
+import javafx.scene.paint.Color;
 public class Camera {
 
-    public double aspectRatio = 1.0;
+    public double aspectRatio = 16.0/9.0;
     public int image_width = 256;
     private int image_height;
 
+    public double getHeight() {
+        return image_height;
+    }
     private void init() {
         image_height = (int)(image_width/aspectRatio);
         image_height = (image_height<1)? 1 : image_height;
 
     }
+    private void saveImage(BufferedImage image) throws IOException{
+        File output = new File("render.png");
+        ImageIO.write(image, "png", output);
+
+    }
 
     //gooit een plaatje 'render.ppm' in de src folder
-    public void render(){
+    public WritableImage render(boolean save){
 
         init();
+        WritableImage writableImage = new WritableImage(image_width,image_height);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        BufferedImage bufferedImage = new java.awt.image.BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_RGB);
+        Color color;
+        for (int y = 0; y < image_height; ++y){
+             for (int x = 0; x < image_width; ++x){
+                 color = Color.rgb(x%256,y%256,0);
+                 pixelWriter.setColor(x, y, color);
 
-        for (int j = 0; j < image_height; ++j){
-             for (int i = 0; i < image_width; ++i){
-
-                 bufferedImage.setRGB(j, i, new java.awt.Color(j,i,0).getRGB());
             }
         }
-
-        try {
-            File output = new File("render.png");
-            ImageIO.write(bufferedImage, "png", output);
-
-        } catch (IOException e){
-            e.printStackTrace();
-            }
         System.out.println("image gerenderd");
+        return writableImage;
+    }
+    public WritableImage render() {
+        return render(true);
     }
 
 }
