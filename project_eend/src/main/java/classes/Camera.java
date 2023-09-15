@@ -1,8 +1,13 @@
 package classes;
 
+import javafx.scene.paint.Color;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.awt.Image;
 
 public class Camera {
 
@@ -20,32 +25,23 @@ public class Camera {
     public void render(){
 
         init();
-        String image = "P3\n" + image_width + " " + image_height + "\n" + "255\n";
-        File output = new File("render.ppm");
+
+        BufferedImage bufferedImage = new java.awt.image.BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_RGB);
 
         for (int j = 0; j < image_height; ++j){
-            System.out.println("Lines remaining "+Integer.toString(image_height-j));
-            for (int i = 0; i < image_width; ++i){
-                image = image + Integer.toString(i) + " " + Integer.toString(j) + " 0" + "\n";
+             for (int i = 0; i < image_width; ++i){
+
+                 bufferedImage.setRGB(j, i, new java.awt.Color(j,i,0).getRGB());
             }
         }
 
         try {
-            FileWriter writer = new FileWriter(output);
-            writer.write(image);
-            writer.close();
-            //System.out.println(image);
+            File output = new File("render.png");
+            ImageIO.write(bufferedImage, "png", output);
+
         } catch (IOException e){
             e.printStackTrace();
             }
-
-        String currentPath = null;
-        try {
-            currentPath = new File(".").getCanonicalPath();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Current dir:" + currentPath);
         System.out.println("image gerenderd");
     }
 
