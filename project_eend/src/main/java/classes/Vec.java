@@ -19,6 +19,13 @@ public class Vec {
     public double[] getAll(){
         return d;
     }
+    public int[] toColor() {
+        int[] color = new int[3];
+        for (int i = 0; i < d.length; i++) {
+            color[i] = (int) (d[i] *255.99999);
+        }
+        return color;
+    }
     //draait bestaande vector om
     public void invert(){
         Vec vec = scale(-1, this);
