@@ -33,6 +33,9 @@ public class Vec {
         this.d[1]= vec.y();
         this.d[2]= vec.z();
     }
+    public static Vec inverse(Vec vec) {
+        return new Vec(-vec.x(),-vec.y(),-vec.z());
+    }
     //voeg twee vectoren bij elkaar (of haalt van elkaar af)
     public static Vec add(Vec vector1, Vec vector2) {
         return new Vec(vector1.x()+vector2.x(), vector1.y()+vector2.y(), vector1.z()+vector2.z());
@@ -48,6 +51,16 @@ public class Vec {
     //TODO crossproduct
     public static Vec cross(Vec vector1, Vec vector2) {
         return new Vec();
+    }
+
+    public static double lengthSquared(Vec vec) {
+        return (vec.x()*vec.x()+ vec.y()* vec.y()+ vec.z()* vec.z());
+    }
+    public static double length(Vec vec) {
+        return Math.sqrt(lengthSquared(vec));
+    }
+    public static Vec unitVector(Vec vec) {
+        return scale((1.0/length(vec)), vec);
     }
 
 
