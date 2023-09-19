@@ -15,26 +15,26 @@ public class Camera {
     public int samplesPerPixel = 100;
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
-    public int image_width = 800;
-    private int image_height = (int)(image_width/aspectRatio);
+    public int imageWidth = 800;
+    private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     public double viewportHeight = 2.0;
-    public double viewportWidth = viewportHeight * (double)image_width/(double)image_height;
+    public double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
     public Vec cameraCenter = new Vec();
     public Vec viewportU = new Vec(viewportWidth,0,0);
     public Vec viewportV = new Vec(0,-viewportHeight,0);
-    public Vec pixelDeltaU = Vec.scale((1.0/image_width), viewportU);
-    public Vec pixelDeltaV = Vec.scale((1.0/image_height), viewportV);
+    public Vec pixelDeltaU = Vec.scale((1.0/ imageWidth), viewportU);
+    public Vec pixelDeltaV = Vec.scale((1.0/ imageHeight), viewportV);
     public Vec viewportUpperleft = Vec.add(Vec.add(Vec.add(cameraCenter, Vec.inverse(new Vec(0,0,focalLength))),
             Vec.inverse(Vec.scale(1.0/2.0,viewportU))),Vec.inverse(Vec.scale(1.0/2.0,viewportV)));
     public Vec pixel00 = Vec.add(viewportUpperleft, Vec.scale(1.0/2.0, Vec.add(pixelDeltaU,pixelDeltaV)));
 
     public double getHeight() {
-        return image_height;
+        return imageHeight;
     }
     private void init() {
         //image_height
-        image_height = (image_height<1) ? 1 : image_height;
+        imageHeight = (imageHeight <1) ? 1 : imageHeight;
 
     }
     private void saveImage(WritableImage image) throws IOException{
@@ -54,14 +54,14 @@ public class Camera {
     public WritableImage render(boolean save, Hittable world){
 
         init();
-        WritableImage writableImage = new WritableImage(image_width,image_height);
+        WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         //Color color;
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
-        for (int y = 0; y < image_height; ++y){
+        for (int y = 0; y < imageHeight; ++y){
             //System.out.println(Integer.toString(y)+ "lines to go");
-             for (int x = 0; x < image_width; ++x) {
+             for (int x = 0; x < imageWidth; ++x) {
                  Vec colorVec = new Vec();
                  for (int sample = 0; sample < samplesPerPixel; ++sample) {
                      Ray ray = getRay(x, y);
