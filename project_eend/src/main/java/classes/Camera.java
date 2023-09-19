@@ -112,7 +112,7 @@ public class Camera {
         if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
             Ray scattered = Global.scattered;
             Vector attenuation = Global.attenuation;
-            if (rec.mat.scatter(r,rec,attenuation,scattered)) {
+            if (rec.material.scatter(r,rec,attenuation,scattered)) {
                 return Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
             }
             return new Vector();

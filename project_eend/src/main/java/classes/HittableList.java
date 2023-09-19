@@ -13,16 +13,16 @@ public class HittableList extends Hittable {
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         HitRecord tempRec = new HitRecord();
-        boolean hitAnything = false;
+        boolean hasHitSomething = false;
         double closestSoFar = rayT.max;
 
         for (Hittable object: objects) {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
-                hitAnything = true;
+                hasHitSomething = true;
                 closestSoFar = tempRec.t;
                 rec = tempRec;
             }
         }
-        return hitAnything;
+        return hasHitSomething;
     }
 }

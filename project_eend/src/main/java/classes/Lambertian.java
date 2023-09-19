@@ -1,7 +1,7 @@
 package classes;
 
 public class Lambertian extends Material{
-    private Vector albedo;
+    private final Vector albedo; // ability of light reflection 
     public Lambertian(Vector albedo) {
         this.albedo = albedo;
     }
