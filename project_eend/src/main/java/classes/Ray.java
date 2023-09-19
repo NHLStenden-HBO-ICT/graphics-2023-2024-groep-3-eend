@@ -5,7 +5,7 @@ public class Ray {
     public Vec origin;
     public Vec direction;
 
-    public Ray(){}
+
     public Ray(Vec origin, Vec direction) {
         this.origin = origin;
         this.direction = direction;
