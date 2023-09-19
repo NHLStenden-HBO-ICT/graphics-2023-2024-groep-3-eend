@@ -2,13 +2,13 @@ package classes;
 
 public class Sphere extends Hittable{
 
-    private double radius;
-    private Vector center;
-    private Material mat;
-    public Sphere(Vector center, double radius, Material mat) {
+    private final double radius;
+    private final Vector center;
+    private final Material material;
+    public Sphere(Vector center, double radius, Material material) {
         this.center = center;
         this. radius = radius;
-        this.mat = mat;
+        this.material = material;
     }
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
@@ -32,7 +32,7 @@ public class Sphere extends Hittable{
         }
         rec.t = root;
         rec.p = ray.at(rec.t);
-        rec.mat = mat;
+        rec.mat = material;
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.p, Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;
