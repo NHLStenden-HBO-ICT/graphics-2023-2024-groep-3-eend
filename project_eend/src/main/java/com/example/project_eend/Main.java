@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
@@ -19,7 +18,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
-import java.awt.*;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -35,7 +33,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
 
 
-        Scene scene = new Scene(root, cam1.image_width, cam1.getHeight());
+        Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
 
         //animatie
         Duration interval = Duration.seconds(frameRate);
