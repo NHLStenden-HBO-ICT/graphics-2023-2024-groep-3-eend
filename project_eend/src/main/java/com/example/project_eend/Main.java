@@ -98,11 +98,11 @@ public class Main extends Application {
         world.add(new Sphere(new Vec(0,0,-1),0.5, redMirror));
         world.add(new Sphere(new Vec(0,-100.5,-1), 100, greyLambertian));
         world.add(new Sphere(new Vec(-1,0,-1),.5,greyLambertian));
-        //cam1.render(true, world); //TODO vervang door capture
+        cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;
         cam1.maxDepth = 3;
-        launch();
+        //launch();
 
 
     }
