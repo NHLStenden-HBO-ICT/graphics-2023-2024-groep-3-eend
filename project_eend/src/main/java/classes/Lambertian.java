@@ -1,13 +1,13 @@
 package classes;
 
 public class Lambertian extends Material{
-    private Vec albedo;
-    public Lambertian(Vec albedo) {
+    private Vector albedo;
+    public Lambertian(Vector albedo) {
         this.albedo = albedo;
     }
     @Override
-    public boolean scatter(Ray rayIn, HitRecord rec, Vec attenuation, Ray scattered) {
-        Vec scatterDirection = Vec.add(rec.normal, Vec.randomUnitVec());
+    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
+        Vector scatterDirection = Vector.add(rec.normal, Vector.randomUnitVec());
         Global.scattered = new Ray(rec.p, scatterDirection);
         Global.attenuation = albedo;
         return true;

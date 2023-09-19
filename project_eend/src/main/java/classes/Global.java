@@ -1,7 +1,7 @@
 package classes;
 
 public class Global {
-    public static Ray scattered = new Ray(new Vec(), new Vec());
+    public static Ray scattered = new Ray(new Vector(), new Vector());
     public static HitRecord rec;
-    public static Vec attenuation = new Vec();
+    public static Vector attenuation = new Vector();
 }

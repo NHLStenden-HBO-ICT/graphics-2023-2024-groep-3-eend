@@ -1,17 +1,17 @@
 package classes;
 
 public class Mirror extends Material{
-    private Vec albedo;
+    private Vector albedo;
     private double fuzz;
-    public Mirror(Vec color, double fuzz) {
+    public Mirror(Vector color, double fuzz) {
         albedo = color;
         this.fuzz = Math.min(fuzz, 1.0);}
     @Override
-    public boolean scatter(Ray rayIn, HitRecord rec, Vec attenuation, Ray scattered) {
-        Vec reflected = Vec.reflect(Vec.unitVector(rayIn.direction()),rec.normal);
+    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
+        Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);
         Global.scattered = new Ray(rec.p,
-                Vec.add(reflected,Vec.scale(fuzz,Vec.randomUnitVec())));
+                Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec())));
         Global.attenuation = albedo;
-        return (Vec.dot(Global.scattered.direction(), rec.normal) > 0);
+        return (Vector.dot(Global.scattered.direction(), rec.normal) > 0);
     }
 }

@@ -53,17 +53,17 @@ public class Main extends Application {
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
                     case UP:
-                        cam1.cameraCenter = Vec.add(cam1.cameraCenter, new Vec (0,0,-1));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,-1));
 
                         break;
                     case LEFT:
-                        cam1.cameraCenter = Vec.add(cam1.cameraCenter, new Vec (1,0,0));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(1,0,0));
                         break;
                     case RIGHT:
-                        cam1.cameraCenter = Vec.add(cam1.cameraCenter, new Vec (-1,0,0));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(-1,0,0));
                         break;
                     case DOWN:
-                        cam1.cameraCenter = Vec.add(cam1.cameraCenter, new Vec (0,0,1));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,1));
                         break;
                     case C:
                         cam1.maxDepth = 50;
@@ -91,11 +91,11 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        Lambertian greyLambertian = new Lambertian(new Vec(.5,.5,.5));
-        Mirror redMirror = new Mirror(new Vec(1,.5,.5), .3);
-        world.add(new Sphere(new Vec(0,0,-1),0.5, redMirror));
-        world.add(new Sphere(new Vec(0,-100.5,-1), 100, greyLambertian));
-        world.add(new Sphere(new Vec(-1,0,-1),.5,greyLambertian));
+        Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
+        Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
+        world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
+        world.add(new Sphere(new Vector(0,-100.5,-1), 100, greyLambertian));
+        world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
         cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;

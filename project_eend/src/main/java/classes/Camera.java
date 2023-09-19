@@ -20,14 +20,14 @@ public class Camera {
     public double focalLength = 1.0;
     public double viewportHeight = 2.0;
     public double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
-    public Vec cameraCenter = new Vec();
-    public Vec viewportU = new Vec(viewportWidth,0,0);
-    public Vec viewportV = new Vec(0,-viewportHeight,0);
-    public Vec pixelDeltaU = Vec.scale((1.0/ imageWidth), viewportU);
-    public Vec pixelDeltaV = Vec.scale((1.0/ imageHeight), viewportV);
-    public Vec viewportUpperleft = Vec.add(Vec.add(Vec.add(cameraCenter, Vec.inverse(new Vec(0,0,focalLength))),
-            Vec.inverse(Vec.scale(1.0/2.0,viewportU))),Vec.inverse(Vec.scale(1.0/2.0,viewportV)));
-    public Vec pixel00 = Vec.add(viewportUpperleft, Vec.scale(1.0/2.0, Vec.add(pixelDeltaU,pixelDeltaV)));
+    public Vector cameraCenter = new Vector();
+    public Vector viewportU = new Vector(viewportWidth,0,0);
+    public Vector viewportV = new Vector(0,-viewportHeight,0);
+    public Vector pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
+    public Vector pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
+    public Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(new Vector(0,0,focalLength))),
+            Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
+    public Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
 
     public double getHeight() {
         return imageHeight;
@@ -62,11 +62,11 @@ public class Camera {
         for (int y = 0; y < imageHeight; ++y){
             //System.out.println(Integer.toString(y)+ "lines to go");
              for (int x = 0; x < imageWidth; ++x) {
-                 Vec colorVec = new Vec();
+                 Vector colorVec = new Vector();
                  for (int sample = 0; sample < samplesPerPixel; ++sample) {
                      Ray ray = getRay(x, y);
                      //colorVec = new Vec();
-                     colorVec = Vec.add(colorVec, rayColor(ray, maxDepth, world));
+                     colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world));
                  }
                  int[] colors = colorVec.toColor(samplesPerPixel, save);
                  pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
@@ -83,43 +83,43 @@ public class Camera {
         return writableImage;
     }
     private Ray getRay(int x, int y) {
-        Vec pixelcenter = Vec.add(Vec.add(pixel00, Vec.scale(x, pixelDeltaU)), Vec.scale(y, pixelDeltaV));
-        Vec pixelSample = Vec.add(pixelcenter, pixelSampleSquare());
+        Vector pixelcenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
+        Vector pixelSample = Vector.add(pixelcenter, pixelSampleSquare());
 
-        Vec rayOrigin = cameraCenter;
-        Vec direction = Vec.add(pixelSample, Vec.inverse(rayOrigin));
+        Vector rayOrigin = cameraCenter;
+        Vector direction = Vector.add(pixelSample, Vector.inverse(rayOrigin));
         return new Ray(rayOrigin, direction);
 
     }
-    private Vec pixelSampleSquare() {
+    private Vector pixelSampleSquare() {
         double px = -.5 + Math.random();
         double py = -.5 + Math.random();
-        return Vec.add(Vec.scale(px, pixelDeltaU), Vec.scale(py, pixelDeltaV));
+        return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
     public WritableImage render(Hittable world) {
         return render(false, world);
     }
 
 
-    private Vec rayColor(Ray r, int depth, Hittable world) {
+    private Vector rayColor(Ray r, int depth, Hittable world) {
         if (world == null) {
-            return Vec.randomVec();
+            return Vector.randomVec();
         }
         if (depth<=0) {
-            return new Vec(.5,.5,.5);
+            return new Vector(.5,.5,.5);
         }
         HitRecord rec = new HitRecord();
         if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
             Ray scattered = Global.scattered;
-            Vec attenuation = Global.attenuation;
+            Vector attenuation = Global.attenuation;
             if (rec.mat.scatter(r,rec,attenuation,scattered)) {
-                return Vec.multiply(attenuation,rayColor(scattered,depth-1,world));
+                return Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
             }
-            return new Vec();
+            return new Vector();
         }
-        Vec unitDirection = Vec.unitVector(r.direction);
+        Vector unitDirection = Vector.unitVector(r.direction);
         double a = .5*(unitDirection.y()+1.0);
-        return Vec.add(Vec.scale((1.0-a),new Vec(1,1,1)),Vec.scale(a, new Vec(.5,.7,1)));
+        return Vector.add(Vector.scale((1.0-a),new Vector(1,1,1)), Vector.scale(a, new Vector(.5,.7,1)));
     }
 
 }
