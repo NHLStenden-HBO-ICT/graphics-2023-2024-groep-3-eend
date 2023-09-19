@@ -7,17 +7,17 @@ import java.util.List;
 public class HittableList extends Hittable {
 
     public List<Hittable> objects = new LinkedList<>();
-    void add(Hittable object) {
+    public void add(Hittable object) {
         objects.add(object);
     }
     @Override
-    boolean hit(Ray ray, double tMin, double tMax, HitRecord rec) {
+    public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         HitRecord tempRec = new HitRecord();
         boolean hitAnything = false;
-        double closestSoFar = tMax;
+        double closestSoFar = rayT.max;
 
         for (Hittable object: objects) {
-            if (object.hit(ray, tMin, closestSoFar,tempRec)) {
+            if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
                 hitAnything = true;
                 closestSoFar = tempRec.t;
                 rec = tempRec;

@@ -13,18 +13,43 @@ public class Vec {
         d[1]=y;
         d[2]=z;
     }
+
+    public static Vec multiply(Vec attenuation, Vec vec) {
+        return new Vec(attenuation.x()* vec.x(), attenuation.y()* vec.y(),attenuation.z()* vec.z());
+    }
+
+    public static Vec reflect(Vec vec, Vec normal) {
+        return add(vec, inverse(scale(2.0*dot(vec,normal),normal)));
+    }
+
     public double x() {return d[0];}
     public double y() {return d[1];}
     public double z() {return d[2];}
     public double[] getAll(){
         return d;
     }
-    public int[] toColor() {
+    public int[] toColor(int pixelPerSample, boolean gamma) {
+        //scale(1.0/pixelPerSample, this);
+            double s = (1.0/pixelPerSample);
+        d[0] = d[0]*s;
+        d[1] = d[1]*s;
+        d[2] = d[2]*s;
+
+        if (gamma) {
+            d[0] = linearToGamma(d[0]);
+            d[1] = linearToGamma(d[1]);
+            d[2] = linearToGamma(d[2]);
+        }
+        Interval intensity = new Interval(0, .9999999);
         int[] color = new int[3];
         for (int i = 0; i < d.length; i++) {
-            color[i] = (int) (d[i] *255.99999);
+            color[i] = (int) ((intensity.clamp(d[i]) *255.99999));
         }
         return color;
+    }
+    //verandert kleur naar gamma-aangepaste kleur e 1/2
+    public double linearToGamma(double original) {
+        return Math.sqrt(original);
     }
     //draait bestaande vector om
     public void invert(){
@@ -63,5 +88,31 @@ public class Vec {
         return scale((1.0/length(vec)), vec);
     }
 
-
+    public static Vec randomVec() {
+        return new Vec(Math.random(), Math.random(), Math.random());
+    }
+    public static Vec randomVec(double min, double max) {
+        return new Vec(
+                min + Math.random() * (max-min),
+                min + Math.random() * (max-min),
+                min + Math.random() * (max-min));
+    }
+    public static Vec randomInUnitSphere() {
+        while (true) {
+            Vec p = randomVec(-1, 1);
+            if (lengthSquared(p) < 1) {
+                return p;
+            }
+        }
+    }
+    public static Vec randomUnitVec() {
+        return unitVector(randomInUnitSphere());
+    }
+    public static Vec RandomUnitVecOnHemisphere(Vec normal) {
+        Vec p = randomUnitVec();
+        if (dot(p, normal) >0.0) {
+            return p;
+        }
+        return inverse(p);
+    }
 }

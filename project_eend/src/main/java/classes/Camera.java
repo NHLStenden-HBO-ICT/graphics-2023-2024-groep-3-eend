@@ -12,6 +12,8 @@ import java.io.IOException;
 public class Camera {
 
     static int frames = 0;
+    public int samplesPerPixel = 100;
+    public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
     public int image_width = 800;
     private int image_height = (int)(image_width/aspectRatio);
@@ -45,10 +47,11 @@ public class Camera {
         }
         File output = new File("render.png");
         ImageIO.write(bufferedImage, "png", output);
+        System.out.println("opgeslagen");
     }
 
     //gooit een plaatje 'render.ppm' in de src folder
-    public WritableImage render(boolean save){
+    public WritableImage render(boolean save, Hittable world){
 
         init();
         WritableImage writableImage = new WritableImage(image_width,image_height);
@@ -57,18 +60,21 @@ public class Camera {
         //Color color;
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
         for (int y = 0; y < image_height; ++y){
-             for (int x = 0; x < image_width; ++x){
-                 Vec pixelcenter = Vec.add(Vec.add(pixel00, Vec.scale(x, pixelDeltaU)), Vec.scale(y, pixelDeltaV));
-                 Vec direction = Vec.add(pixelcenter, Vec.inverse(cameraCenter));
-                 Ray ray = new Ray(cameraCenter, direction);
-                 int[] colors = rayColor(ray).toColor();
-                 pixelWriter.setColor(x,y, Color.rgb(colors[0],colors[1],colors[2]));
-            }
+            //System.out.println(Integer.toString(y)+ "lines to go");
+             for (int x = 0; x < image_width; ++x) {
+                 Vec colorVec = new Vec();
+                 for (int sample = 0; sample < samplesPerPixel; ++sample) {
+                     Ray ray = getRay(x, y);
+                     //colorVec = new Vec();
+                     colorVec = Vec.add(colorVec, rayColor(ray, maxDepth, world));
+                 }
+                 int[] colors = colorVec.toColor(samplesPerPixel, save);
+                 pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+
+             }
         }
         System.out.println("frame " + frames);
         frames++;
-
-
         if (save) {
             try {
                 saveImage(writableImage);
@@ -76,29 +82,44 @@ public class Camera {
         }
         return writableImage;
     }
-    public WritableImage render() {
-        return render(false);
-    }
-    private double hitSphere(Vec center, double radius, Ray ray) {
-        Vec OC = Vec.add(ray.origin(), Vec.inverse(center));
-        double a = Vec.lengthSquared(ray.direction());
-        double halfb = Vec.dot(OC, ray.direction());
-        double c = Vec.lengthSquared(OC) - radius*radius;
-        double D = halfb*halfb - a*c;
-        if (D < 0) {
-            return -1.0;
-        }
-        return ((-halfb - Math.sqrt(D))/a);
+    private Ray getRay(int x, int y) {
+        Vec pixelcenter = Vec.add(Vec.add(pixel00, Vec.scale(x, pixelDeltaU)), Vec.scale(y, pixelDeltaV));
+        Vec pixelSample = Vec.add(pixelcenter, pixelSampleSquare());
+
+        Vec rayOrigin = cameraCenter;
+        Vec direction = Vec.add(pixelSample, Vec.inverse(rayOrigin));
+        return new Ray(rayOrigin, direction);
 
     }
-    private Vec rayColor(Ray r) {
-        double t = hitSphere(new Vec(0,0,-1), 0.5, r);
-        if (t>0.0)
-        {
-            Vec N = Vec.add(r.at(t), Vec.inverse(new Vec(0,0,-1)));
-            return Vec.scale(0.5, new Vec(N.x()+1.0,N.y()+1.0,N.z()+1.0));
+    private Vec pixelSampleSquare() {
+        double px = -.5 + Math.random();
+        double py = -.5 + Math.random();
+        return Vec.add(Vec.scale(px, pixelDeltaU), Vec.scale(py, pixelDeltaV));
+    }
+    public WritableImage render(Hittable world) {
+        return render(false, world);
+    }
+
+
+    private Vec rayColor(Ray r, int depth, Hittable world) {
+        if (world == null) {
+            return Vec.randomVec();
         }
-        return new Vec(Math.random(),Math.random(),Math.random());
+        if (depth<=0) {
+            return new Vec(.5,.5,.5);
+        }
+        HitRecord rec = new HitRecord();
+        if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+            Ray scattered = Global.scattered;
+            Vec attenuation = Global.attenuation;
+            if (rec.mat.scatter(r,rec,attenuation,scattered)) {
+                return Vec.multiply(attenuation,rayColor(scattered,depth-1,world));
+            }
+            return new Vec();
+        }
+        Vec unitDirection = Vec.unitVector(r.direction);
+        double a = .5*(unitDirection.y()+1.0);
+        return Vec.add(Vec.scale((1.0-a),new Vec(1,1,1)),Vec.scale(a, new Vec(.5,.7,1)));
     }
 
 }

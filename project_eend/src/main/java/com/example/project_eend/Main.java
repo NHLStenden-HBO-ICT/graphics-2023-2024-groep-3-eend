@@ -1,7 +1,6 @@
 package com.example.project_eend;
 
-import classes.Camera;
-import classes.Vec;
+import classes.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -25,10 +24,12 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+    static HittableList world = new HittableList();
+
     static Camera cam1 = new Camera();
-    static double frameRate = 1.0/20.0; //hertz
+    static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
-    ImageView frame = new ImageView(cam1.render());
+    ImageView frame = new ImageView();
     StackPane root = new StackPane();
     @Override
     public void start(Stage stage) throws IOException {
@@ -66,6 +67,14 @@ public class Main extends Application {
                     case DOWN:
                         cam1.cameraCenter = Vec.add(cam1.cameraCenter, new Vec (0,0,1));
                         break;
+                    case C:
+                        cam1.maxDepth = 50;
+                        cam1.samplesPerPixel = 100;
+                        System.out.println("starting capture...");
+                        cam1.render(true, world);
+                        cam1.maxDepth = 3;
+                        cam1.samplesPerPixel = 1;
+
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
                     System.out.println("Escape key pressed");
@@ -79,15 +88,20 @@ public class Main extends Application {
     }
 
     private void update() {
-        frame.setImage(cam1.render());
+        frame.setImage(cam1.render(world));
     }
 
     public static void main(String[] args) {
 
-        //cam1.image_width = 800; //zet maar niet te hoog
-        System.out.println(cam1.pixelDeltaU.x());
-        System.out.println(cam1.pixelDeltaV.y());
-        cam1.render(true); //TODO vervang door capture
+        Lambertian greyLambertian = new Lambertian(new Vec(.5,.5,.5));
+        Mirror redMirror = new Mirror(new Vec(1,.5,.5), .3);
+        world.add(new Sphere(new Vec(0,0,-1),0.5, redMirror));
+        world.add(new Sphere(new Vec(0,-100.5,-1), 100, greyLambertian));
+        world.add(new Sphere(new Vec(-1,0,-1),.5,greyLambertian));
+        //cam1.render(true, world); //TODO vervang door capture
+
+        cam1.samplesPerPixel = 1;
+        cam1.maxDepth = 3;
         launch();
 
 

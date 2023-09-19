@@ -4,12 +4,14 @@ public class Sphere extends Hittable{
 
     private double radius;
     private Vec center;
-    public Sphere(Vec center, double radius) {
+    private Material mat;
+    public Sphere(Vec center, double radius, Material mat) {
         this.center = center;
         this. radius = radius;
+        this.mat = mat;
     }
     @Override
-    boolean hit(Ray ray, double tMin, double tMax, HitRecord rec) {
+    public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
 
         Vec OC = Vec.add(ray.origin(), Vec.inverse(center));
         double a = Vec.lengthSquared(ray.direction());
@@ -22,14 +24,15 @@ public class Sphere extends Hittable{
 
         double sqrtD = Math.sqrt(D);
         double root = ((-halfb - sqrtD) / a);
-        if (root <= tMin || root >= tMax) {
+        if (!rayT.surrounds(root)) {
             root = ((-halfb - sqrtD) / a);
-            if (root <= tMin || root >= tMax) {
+            if (!rayT.surrounds(root)) {
                 return false;
             }
         }
         rec.t = root;
         rec.p = ray.at(rec.t);
+        rec.mat = mat;
         Vec outwardNormal = Vec.scale((1.0 / radius), Vec.add(rec.p, Vec.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;
