@@ -110,8 +110,8 @@ public class Camera {
         }
         HitRecord rec = new HitRecord();
         if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
-            Ray scattered = Global.scattered;
-            Vector attenuation = Global.attenuation;
+            Ray scattered = new Ray(new Vector(), new Vector());
+            Vector attenuation = new Vector();
             if (rec.material.scatter(r,rec,attenuation,scattered)) {
                 return Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
             }

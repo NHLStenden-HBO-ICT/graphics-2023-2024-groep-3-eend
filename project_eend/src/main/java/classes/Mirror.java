@@ -9,9 +9,14 @@ public class Mirror extends Material{
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
         Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);
-        Global.scattered = new Ray(rec.p,
-                Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec())));
-        Global.attenuation = albedo;
-        return (Vector.dot(Global.scattered.direction(), rec.normal) > 0);
+        Vector direction = Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec()));
+        scattered.origin = rec.p;
+        scattered.direction = direction;
+        attenuation.copy(albedo);
+        //wat er eerst stond
+        //Global.scattered = new Ray(rec.p,
+        //        Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec())));
+        //Global.attenuation = albedo;
+        return (Vector.dot(scattered.direction(), rec.normal) > 0);
     }
 }

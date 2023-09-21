@@ -47,6 +47,9 @@ public class Vector {
         }
         return color;
     }
+    public void copy(Vector copied) {
+        this.d = copied.d;
+    }
     //verandert kleur naar gamma-aangepaste kleur e 1/2
     public double linearToGamma(double original) {
         return Math.sqrt(original);

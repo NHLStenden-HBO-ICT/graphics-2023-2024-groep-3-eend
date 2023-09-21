@@ -32,7 +32,7 @@ public class Sphere extends Hittable{
         }
         rec.t = root;
         rec.p = ray.at(rec.t);
-        rec.mat = material;
+        rec.material = material;
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.p, Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;

@@ -20,7 +20,9 @@ public class HittableList extends Hittable {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
                 hasHitSomething = true;
                 closestSoFar = tempRec.t;
-                rec = tempRec;
+                rec.copy(tempRec);
+                //oude
+                //rec = tempRec;
             }
         }
         return hasHitSomething;
