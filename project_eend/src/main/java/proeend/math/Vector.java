@@ -1,4 +1,4 @@
-package classes;
+package proeend.math;
 
 public class Vector {
     // vectoren en (?)kleur

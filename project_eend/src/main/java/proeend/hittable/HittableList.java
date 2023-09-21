@@ -1,15 +1,19 @@
-package classes;
+package proeend.hittable;
 
-import java.util.ArrayList;
+import misc.HitRecord;
+import proeend.math.Interval;
+import proeend.math.Ray;
+
 import java.util.LinkedList;
 import java.util.List;
 
 public class HittableList extends Hittable {
 
-    public List<Hittable> objects = new LinkedList<>();
+    private List<Hittable> objects = new LinkedList<>();
     public void add(Hittable object) {
         objects.add(object);
     }
+    public void clear() {objects.clear();}
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         HitRecord tempRec = new HitRecord();

@@ -1,6 +1,6 @@
-package com.example.project_eend;
+package proeend;
 
-import classes.*;
+import misc.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -16,6 +16,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import proeend.hittable.HittableList;
+import proeend.math.Vector;
 
 
 import java.io.IOException;
@@ -91,14 +93,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
-        Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
-        world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
-        world.add(new Sphere(new Vector(0,-100.5,-1), 100, greyLambertian));
-        world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
-
-
-        //Sphere sphere = new Sphere(new Vector(1,0,-1), .5, greyLambertian);
+        Utility.loadWorld(world,1);
         cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;

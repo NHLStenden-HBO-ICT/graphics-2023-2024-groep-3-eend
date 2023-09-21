@@ -1,4 +1,8 @@
-package classes;
+package misc;
+
+import proeend.material.Material;
+import proeend.math.Ray;
+import proeend.math.Vector;
 
 public class HitRecord {
     public Vector p;

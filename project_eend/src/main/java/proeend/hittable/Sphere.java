@@ -1,4 +1,10 @@
-package classes;
+package proeend.hittable;
+
+import misc.HitRecord;
+import proeend.math.Interval;
+import proeend.math.Ray;
+import proeend.math.Vector;
+import proeend.material.Material;
 
 public class Sphere extends Hittable{
 
