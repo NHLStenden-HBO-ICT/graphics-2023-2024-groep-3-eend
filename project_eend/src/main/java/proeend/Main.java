@@ -1,6 +1,6 @@
 package proeend;
 
-import misc.*;
+import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.HittableList;
 import proeend.math.Vector;
+import proeend.misc.Utility;
 
 
 import java.io.IOException;

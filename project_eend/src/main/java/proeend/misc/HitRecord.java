@@ -1,4 +1,4 @@
-package misc;
+package proeend.misc;
 
 import proeend.material.Material;
 import proeend.math.Ray;

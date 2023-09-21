@@ -1,6 +1,6 @@
 package proeend.material;
 
-import misc.HitRecord;
+import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
 

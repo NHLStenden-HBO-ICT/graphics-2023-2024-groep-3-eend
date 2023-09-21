@@ -1,8 +1,12 @@
-package classes;
+package proeend.misc;
 
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import proeend.hittable.Hittable;
+import proeend.math.Interval;
+import proeend.math.Ray;
+import proeend.math.Vector;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -1,6 +1,6 @@
 package proeend.hittable;
 
-import misc.HitRecord;
+import proeend.misc.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
 

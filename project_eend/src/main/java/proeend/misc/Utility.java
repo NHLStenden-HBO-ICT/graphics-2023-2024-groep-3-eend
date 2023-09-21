@@ -1,4 +1,4 @@
-package misc;
+package proeend.misc;
 
 import proeend.hittable.HittableList;
 import proeend.hittable.Sphere;
