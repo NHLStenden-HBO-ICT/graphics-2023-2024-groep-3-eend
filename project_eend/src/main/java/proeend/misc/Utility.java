@@ -3,6 +3,7 @@ package proeend.misc;
 import proeend.hittable.HittableList;
 import proeend.hittable.Sphere;
 import proeend.hittable.Triangle;
+import proeend.hittable.TriangleMesh;
 import proeend.material.Lambertian;
 import proeend.material.Mirror;
 import proeend.math.Vector;
@@ -47,6 +48,8 @@ public class Utility {
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
         Vector v2 = new Vector(0,1,-6);
+        Vector v3 = new Vector(-1,1,-2);
+        Vector v4 = new Vector(1,1,-2);
 
 
         switch (selector) {
@@ -66,13 +69,19 @@ public class Utility {
                 break;
             case 2:
                 world.add(new Triangle(v0,v1,v2, halfMirror));
-                world.add(new Triangle(v0,v2,new Vector(-1,1,-2),yellowLambertian));
-                world.add(new Triangle(v1,new Vector(1,1,-2),v2, greyLambertian));
+                world.add(new Triangle(v0,v2,v3,yellowLambertian));
+                world.add(new Triangle(v1,v4,v2, greyLambertian));
                 //world.add(new Sphere(new Vector(-1.5,-.5,-3),0.5, redMirror));
                 //world.add(new Sphere(new Vector(0,.5,-3),0.5, redMirror));
 
                 //world.add(new Triangle(v2,v1,v0, yellowLambertian));
-
+                break;
+            case 3:
+                int[] faceArray = {3,3,3};
+                int[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
+                Vector[] vertexArray = {v0,v1,v2,v3,v4};
+                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror));
+                break;
         }
     }
 
