@@ -40,11 +40,13 @@ public class Utility {
         world.clear();
         Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
         Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
-        Mirror redMirror = new Mirror(new Vector(1,.5,.5), .1);
+        Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
+        Mirror halfMirror = new Mirror(new Vector(1,1,1),.5);
+
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
-        Vector v2 = new Vector(0,1,-2);
+        Vector v2 = new Vector(0,1,-6);
 
 
         switch (selector) {
@@ -63,7 +65,9 @@ public class Utility {
 
                 break;
             case 2:
-                world.add(new Triangle(v0,v1,v2, redMirror));
+                world.add(new Triangle(v0,v1,v2, halfMirror));
+                world.add(new Triangle(v0,v2,new Vector(-1,1,-2),yellowLambertian));
+                world.add(new Triangle(v1,new Vector(1,1,-2),v2, greyLambertian));
                 //world.add(new Sphere(new Vector(-1.5,-.5,-3),0.5, redMirror));
                 //world.add(new Sphere(new Vector(0,.5,-3),0.5, redMirror));
 

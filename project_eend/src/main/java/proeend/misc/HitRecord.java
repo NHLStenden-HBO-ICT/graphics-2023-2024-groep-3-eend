@@ -9,6 +9,8 @@ public class HitRecord {
     public Vector normal;
     public double t;
     public boolean frontFace;
+    //voor driehoeken en textures
+    public double u,v,w;
     public Material material;
     //outwardNormal moet eenheidsvector zijn
     public void setFaceNormal(Ray ray, Vector outwardNormal) {
