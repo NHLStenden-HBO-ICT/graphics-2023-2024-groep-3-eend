@@ -94,7 +94,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        Utility.loadWorld(world,1);
+        Utility.loadWorld(world,2);
         cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;

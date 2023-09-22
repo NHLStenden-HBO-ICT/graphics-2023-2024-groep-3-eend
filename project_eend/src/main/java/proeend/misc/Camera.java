@@ -64,7 +64,8 @@ public class Camera {
         //Color color;
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
         for (int y = 0; y < imageHeight; ++y){
-            //System.out.println(Integer.toString(y)+ "lines to go");
+            System.out.println(Integer.toString(y)+ "lines to go");
+
              for (int x = 0; x < imageWidth; ++x) {
                  Vector colorVec = new Vector();
                  for (int sample = 0; sample < samplesPerPixel; ++sample) {
@@ -110,13 +111,15 @@ public class Camera {
             return Vector.randomVec();
         }
         if (depth<=0) {
-            return new Vector(.5,.5,.5);
+            System.out.println("hit");
+            return new Vector(.0,.0,.0);
         }
         HitRecord rec = new HitRecord();
         if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
             Ray scattered = new Ray(new Vector(), new Vector());
             Vector attenuation = new Vector();
             if (rec.material.scatter(r,rec,attenuation,scattered)) {
+                //if (depth == 1) System.out.println("lowdeptj");
                 return Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
             }
             return new Vector();

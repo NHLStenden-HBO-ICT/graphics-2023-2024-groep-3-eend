@@ -78,7 +78,11 @@ public class Vector {
     }
     //TODO crossproduct
     public static Vector cross(Vector vector1, Vector vector2) {
-        return new Vector();
+        return new Vector(
+                vector1.y() * vector2.z() - vector1.z() * vector2.y(),
+                vector1.z() * vector2.x() - vector1.x() * vector2.z(),
+                vector1.x() * vector2.y() - vector1.y() * vector2.x()
+        );
     }
 
     public static double lengthSquared(Vector vec) {
