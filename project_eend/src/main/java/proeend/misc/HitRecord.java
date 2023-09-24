@@ -10,7 +10,7 @@ public class HitRecord {
     public double t;
     public boolean frontFace;
     //voor driehoeken en textures
-    public double u,v,w;
+    public double u,v,w = 0.0;
     public Material material;
     //outwardNormal moet eenheidsvector zijn
     public void setFaceNormal(Ray ray, Vector outwardNormal) {
@@ -24,5 +24,7 @@ public class HitRecord {
         this.t = rec.t;
         this.frontFace = rec.frontFace;
         this.material = rec.material;
+        this.u = rec.u;
+        this.v = rec.v;
     }
 }

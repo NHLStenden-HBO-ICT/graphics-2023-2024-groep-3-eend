@@ -6,6 +6,8 @@ import proeend.hittable.Triangle;
 import proeend.hittable.TriangleMesh;
 import proeend.material.Lambertian;
 import proeend.material.Mirror;
+import proeend.material.Normal;
+import proeend.material.Texture;
 import proeend.math.Vector;
 
 import java.io.IOException;
@@ -44,10 +46,11 @@ public class Utility {
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(1,1,1),.5);
+        Texture texture = new Texture();
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
-        Vector v2 = new Vector(0,1,-6);
+        Vector v2 = new Vector(0,.3,-2);
         Vector v3 = new Vector(-1,1,-2);
         Vector v4 = new Vector(1,1,-2);
 
@@ -63,14 +66,14 @@ public class Utility {
                 world.add(new Sphere(new Vector(0,-100.5,-.55), 100, greyLambertian));
                 world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
-                world.add(new Sphere(new Vector(0,0,.7),.5,perfectMirror));
+                world.add(new Sphere(new Vector(0,0,.7),.5,new Normal()));
                 world.add(new Sphere(new Vector(1,0,-.55),.5,redMirror));
 
                 break;
             case 2:
-                world.add(new Triangle(v0,v1,v2, halfMirror));
-                world.add(new Triangle(v0,v2,v3,yellowLambertian));
-                world.add(new Triangle(v1,v4,v2, greyLambertian));
+                world.add(new Triangle(v0,v1,v2, new Normal()));
+                world.add(new Triangle(v0,v2,v3,texture));
+                world.add(new Triangle(v1,v4,v2, texture));
                 //world.add(new Sphere(new Vector(-1.5,-.5,-3),0.5, redMirror));
                 //world.add(new Sphere(new Vector(0,.5,-3),0.5, redMirror));
 
@@ -80,8 +83,15 @@ public class Utility {
                 int[] faceArray = {3,3,3};
                 int[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
                 Vector[] vertexArray = {v0,v1,v2,v3,v4};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror));
+                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, new Normal()));
                 break;
+            case 4:
+                faceArray = new int[]{4};
+                vertexIndexArray = new int[]{0,1,2,4};
+                vertexArray = new Vector[]{v0,v1,v2,v3,v4};
+                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror).toTriangleMesh());
+
+
         }
     }
 

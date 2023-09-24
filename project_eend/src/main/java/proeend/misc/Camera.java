@@ -4,6 +4,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.hittable.Hittable;
+import proeend.material.Normal;
+import proeend.material.Texture;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -116,13 +118,20 @@ public class Camera {
         }
         HitRecord rec = new HitRecord();
         if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+
             Ray scattered = new Ray(new Vector(), new Vector());
             Vector attenuation = new Vector();
             if (rec.material.scatter(r,rec,attenuation,scattered)) {
                 //if (depth == 1) System.out.println("lowdeptj");
                 return Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
             }
-            return new Vector();
+            if (rec.material instanceof Texture)
+                return new Vector(rec.u,rec.v,(1.0-rec.u-rec.v));
+            if (rec.material instanceof Normal) {
+                return Vector.scale(.5, new Vector(rec.normal.x()+1,
+                        rec.normal.y()+1, rec.normal.z()+1));
+            }
+                return new Vector();
         }
         Vector unitDirection = Vector.unitVector(r.direction);
         double a = .5*(unitDirection.y()+1.0);
