@@ -17,6 +17,7 @@ import java.io.IOException;
 
 public class Camera {
 
+    public static boolean block;
     static int frames = 0;
     public int samplesPerPixel = 100;
     public int maxDepth = 50;
@@ -39,9 +40,16 @@ public class Camera {
         return imageHeight;
     }
     private void init() {
-        //image_height
+        imageHeight = (int)(imageWidth /aspectRatio);
         imageHeight = (imageHeight <1) ? 1 : imageHeight;
-
+        viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
+        viewportU = new Vector(viewportWidth,0,0);
+        viewportV = new Vector(0,-viewportHeight,0);
+        pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
+        pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
+        viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(new Vector(0,0,focalLength))),
+                Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
+        pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
     }
     private void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -60,13 +68,15 @@ public class Camera {
     public WritableImage render(boolean save, Hittable world){
 
         init();
+        block = true;
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         //Color color;
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
         for (int y = 0; y < imageHeight; ++y){
-            System.out.println(Integer.toString(y)+ "lines to go");
+            if (save)
+                System.out.println(Integer.toString(y)+ "lines to go");
 
              for (int x = 0; x < imageWidth; ++x) {
                  Vector colorVec = new Vector();
@@ -82,6 +92,7 @@ public class Camera {
         }
         System.out.println("frame " + frames);
         frames++;
+        block = false;
         if (save) {
             try {
                 saveImage(writableImage);

@@ -30,7 +30,8 @@ public class TriangleMesh extends Hittable {
             v2 = vertexArray[vertexIndexArray[j+2]];
             Triangle triangle = new Triangle(v0,v1,v2,material);
             if (triangle.hit(ray, rayT, rec)) {
-                tempHit = true;
+                return true;
+                //tempHit = true;
             }
 
             j += 3;

@@ -1,5 +1,6 @@
 package proeend;
 
+import javafx.scene.control.Label;
 import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -30,13 +31,23 @@ public class Main extends Application {
     static Camera cam1 = new Camera();
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
+    static Vector camOrigin = new Vector(0,0,2);
+
     ImageView frame = new ImageView();
     StackPane root = new StackPane();
+
+    Label coordX = new Label(Double.toString(camOrigin.x()));
+    Label coordY = new Label(Double.toString(camOrigin.y()));
+    Label coordZ = new Label(Double.toString(camOrigin.z()));
     @Override
     public void start(Stage stage) throws IOException {
 
 
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
+        root.setAlignment(coordX, Pos.TOP_LEFT);
+        root.setAlignment(coordY, Pos.TOP_CENTER);
+        root.setAlignment(coordZ, Pos.TOP_RIGHT);
+
 
         //animatie
         Duration interval = Duration.seconds(frameRate);
@@ -51,30 +62,51 @@ public class Main extends Application {
         StackPane.setAlignment(frame, Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.BLACK,null, null)));
         root.getChildren().add(frame);
+        root.getChildren().add(coordX);
+        root.getChildren().add(coordY);
+        root.getChildren().add(coordZ);
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            int shiftMult = 1;
             @Override
             public void handle(KeyEvent event) {
+                if (event.isShiftDown()) {shiftMult=10;}
+                else shiftMult =1;
                 switch (event.getCode()) {
                     case UP:
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,-1));
-
+                        coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())-0.04*shiftMult));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,-0.04*shiftMult));
                         break;
                     case LEFT:
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(1,0,0));
+                        //camOrigin = new Vector(camOrigin.x()-0.02,camOrigin.y(),camOrigin.z());
+                        coordX.setText(Double.toString( Double.parseDouble(coordX.getText())-0.02*shiftMult));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(-0.02*shiftMult,0,0));
                         break;
                     case RIGHT:
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(-1,0,0));
+                        coordX.setText(Double.toString( Double.parseDouble(coordX.getText())+0.02*shiftMult));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0.02*shiftMult,0,0));
                         break;
                     case DOWN:
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,1));
+                        coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())+0.04*shiftMult));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,0.04*shiftMult));
+                        break;
+                    case SPACE:
+                        coordY.setText(Double.toString( Double.parseDouble(coordY.getText())+0.1*shiftMult));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,.1*shiftMult,0));
+                        break;
+                    case Z:
+                        coordY.setText(Double.toString( Double.parseDouble(coordY.getText())-0.1*shiftMult));
+                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
                     case C:
+                        int store = cam1.imageWidth;
+                        cam1.imageWidth = 1920;
                         cam1.maxDepth = 50;
                         cam1.samplesPerPixel = 100;
                         System.out.println("starting capture...");
                         cam1.render(true, world);
                         cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1;
+                        cam1.imageWidth=store;
 
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
@@ -89,17 +121,23 @@ public class Main extends Application {
     }
 
     private void update() {
-        frame.setImage(cam1.render(world));
+        if (!Camera.block)
+            frame.setImage(cam1.render(world));
+
     }
 
     public static void main(String[] args) {
 
-        Utility.loadWorld(world,3);
+        Utility.loadWorld(world,6);
+        cam1.imageWidth = 400;
+        cam1.samplesPerPixel=1;
+        cam1.cameraCenter = camOrigin;
+
         cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;
         cam1.maxDepth = 3;
-        //launch();
+        launch();
 
 
     }
