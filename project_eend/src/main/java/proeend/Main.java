@@ -72,9 +72,22 @@ public class Main extends Application {
                 if (event.isShiftDown()) {shiftMult=10;}
                 else shiftMult =1;
                 switch (event.getCode()) {
+                    case EQUALS:
+                        cam1.verticalFOV-=Math.PI/360*shiftMult;
+                        break;
+                    case MINUS:
+                        cam1.verticalFOV+=Math.PI/360*shiftMult;
+                        break;
+                    case Q:
+                        cam1.lookat.rotateY(-Math.PI/400*shiftMult);
+                        break;
+                    case E:
+                        cam1.lookat.rotateY(Math.PI/400*shiftMult);
+                        break;
                     case UP:
                         coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())-0.04*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,-0.04*shiftMult));
+                        cam1.lookat = Vector.add(cam1.lookat, new Vector(0,0,-0.04*shiftMult));
                         break;
                     case LEFT:
                         //camOrigin = new Vector(camOrigin.x()-0.02,camOrigin.y(),camOrigin.z());
@@ -88,6 +101,7 @@ public class Main extends Application {
                     case DOWN:
                         coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())+0.04*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,0.04*shiftMult));
+                        cam1.lookat = Vector.add(cam1.lookat, new Vector(0,0,+0.04*shiftMult));
                         break;
                     case SPACE:
                         coordY.setText(Double.toString( Double.parseDouble(coordY.getText())+0.1*shiftMult));
@@ -127,16 +141,15 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-
-        Utility.loadWorld(world,6);
+        Utility.loadWorld(world,1);
         cam1.imageWidth = 400;
         cam1.samplesPerPixel=1;
         cam1.cameraCenter = camOrigin;
 
-        cam1.render(true, world); //TODO vervang door capture
+        //cam1.render(true, world); //TODO vervang door capture
 
-        cam1.samplesPerPixel = 1;
-        cam1.maxDepth = 3;
+        //cam1.samplesPerPixel = 1;
+        //cam1.maxDepth = 3;
         launch();
 
 

@@ -1,13 +1,19 @@
 package proeend.material;
 
+import proeend.material.texture.SolidColor;
+import proeend.material.texture.Texture;
 import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
 
 public class Lambertian extends Material{
-    private final Vector albedo; // ability of light reflection
+    private Texture albedo; // ability of light reflection
     public Lambertian(Vector albedo) {
-        this.albedo = albedo;
+        this.albedo = new SolidColor(albedo); {
+        }
+    }
+    public Lambertian(Texture texture) {
+        this.albedo = texture;
     }
 
     /**
@@ -28,7 +34,7 @@ public class Lambertian extends Material{
         Vector scatterDirection = Vector.add(rec.normal, Vector.randomUnitVec());
         scattered.origin = rec.p;
         scattered.direction = scatterDirection;
-        attenuation.copy(albedo);
+        attenuation.copy(albedo.value(rec.u, rec.v,rec.p));
         //wat er eerst stond
         //Global.scattered = new Ray(rec.p, scatterDirection);
         //Global.attenuation = albedo;

@@ -5,7 +5,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.hittable.Hittable;
 import proeend.material.Normal;
-import proeend.material.Texture;
+import proeend.material.texture.Texture;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -19,15 +19,20 @@ public class Camera {
 
     public static boolean block;
     static int frames = 0;
+    private Vector u,v,w;
+    public Vector cameraCenter = new Vector(0,0,0);
+    public Vector lookat = new Vector(0,0,-1);
+    public Vector up = new Vector(0,1,0);
+    public double verticalFOV = Math.PI/2; //in radialen
     public int samplesPerPixel = 100;
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
     public int imageWidth = 800;
+    public Vector background = new Vector();
     private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
-    public double viewportHeight = 2.0;
+    private double viewportHeight;
     public double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
-    public Vector cameraCenter = new Vector();
     public Vector viewportU = new Vector(viewportWidth,0,0);
     public Vector viewportV = new Vector(0,-viewportHeight,0);
     public Vector pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
@@ -40,14 +45,20 @@ public class Camera {
         return imageHeight;
     }
     private void init() {
+        focalLength = Vector.length(Vector.add(cameraCenter, Vector.inverse(lookat)));
         imageHeight = (int)(imageWidth /aspectRatio);
         imageHeight = (imageHeight <1) ? 1 : imageHeight;
+        double h = Math.tan(verticalFOV/2);
+        w = Vector.unitVector(Vector.add(cameraCenter, Vector.inverse(lookat)));
+        u = Vector.unitVector(Vector.cross(up, w));
+        v = Vector.cross(w,u);
+        viewportHeight = 2*h*focalLength;
         viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
-        viewportU = new Vector(viewportWidth,0,0);
-        viewportV = new Vector(0,-viewportHeight,0);
+        viewportU = Vector.scale(viewportWidth, u);
+        viewportV = Vector.scale(viewportHeight, Vector.inverse(v));
         pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
         pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
-        viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(new Vector(0,0,focalLength))),
+        viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(Vector.scale(focalLength, w))),
                 Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
         pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
     }
@@ -128,25 +139,24 @@ public class Camera {
             return new Vector(.0,.0,.0);
         }
         HitRecord rec = new HitRecord();
-        if (world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
+            return background;
 
-            Ray scattered = new Ray(new Vector(), new Vector());
-            Vector attenuation = new Vector();
-            if (rec.material.scatter(r,rec,attenuation,scattered)) {
-                //if (depth == 1) System.out.println("lowdeptj");
-                return Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
-            }
-            if (rec.material instanceof Texture)
-                return new Vector(rec.u,rec.v,(1.0-rec.u-rec.v));
+        Ray scattered = new Ray(new Vector(), new Vector());
+        Vector attenuation = new Vector();
+        Vector emissionColor = rec.material.emit(rec.u, rec.v, rec.p);
+        if (!rec.material.scatter(r,rec,attenuation,scattered)) {
             if (rec.material instanceof Normal) {
                 return Vector.scale(.5, new Vector(rec.normal.x()+1,
                         rec.normal.y()+1, rec.normal.z()+1));
             }
-                return new Vector();
+
+            return emissionColor;
         }
-        Vector unitDirection = Vector.unitVector(r.direction);
-        double a = .5*(unitDirection.y()+1.0);
-        return Vector.add(Vector.scale((1.0-a),new Vector(1,1,1)), Vector.scale(a, new Vector(.5,.7,1)));
+
+        Vector scatterColor = Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
+
+        return Vector.add(emissionColor, scatterColor);
     }
 
 }

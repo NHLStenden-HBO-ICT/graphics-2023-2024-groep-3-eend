@@ -4,10 +4,12 @@ import proeend.hittable.HittableList;
 import proeend.hittable.Sphere;
 import proeend.hittable.Triangle;
 import proeend.hittable.TriangleMesh;
+import proeend.material.Emitter;
 import proeend.material.Lambertian;
 import proeend.material.Mirror;
 import proeend.material.Normal;
-import proeend.material.Texture;
+import proeend.material.texture.CheckerTexture;
+import proeend.material.texture.Texture;
 import proeend.math.Vector;
 
 import java.io.IOException;
@@ -46,8 +48,11 @@ public class Utility {
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(1,1,1),.5);
-        Texture texture = new Texture();
         Normal normal = new Normal();
+        CheckerTexture checkerTexture = new CheckerTexture(.1, new Vector(.6,.1,.7), new Vector());
+        Lambertian errorCheckers = new Lambertian(checkerTexture);
+        Emitter whiteLight = new Emitter(new Vector(100,100,100));
+        Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -69,6 +74,7 @@ public class Utility {
 
 
         switch (selector) {
+
             case 0:
                 world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
                 world.add(new Sphere(new Vector(0,-100.5,-1), 100, perfectMirror));
@@ -80,20 +86,24 @@ public class Utility {
                 world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
                 world.add(new Sphere(new Vector(0,0,.7),.5,normal));
-                world.add(new Sphere(new Vector(1,0,-.55),.5,redMirror));
+                world.add(new Sphere(new Vector(1,0,-.55),.5,whiteLight));
 
                 break;
             case 2:
                 world.add(new Triangle(v0,v1,v2, normal));
-                world.add(new Triangle(v0,v2,v3,texture));
-                world.add(new Triangle(v1,v4,v2, texture));
+                world.add(new Triangle(v0,v2,v3,normal));
+                world.add(new Triangle(v1,v4,v2, normal));
                 //world.add(new Sphere(new Vector(-1.5,-.5,-3),0.5, redMirror));
                 //world.add(new Sphere(new Vector(0,.5,-3),0.5, redMirror));
 
                 //world.add(new Triangle(v2,v1,v0, yellowLambertian));
                 break;
             case 3:
+                faceArray = new int[]{3,3,3};
+                vertexIndexArray = new int[]{0,1,2,0,2,3,1,4,2};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
+                world.add(new Sphere(v1, .3, whiteLight));
+
                 break;
             case 4:
                 faceArray = new int[]{4};
@@ -102,13 +112,13 @@ public class Utility {
                 //world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror).toTriangleMesh());
                 break;
             case 5:
-                world.add(new Sphere(v2, .5, redMirror));
-                world.add(new Sphere(v1, .3, redMirror));
+                world.add(new Sphere(new Vector(1,0,-2), .5, whiteLambertian));
+                world.add(new Sphere(v1, .3, whiteLight));
                 break;
             case 6:
                 faceArray = new int[]{3,3,3,3};
                 vertexIndexArray = new int[]{5,6,7,6,8,7,8,9,10,7,8,10};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, texture));
+                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
             default:
                 System.out.println("foute wereldkeuze");
                 break;

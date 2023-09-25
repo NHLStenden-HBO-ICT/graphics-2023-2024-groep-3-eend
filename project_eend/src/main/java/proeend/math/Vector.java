@@ -61,6 +61,16 @@ public class Vector {
         this.d[1]= vec.y();
         this.d[2]= vec.z();
     }
+    public void rotateZ(double angle) {
+        double x = d[0];
+        d[0] = d[0]*Math.cos(angle)-d[1]*Math.sin(angle);
+        d[1] = x*Math.sin(angle)+d[1]*Math.cos(angle);
+    }
+    public void rotateY(double angle) {
+        double x = d[0];
+        d[0] = d[0]*Math.cos(angle)+d[2]*Math.sin(angle);
+        d[2] = -x  *Math.sin(angle)+d[2]*Math.cos(angle);
+    }
     public static Vector inverse(Vector vec) {
         return new Vector(-vec.x(),-vec.y(),-vec.z());
     }

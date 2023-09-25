@@ -4,8 +4,9 @@ import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
 
-public abstract class Material {
+public class Material {
 
+    protected Material() {}
     /**
      * abstract methode die bepaalt hoe het licht weerkaatst gaat worden
      * @param rayIn
@@ -19,5 +20,10 @@ public abstract class Material {
      * @return
      * of de scatter wel of niet voldoet
      */
-    public abstract boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered);
+    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
+        return false;
+    }
+    public Vector emit(double u, double v, Vector p) {
+        return new Vector();
+    }
 }
