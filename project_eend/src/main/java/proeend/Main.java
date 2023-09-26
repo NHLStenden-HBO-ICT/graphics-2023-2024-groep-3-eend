@@ -142,14 +142,13 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Utility.loadWorld(world,1);
-        cam1.imageWidth = 400;
-        cam1.samplesPerPixel=1;
+        cam1.imageWidth = 200;
         cam1.cameraCenter = camOrigin;
 
         //cam1.render(true, world); //TODO vervang door capture
 
-        //cam1.samplesPerPixel = 1;
-        //cam1.maxDepth = 3;
+        cam1.samplesPerPixel = 1;
+        cam1.maxDepth = 3;
         launch();
 
 

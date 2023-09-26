@@ -25,10 +25,11 @@ public class Camera {
     public Vector up = new Vector(0,1,0);
     public double verticalFOV = Math.PI/2; //in radialen
     public int samplesPerPixel = 100;
+    private int rootSPP = (int) Math.sqrt(samplesPerPixel);
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
     public int imageWidth = 800;
-    public Vector background = new Vector();
+    public Vector background = new Vector(.1,.1,.1);
     private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     private double viewportHeight;
@@ -44,7 +45,12 @@ public class Camera {
     public double getHeight() {
         return imageHeight;
     }
+
+    /**
+     * wat voor elk plaatje opnieuw gedaan wordt
+     */
     private void init() {
+        rootSPP = (int) Math.sqrt(samplesPerPixel);
         focalLength = Vector.length(Vector.add(cameraCenter, Vector.inverse(lookat)));
         imageHeight = (int)(imageWidth /aspectRatio);
         imageHeight = (imageHeight <1) ? 1 : imageHeight;
@@ -62,6 +68,15 @@ public class Camera {
                 Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
         pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
     }
+
+    /**
+     * zet een writable image via een functie om naar een bufferedimage, omdat dat makkelijker
+     * was om op te slaan, slaat het plaatje op in de working directory
+     * @param image
+     * het plaatje dat moet worden opgeslagen
+     * @throws IOException
+     * als de fileinteractie fout gaat
+     */
     private void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int x = 0; x < (int) image.getWidth(); x++) {
@@ -75,7 +90,15 @@ public class Camera {
         System.out.println("opgeslagen");
     }
 
-    //gooit een plaatje 'render.ppm' in de src folder
+    /**
+     * rendert plaatje met voorwaarden vanuit het camera object
+     * @param save
+     * of het plaatje moet worden opgeslagen
+     * @param world
+     * de wereld die gerenderd wordt
+     * @return
+     * een WritableImage, voor een ImageView in de UI of om opgeslagen te worden
+     */
     public WritableImage render(boolean save, Hittable world){
 
         init();
@@ -87,15 +110,26 @@ public class Camera {
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
         for (int y = 0; y < imageHeight; ++y){
             if (save)
-                System.out.println(Integer.toString(y)+ "lines to go");
+                System.out.println(Integer.toString(imageHeight - y)+ " lines to go");
 
              for (int x = 0; x < imageWidth; ++x) {
                  Vector colorVec = new Vector();
+
+                 //nieuwe AA, een stuk minder snell, maar wel beter
+                 for (int sy = 0; sy < rootSPP; ++sy) {
+                     for (int sx = 0; sx < rootSPP; ++sx) {
+                         Ray ray = getRay(x,y,sx,sy);
+                         colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world));
+                     }
+                 }
+
+                 /* oude AA
                  for (int sample = 0; sample < samplesPerPixel; ++sample) {
                      Ray ray = getRay(x, y);
                      //colorVec = new Vec();
                      colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world));
-                 }
+                 }*/
+
                  int[] colors = colorVec.toColor(samplesPerPixel, save);
                  pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
 
@@ -110,6 +144,20 @@ public class Camera {
             } catch (IOException e) {e.printStackTrace();}
         }
         return writableImage;
+    }
+    private Ray getRay(int x, int y, int sx, int sy) {
+        Vector pixelCenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
+        Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(sx, sy));
+
+        Vector rayOrigin = cameraCenter;
+        Vector direction = Vector.add(pixelSample, Vector.inverse(rayOrigin));
+        return new Ray(rayOrigin, direction);
+
+    }
+    private Vector pixelSampleSquare(int sx, int sy) {
+        double px = -.5 + 1.0/rootSPP * (sx + Math.random());
+        double py = -.5 + 1.0/rootSPP * (sy + Math.random());
+        return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
     private Ray getRay(int x, int y) {
         Vector pixelcenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
