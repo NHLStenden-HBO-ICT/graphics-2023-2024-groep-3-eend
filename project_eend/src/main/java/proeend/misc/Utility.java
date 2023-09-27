@@ -36,7 +36,28 @@ public class Utility {
         }
         System.out.println(exitCode);
     }
+    public static double integralMonteCarlo (double a, double b ) {
+        int N = 1000000;
+        double sum = 0;
+        for (int i = 0; i < N; ++i) {
+            double x = a + (b - a) * Math.random();
+            sum += x;
+        }
+        return b - a * sum / N;
 
+
+    }
+    public static Vector randomCosineDirection() {
+        double r1 = Math.random();
+        double r2 = Math.random();
+
+        double fi = 2*Math.PI*r1;
+        double x = Math.cos(fi)*Math.sqrt(r2);
+        double y = Math.sin(fi)*Math.sqrt(r2);
+        double z = Math.sqrt(1-r2);
+
+        return new Vector(x,y,z);
+    }
     /**
      * laad een in de functie gedefineerde wereld in
      * @param selector je keuze
@@ -49,7 +70,7 @@ public class Utility {
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(1,1,1),.5);
         Normal normal = new Normal();
-        CheckerTexture checkerTexture = new CheckerTexture(.1, new Vector(.6,.1,.7), new Vector());
+        CheckerTexture checkerTexture = new CheckerTexture(10, new Vector(.6,.1,.7), new Vector());
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(100,100,100));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
@@ -115,7 +136,7 @@ public class Utility {
                 world.add(new Sphere(new Vector(1,0,-2), .5, whiteLambertian));
                 world.add(new Sphere(v1, .3, whiteLight));
                 break;
-            case 6:
+            case 6: //box
                 faceArray = new int[]{3,3,3,3};
                 vertexIndexArray = new int[]{5,6,7,6,8,7,8,9,10,7,8,10};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));

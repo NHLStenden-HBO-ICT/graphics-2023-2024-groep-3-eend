@@ -26,4 +26,7 @@ public class Material {
     public Vector emit(double u, double v, Vector p) {
         return new Vector();
     }
+    public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
+        return 0;
+    }
 }

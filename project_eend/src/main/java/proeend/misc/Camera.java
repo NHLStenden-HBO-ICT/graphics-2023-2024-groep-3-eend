@@ -29,7 +29,7 @@ public class Camera {
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
     public int imageWidth = 800;
-    public Vector background = new Vector(.1,.1,.1);
+    public Vector background = new Vector(1,1,1);
     private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     private double viewportHeight;
@@ -198,11 +198,13 @@ public class Camera {
                 return Vector.scale(.5, new Vector(rec.normal.x()+1,
                         rec.normal.y()+1, rec.normal.z()+1));
             }
-
             return emissionColor;
         }
-
-        Vector scatterColor = Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
+        double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
+        double pdf = scatteringPDF;
+        //blijkbaar mag je floats(...) wel delen door nul...
+        Vector scatterColor = Vector.scale(1.0/pdf,
+                Vector.multiply(Vector.scale(scatteringPDF, attenuation),rayColor(scattered,depth-1,world)));
 
         return Vector.add(emissionColor, scatterColor);
     }
