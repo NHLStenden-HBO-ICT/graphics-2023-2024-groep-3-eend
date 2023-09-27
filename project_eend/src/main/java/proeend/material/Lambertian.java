@@ -41,7 +41,7 @@ public class Lambertian extends Material{
         scattered.origin = rec.p;
         scattered.direction = Vector.unitVector(scatterDirection);
         attenuation.copy(albedo.value(rec.u, rec.v,rec.p));
-
+        rec.pdf = Vector.dot(uvw.w(), scattered.direction())/Math.PI;
 
         /* oude scatter zonder pdf
         Vector scatterDirection = Vector.add(rec.normal, Vector.randomUnitVec());

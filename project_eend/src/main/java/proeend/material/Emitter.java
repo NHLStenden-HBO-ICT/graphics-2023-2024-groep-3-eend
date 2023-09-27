@@ -20,7 +20,9 @@ public class Emitter extends Material {
         return false;
     }
     @Override
-    public Vector emit(double u, double v, Vector p) {
+    public Vector emit(Ray rayIn, HitRecord rec,double u, double v, Vector p) {
+        if(!rec.frontFace)
+            return new Vector();
         return emission.value(u, v, p);
     }
 }

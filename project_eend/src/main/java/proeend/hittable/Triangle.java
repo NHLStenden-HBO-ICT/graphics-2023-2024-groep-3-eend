@@ -49,6 +49,7 @@ public class Triangle extends Hittable{
 
         //rec.normal = Vector.cross(v0v1,v0v2);
         rec.normal = Vector.unitVector(Vector.cross(v0v1,v0v2));
+        rec.setFaceNormal(ray, rec.normal);
 
 
 

@@ -23,10 +23,10 @@ public class Material {
     public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
         return false;
     }
-    public Vector emit(double u, double v, Vector p) {
+    public Vector emit(Ray rayIn, HitRecord rec, double u, double v, Vector p) {
         return new Vector();
     }
     public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
-        return 0;
+        return 1;
     }
 }
