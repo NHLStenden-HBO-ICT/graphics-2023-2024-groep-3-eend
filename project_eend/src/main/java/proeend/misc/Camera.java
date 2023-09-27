@@ -5,7 +5,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.hittable.Hittable;
 import proeend.material.Normal;
-import proeend.material.texture.Texture;
+import proeend.material.pdf.CosPDF;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -183,7 +183,7 @@ public class Camera {
             return Vector.randomVec();
         }
         if (depth<=0) {
-            System.out.println("hit");
+            //System.out.println("hit");
             return new Vector(.0,.0,.0);
         }
         HitRecord rec = new HitRecord();
@@ -200,10 +200,13 @@ public class Camera {
             }
             return emissionColor;
         }
+        CosPDF surfacePDF = new CosPDF(rec.normal);
+        scattered = new Ray(rec.p, surfacePDF.generate());
+        double pdfVal = surfacePDF.value(scattered.direction());
         //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
         //double pdf = scatteringPDF;
         //blijkbaar mag je floats(...) wel delen door nul...
-        Vector scatterColor = Vector.scale(1.0/rec.pdf,
+        Vector scatterColor = Vector.scale(1.0/pdfVal,
                 Vector.multiply(Vector.scale(rec.pdf, attenuation),rayColor(scattered,depth-1,world)));
 
         return Vector.add(emissionColor, scatterColor);

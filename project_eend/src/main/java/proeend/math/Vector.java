@@ -131,11 +131,11 @@ public class Vector {
             }
         }
     }
-    public static Vector randomUnitVec() {
+    public static Vector randomOnUnitSphere() {
         return unitVector(randomInUnitSphere());
     }
     public static Vector RandomUnitVecOnHemisphere(Vector normal) {
-        Vector p = randomUnitVec();
+        Vector p = randomOnUnitSphere();
         if (dot(p, normal) >0.0) {
             return p;
         }

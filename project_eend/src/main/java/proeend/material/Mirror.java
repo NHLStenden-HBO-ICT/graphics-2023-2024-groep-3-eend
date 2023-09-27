@@ -27,7 +27,7 @@ public class Mirror extends Material{
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
         Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);
-        Vector direction = Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec()));
+        Vector direction = Vector.add(reflected, Vector.scale(fuzz, Vector.randomOnUnitSphere()));
         scattered.origin = rec.p;
         scattered.direction = direction;
         attenuation.copy(albedo);
