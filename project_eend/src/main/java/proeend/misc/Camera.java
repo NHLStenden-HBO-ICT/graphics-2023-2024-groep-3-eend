@@ -198,6 +198,8 @@ public class Camera {
 
         // Controleer of de ray een object in de wereld raakt
         if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+
+            // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
             // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
             // Geen raakpunt, retourneer de achtergrondkleur
             return background;
