@@ -6,15 +6,35 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.material.Material;
 
-public class Sphere extends Hittable{
+/**
+ * Een sfeerobject dat kan worden getroffen door een lichtstraal in een 3D-scène.
+ */
+public class Sphere extends Hittable {
 
     private final double radius;
     private final Vector center;
+
+    /**
+     * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
+     *
+     * @param center   Het middelpunt van de sfeer.
+     * @param radius   De straal van de sfeer.
+     * @param material Het materiaal van de sfeer.
+     */
     public Sphere(Vector center, double radius, Material material) {
         this.center = center;
-        this. radius = radius;
+        this.radius = radius;
         super.setMaterial(material);
     }
+
+    /**
+     * Bepaalt of een lichtstraal een botsing heeft met de sfeer en vult het HitRecord met de informatie over de botsing.
+     *
+     * @param ray   De lichtstraal die wordt getest op botsingen.
+     * @param rayT  Het interval waarin mogelijke botsingen worden gecontroleerd.
+     * @param rec   Het HitRecord dat wordt gevuld met informatie over de botsing.
+     * @return True als de lichtstraal een botsing heeft met de sfeer, anders false.
+     */
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
 
