@@ -197,6 +197,7 @@ public class Camera {
         HitRecord rec = new HitRecord();
 
         // Controleer of de ray een object in de wereld raakt
+        // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
         if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
 
             // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
