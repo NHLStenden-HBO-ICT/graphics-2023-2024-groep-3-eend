@@ -11,12 +11,11 @@ public class TriangleMesh extends Hittable {
     private int[] faceArray;
     private int[] vertexIndexArray;
     private Vector[] vertexArray;
-    private Material material;
     public TriangleMesh(int[] faceArray, int[] vertexIndexArray, Vector[] vertexArray, Material material) {
         this.faceArray = faceArray;
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
-        this.material = material;
+        super.setMaterial(material);
     }
 
     @Override
@@ -28,7 +27,7 @@ public class TriangleMesh extends Hittable {
             v0 = vertexArray[vertexIndexArray[j]];
             v1 = vertexArray[vertexIndexArray[j+1]];
             v2 = vertexArray[vertexIndexArray[j+2]];
-            Triangle triangle = new Triangle(v0,v1,v2,material);
+            Triangle triangle = new Triangle(v0,v1,v2,getMaterial());
             if (triangle.hit(ray, rayT, rec)) {
                 return true;
                 //tempHit = true;

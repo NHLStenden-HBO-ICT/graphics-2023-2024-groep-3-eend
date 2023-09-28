@@ -10,11 +10,10 @@ public class Sphere extends Hittable{
 
     private final double radius;
     private final Vector center;
-    private final Material material;
     public Sphere(Vector center, double radius, Material material) {
         this.center = center;
         this. radius = radius;
-        this.material = material;
+        super.setMaterial(material);
     }
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
@@ -38,7 +37,7 @@ public class Sphere extends Hittable{
         }
         rec.t = root;
         rec.p = ray.at(rec.t);
-        rec.material = material;
+        rec.material = getMaterial();
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.p, Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;

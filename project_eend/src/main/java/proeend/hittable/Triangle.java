@@ -11,10 +11,9 @@ public class Triangle extends Hittable{
         this.v1 = v1;
         this.v2 = v2;
         this.v0 = v0;
-        this.material = material;
+        super.setMaterial(material);
     }
     public Vector v0,v1,v2;
-    public Material material;
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         Vector v0v1 = Vector.add(v1, Vector.inverse(v0));
@@ -42,7 +41,7 @@ public class Triangle extends Hittable{
 
         //if (rec.t < 0) {return false;}
         //rec.t = Vector.dot(v0v2, qvec);
-        rec.material = material;
+        rec.material = getMaterial();
         //ray.direction = unitDir;
         rec.p = Vector.add(ray.origin(), Vector.scale(rec.t, unitDir));
         //rec.p = ray.at(rec.t);
