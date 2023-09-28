@@ -31,10 +31,10 @@ public class Lambertian extends Material{
      */
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
-        Vector scatterDirection = Vector.add(rec.normal, Vector.randomUnitVec());
-        scattered.origin = rec.p;
+        Vector scatterDirection = Vector.add(rec.getNormal(), Vector.randomUnitVec());
+        scattered.origin = rec.getP();
         scattered.direction = scatterDirection;
-        attenuation.copy(albedo.value(rec.u, rec.v,rec.p));
+        attenuation.copy(albedo.value(rec.getU(), rec.getV(),rec.getP()));
         //wat er eerst stond
         //Global.scattered = new Ray(rec.p, scatterDirection);
         //Global.attenuation = albedo;

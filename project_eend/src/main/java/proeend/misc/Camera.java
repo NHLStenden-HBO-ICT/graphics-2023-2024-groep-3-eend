@@ -210,13 +210,13 @@ public class Camera {
         Vector attenuation = new Vector();
 
         // Bereken de emissiekleur van het materiaal
-        Vector emissionColor = rec.material.emit(rec.u, rec.v, rec.p);
+        Vector emissionColor = rec.getMaterial().emit(rec.getU(), rec.getV(), rec.getP());
 
         // Controleer of het materiaal van het object licht verstrooit
-        if (!rec.material.scatter(r, rec, attenuation, scattered)) {
+        if (!rec.getMaterial().scatter(r, rec, attenuation, scattered)) {
             // Als het materiaal een normaal is, verstrooi het met een bias
-            if (rec.material instanceof Normal) {
-                return Vector.scale(.5, new Vector(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1));
+            if (rec.getMaterial() instanceof Normal) {
+                return Vector.scale(.5, new Vector(rec.getNormal().x() + 1, rec.getNormal().y() + 1, rec.getNormal().z() + 1));
             }
 
             // Retourneer de emissiekleur als er geen verstrooiing is

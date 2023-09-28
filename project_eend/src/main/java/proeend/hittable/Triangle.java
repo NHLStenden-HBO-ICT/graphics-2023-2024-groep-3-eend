@@ -30,24 +30,24 @@ public class Triangle extends Hittable{
         double invDet = 1/det;
 
         Vector tvec = Vector.add(ray.origin(), Vector.inverse(v0));
-        rec.u = Vector.dot(tvec,pvec)*invDet;
-        if (rec.u < 0 || rec.u > 1) return false;
+        rec.setU(Vector.dot(tvec,pvec)*invDet);
+        if (rec.getU() < 0 || rec.getU() > 1) return false;
 
         Vector qvec = Vector.cross(tvec, v0v1);
-        rec.v = Vector.dot(unitDir, qvec)*invDet;
-        if (rec.v < 0 || rec.u + rec.v > 1) return false;
+        rec.setV(Vector.dot(unitDir, qvec)*invDet);
+        if (rec.getV() < 0 || rec.getU() + rec.getV() > 1) return false;
 
-        rec.t = Vector.dot(v0v2, qvec)*invDet;
+        rec.setT(Vector.dot(v0v2, qvec)*invDet);
 
         //if (rec.t < 0) {return false;}
         //rec.t = Vector.dot(v0v2, qvec);
-        rec.material = getMaterial();
+        rec.setMaterial(getMaterial());
         //ray.direction = unitDir;
-        rec.p = Vector.add(ray.origin(), Vector.scale(rec.t, unitDir));
+        rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
         //rec.p = ray.at(rec.t);
 
         //rec.normal = Vector.cross(v0v1,v0v2);
-        rec.normal = Vector.unitVector(Vector.cross(v0v1,v0v2));
+        rec.setNormal(Vector.unitVector(Vector.cross(v0v1,v0v2)));
 
 
 
