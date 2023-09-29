@@ -3,9 +3,12 @@ package proeend.misc;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import proeend.ScatterRecord;
 import proeend.hittable.Hittable;
 import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
+import proeend.material.pdf.HittablePDF;
+import proeend.material.pdf.MixturePDF;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -29,7 +32,7 @@ public class Camera {
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
     public int imageWidth = 800;
-    public Vector background = new Vector(.1,.1,.1);
+    public Vector background = new Vector();
     private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     private double viewportHeight;
@@ -99,7 +102,7 @@ public class Camera {
      * @return
      * een WritableImage, voor een ImageView in de UI of om opgeslagen te worden
      */
-    public WritableImage render(boolean save, Hittable world){
+    public WritableImage render(boolean save, Hittable world, Hittable lights){
 
         init();
         block = true;
@@ -119,7 +122,7 @@ public class Camera {
                  for (int sy = 0; sy < rootSPP; ++sy) {
                      for (int sx = 0; sx < rootSPP; ++sx) {
                          Ray ray = getRay(x,y,sx,sy);
-                         colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world));
+                         colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
                      }
                  }
 
@@ -173,12 +176,12 @@ public class Camera {
         double py = -.5 + Math.random();
         return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
-    public WritableImage render(Hittable world) {
-        return render(false, world);
+    public WritableImage render(Hittable world, Hittable lights) {
+        return render(false, world, lights);
     }
 
 
-    private Vector rayColor(Ray r, int depth, Hittable world) {
+    private Vector rayColor(Ray r, int depth, Hittable world, Hittable lights) {
         if (world == null) {
             return Vector.randomVec();
         }
@@ -187,27 +190,35 @@ public class Camera {
             return new Vector(.0,.0,.0);
         }
         HitRecord rec = new HitRecord();
+        r.direction = Vector.unitVector(r.direction);
         if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
             return background;
 
-        Ray scattered = new Ray(new Vector(), new Vector());
-        Vector attenuation = new Vector();
+        ScatterRecord scatterRecord = new ScatterRecord();
         Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
-        if (!rec.material.scatter(r,rec,attenuation,scattered)) {
+        if (!rec.material.scatter(r,rec,scatterRecord)) {
             if (rec.material instanceof Normal) {
                 return Vector.scale(.5, new Vector(rec.normal.x()+1,
                         rec.normal.y()+1, rec.normal.z()+1));
             }
             return emissionColor;
         }
+        if (scatterRecord.skipPDF) {
+            return Vector.multiply(scatterRecord.attenuation, rayColor(scatterRecord.skipRay,
+                    depth-1,world, lights));
+        }
+
+        HittablePDF lightPDF = new HittablePDF(lights, rec.p);
         CosPDF surfacePDF = new CosPDF(rec.normal);
-        scattered = new Ray(rec.p, surfacePDF.generate());
-        double pdfVal = surfacePDF.value(scattered.direction());
+        MixturePDF mixPDF = new MixturePDF(lightPDF, surfacePDF);
+
+        Ray scattered = new Ray(rec.p, mixPDF.generate());
+        double pdfVal = mixPDF.value(scattered.direction());
         //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
         //double pdf = scatteringPDF;
         //blijkbaar mag je floats(...) wel delen door nul...
         Vector scatterColor = Vector.scale(1.0/pdfVal,
-                Vector.multiply(Vector.scale(rec.pdf, attenuation),rayColor(scattered,depth-1,world)));
+                Vector.multiply(Vector.scale(rec.pdf, scatterRecord.attenuation),rayColor(scattered,depth-1,world, lights)));
 
         return Vector.add(emissionColor, scatterColor);
     }

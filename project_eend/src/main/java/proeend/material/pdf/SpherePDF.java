@@ -2,7 +2,7 @@ package proeend.material.pdf;
 
 import proeend.math.Vector;
 
-public class spherePDF extends pdf{
+public class SpherePDF extends PDF {
     @Override
     double value(Vector direction) {
         return 1/(4*Math.PI);

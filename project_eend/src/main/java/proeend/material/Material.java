@@ -1,5 +1,6 @@
 package proeend.material;
 
+import proeend.ScatterRecord;
 import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -20,7 +21,7 @@ public class Material {
      * @return
      * of de scatter wel of niet voldoet
      */
-    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
+    public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scatterRecord) {
         return false;
     }
     public Vector emit(Ray rayIn, HitRecord rec, double u, double v, Vector p) {

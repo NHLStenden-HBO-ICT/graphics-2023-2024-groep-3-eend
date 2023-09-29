@@ -22,7 +22,10 @@ public class HittableList extends Hittable {
 
         for (Hittable object: objects) {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
+                //if (object instanceof Triangle)
+                    //continue;
                 hasHitSomething = true;
+
                 closestSoFar = tempRec.t;
                 rec.copy(tempRec);
                 //oude

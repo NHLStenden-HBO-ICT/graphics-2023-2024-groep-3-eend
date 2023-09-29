@@ -1,10 +1,12 @@
 package proeend.hittable;
 
+import proeend.Main;
 import proeend.misc.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.material.Material;
+import proeend.misc.OrthonormalBase;
 
 public class Sphere extends Hittable{
 
@@ -42,5 +44,35 @@ public class Sphere extends Hittable{
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.p, Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;
+    }
+    @Override
+    public double pdfValue(Vector origin, Vector direction) {
+        HitRecord hitRecord = new HitRecord();
+        if (!hit(new Ray(origin,direction),new Interval(0.001, Double.POSITIVE_INFINITY), hitRecord)) {
+            return 0;
+        }
+        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(Vector.add(center, Vector.inverse(origin))));
+        double solidAngle = 2*Math.PI*(1-cosThetaMax);
+
+        return 1.0/solidAngle;
+    }
+    @Override
+    public Vector random(Vector origin) {
+        Vector direction = Vector.add(center, Vector.inverse(origin));
+        double distanceSquared = Vector.lengthSquared(direction);
+        OrthonormalBase uvw = new OrthonormalBase();
+        uvw.buildFromW(direction);
+        return uvw.local(randomToSphere(radius, distanceSquared));
+    }
+    private Vector randomToSphere(double radius, double distanceSquared) {
+        double r1 = Math.random();
+        double r2 = Math.random();
+        double z = 1 + r2 * (Math.sqrt(1-radius*radius/distanceSquared)-1);
+
+        double fi = 2*Math.PI*r1;
+        double x = Math.cos(fi)*Math.sqrt(1-z*z);
+        double y = Math.sin(fi)*Math.sqrt(1-z*z);
+
+        return new Vector(x,y,z);
     }
 }

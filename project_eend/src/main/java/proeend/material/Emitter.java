@@ -1,6 +1,7 @@
 package proeend.material;
 
 import proeend.Main;
+import proeend.ScatterRecord;
 import proeend.material.texture.SolidColor;
 import proeend.material.texture.Texture;
 import proeend.math.Ray;
@@ -16,7 +17,7 @@ public class Emitter extends Material {
     }
     private Texture emission;
     @Override
-    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
+    public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scatterRecord) {
         return false;
     }
     @Override

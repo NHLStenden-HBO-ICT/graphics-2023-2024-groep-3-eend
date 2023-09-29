@@ -4,7 +4,7 @@ import proeend.math.Vector;
 import proeend.misc.OrthonormalBase;
 import proeend.misc.Utility;
 
-public class CosPDF extends pdf{
+public class CosPDF extends PDF {
     private OrthonormalBase uvw = new OrthonormalBase();
     public CosPDF(Vector w) {uvw.buildFromW(w);}
     @Override

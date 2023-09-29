@@ -27,6 +27,7 @@ import java.io.IOException;
 public class Main extends Application {
 
     static HittableList world = new HittableList();
+    static HittableList lights = new HittableList();
 
     static Camera cam1 = new Camera();
     static double frameRate = 1.0/10.0; //hertz
@@ -113,11 +114,11 @@ public class Main extends Application {
                         break;
                     case C:
                         int store = cam1.imageWidth;
-                        cam1.imageWidth = 1920;
+                        cam1.imageWidth = 600;
                         cam1.maxDepth = 50;
-                        cam1.samplesPerPixel = 100;
+                        cam1.samplesPerPixel = 1000;
                         System.out.println("starting capture...");
-                        cam1.render(true, world);
+                        cam1.render(true, world, lights);
                         cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1;
                         cam1.imageWidth=store;
@@ -136,15 +137,15 @@ public class Main extends Application {
 
     private void update() {
         if (!Camera.block)
-            frame.setImage(cam1.render(world));
+            frame.setImage(cam1.render(world, lights));
 
     }
 
     public static void main(String[] args) {
-        Utility.loadWorld(world,1);
+        Utility.loadWorld(world,lights,1);
         cam1.imageWidth = 200;
         cam1.cameraCenter = camOrigin;
-
+        cam1.background = new Vector(.0,.0,.0);
         //cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;

@@ -6,10 +6,10 @@ import proeend.math.Vector;
 /**
  * dit is dus een PDF náár een hittable
  */
-public class hittablePDF extends pdf{
+public class HittablePDF extends PDF {
     private Hittable objects;
     private Vector origin;
-    public hittablePDF(Hittable objects, Vector origin) {
+    public HittablePDF(Hittable objects, Vector origin) {
         this.objects = objects;
         this.origin = origin;
     }

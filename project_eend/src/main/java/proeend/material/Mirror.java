@@ -1,5 +1,6 @@
 package proeend.material;
 
+import proeend.ScatterRecord;
 import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -25,16 +26,24 @@ public class Mirror extends Material{
      * of de reflectie in dezelfde globale richting gaat als de normaal, dus niet terug het object in
      */
     @Override
-    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
+    public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scatterRecord) {
+        scatterRecord.attenuation = albedo;
+        scatterRecord.pdf = null;
+        scatterRecord.skipPDF = true;
+        Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);
+        scatterRecord.skipRay = new Ray(rec.p, Vector.add(reflected,Vector.scale(fuzz,Vector.randomOnUnitSphere())));
+        return true;
+        /*
         Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);
         Vector direction = Vector.add(reflected, Vector.scale(fuzz, Vector.randomOnUnitSphere()));
         scattered.origin = rec.p;
         scattered.direction = direction;
         attenuation.copy(albedo);
+         */
         //wat er eerst stond
         //Global.scattered = new Ray(rec.p,
         //        Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec())));
         //Global.attenuation = albedo;
-        return (Vector.dot(scattered.direction(), rec.normal) > 0);
+        //return (Vector.dot(scattered.direction(), rec.normal) > 0);
     }
 }
