@@ -82,6 +82,7 @@ public class Vector {
     public static Vector scale(double scalar, Vector scaled) {
         return new Vector(scaled.x()*scalar, scaled.y()*scalar, scaled.z()*scalar);
     }
+
     //dotproduct
     public static double dot(Vector vector1, Vector vector2) {
         return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
