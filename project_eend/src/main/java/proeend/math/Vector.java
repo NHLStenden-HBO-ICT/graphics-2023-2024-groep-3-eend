@@ -132,4 +132,17 @@ public class Vector {
         }
         return inverse(p);
     }
+
+    /**
+     * Subtract second vector to first vector.
+     * @param vectorA is the first vector.
+     * @param vectorB is the second vector to subtract.
+     * @return the result of the vector subtraction.
+     */
+    public static Vector subtract(Vector vectorA, Vector vectorB) {
+        double x = vectorA.d[0] - vectorB.d[0];
+        double y = vectorA.d[1] - vectorB.d[1];
+        double z = vectorA.d[2] - vectorB.d[2];
+        return new Vector(x, y, z);
+    }
 }

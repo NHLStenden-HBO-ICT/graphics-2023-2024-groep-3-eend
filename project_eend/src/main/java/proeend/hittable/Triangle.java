@@ -40,44 +40,53 @@ public class Triangle extends Hittable{
      */
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
-        Vector v0v1 = Vector.add(v1, Vector.inverse(v0));
-        Vector v0v2 = Vector.add(v2, Vector.inverse(v0));   //deze twee kloppen
+        Vector v0v1 = Vector.subtract(v1, v0);
+        Vector v0v2 = Vector.subtract(v2, v0);
+
         Vector unitDir = Vector.unitVector(ray.direction());
-        //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
+
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
-        if (det<0) {
+
+        if (det < 0) {
             return false;
         }
-        //determinant lijkt niet goed te zijn
-        //System.out.println(det);
-        double invDet = 1/det;
 
-        Vector tvec = Vector.add(ray.origin(), Vector.inverse(v0));
-        rec.setU(Vector.dot(tvec,pvec)*invDet);
-        if (rec.getU() < 0 || rec.getU() > 1) return false;
+        double invDet = 1.0 / det;
+
+        Vector tvec = Vector.subtract(ray.origin(), v0);
+        double u = Vector.dot(tvec, pvec) * invDet;
+
+        if (u < 0 || u > 1) {
+            return false;
+        }
 
         Vector qvec = Vector.cross(tvec, v0v1);
-        rec.setV(Vector.dot(unitDir, qvec)*invDet);
-        if (rec.getV() < 0 || rec.getU() + rec.getV() > 1) return false;
+        double v = Vector.dot(unitDir, qvec) * invDet;
 
-        rec.setT(Vector.dot(v0v2, qvec)*invDet);
+        if (v < 0 || u + v > 1) {
+            return false;
+        }
 
-        //if (rec.t < 0) {return false;}
-        //rec.t = Vector.dot(v0v2, qvec);
+        double t = Vector.dot(v0v2, qvec) * invDet;
+
+        if (t < rayT.getMin() || t > rayT.getMax()) {
+            return false;
+        }
+
+        rec.setT(t);
+        rec.setU(u);
+        rec.setV(v);
+
         rec.setMaterial(getMaterial());
-        //ray.direction = unitDir;
-        rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
-        //rec.p = ray.at(rec.t);
 
-        //rec.normal = Vector.cross(v0v1,v0v2);
-        rec.setNormal(Vector.unitVector(Vector.cross(v0v1,v0v2)));
+        Vector p = Vector.add(ray.origin(), Vector.scale(t, unitDir));
+        rec.setP(p);
 
+        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        rec.setNormal(normal);
 
-
-        //rec.setFaceNormal(ray,rec.normal);
-        //System.out.println(v+u);
-        //rec.normal = pvec;
         return true;
     }
+
 }
