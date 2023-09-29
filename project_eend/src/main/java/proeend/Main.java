@@ -1,6 +1,8 @@
 package proeend;
 
 import javafx.scene.control.Label;
+import proeend.hittable.Sphere;
+import proeend.material.Lambertian;
 import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -115,10 +117,10 @@ public class Main extends Application {
                     case C:
                         int store = cam1.imageWidth;
                         cam1.imageWidth = 600;
-                        cam1.maxDepth = 50;
+                        cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1000;
                         System.out.println("starting capture...");
-                        cam1.render(true, world, lights);
+                        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
                         cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1;
                         cam1.imageWidth=store;
@@ -137,7 +139,8 @@ public class Main extends Application {
 
     private void update() {
         if (!Camera.block)
-            frame.setImage(cam1.render(world, lights));
+
+            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector()))));
 
     }
 
