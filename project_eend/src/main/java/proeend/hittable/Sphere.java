@@ -49,9 +49,9 @@ public class Sphere extends Hittable {
 
         double sqrtD = Math.sqrt(D);
         double root = ((-halfb - sqrtD) / a);
-        if (!rayT.surrounds(root)) {
+        if (rayT.surrounds(root)) {
             root = ((-halfb - sqrtD) / a);
-            if (!rayT.surrounds(root)) {
+            if (rayT.surrounds(root)) {
                 return false;
             }
         }

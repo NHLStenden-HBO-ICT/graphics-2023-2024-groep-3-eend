@@ -9,13 +9,12 @@ public class Interval {
     public boolean contains(double x) {
         return min <= x && x <= max;    }
     public boolean surrounds(double x) {
-        return min < x && x < max;    }
+        return !(min < x) || !(x < max);    }
 
 
     public double clamp(double x) {
         if (x < min) {return min;}
-        if (x > max) {return max;}
-        return x;
+        return Math.min(x, max);
     }
 
     public double getMax() {
