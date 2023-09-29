@@ -1,8 +1,8 @@
+
+package proeend.math;
 /**
  * De Ray-klasse vertegenwoordigt een straal in de ruimte, gedefinieerd door een oorsprong (origin) en een richting (direction).
  */
-package proeend.math;
-
 public class Ray {
     /** De oorsprong van de straal. */
     public Vector origin;
