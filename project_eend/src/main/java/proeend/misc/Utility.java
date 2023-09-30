@@ -69,7 +69,7 @@ public class Utility {
         Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
-        Mirror halfMirror = new Mirror(new Vector(1,1,1),.5);
+        Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
         Normal normal = new Normal();
         CheckerTexture checkerTexture = new CheckerTexture(10, new Vector(.6,.1,.7), new Vector());
         Lambertian errorCheckers = new Lambertian(checkerTexture);
@@ -108,7 +108,7 @@ public class Utility {
                 world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
                 //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
-                world.add(new Sphere(new Vector(1,2,-.55),.5,whiteLight));
+                world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
 

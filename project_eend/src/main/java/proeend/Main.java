@@ -117,10 +117,10 @@ public class Main extends Application {
                     case C:
                         int store = cam1.imageWidth;
                         cam1.imageWidth = 600;
-                        cam1.maxDepth = 3;
+                        cam1.maxDepth = 50;
                         cam1.samplesPerPixel = 1000;
                         System.out.println("starting capture...");
-                        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+                        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
                         cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1;
                         cam1.imageWidth=store;
@@ -140,13 +140,13 @@ public class Main extends Application {
     private void update() {
         if (!Camera.block)
 
-            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector()))));
+            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
     }
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        cam1.imageWidth = 200;
+        cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);
         //cam1.render(true, world); //TODO vervang door capture

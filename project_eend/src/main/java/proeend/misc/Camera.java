@@ -214,11 +214,12 @@ public class Camera {
 
         Ray scattered = new Ray(rec.p, mixPDF.generate());
         double pdfVal = mixPDF.value(scattered.direction());
+        double scatteringPDF = rec.material.scatteringPDF(r,rec,scattered);
         //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
         //double pdf = scatteringPDF;
         //blijkbaar mag je floats(...) wel delen door nul...
         Vector scatterColor = Vector.scale(1.0/pdfVal,
-                Vector.multiply(Vector.scale(rec.pdf, scatterRecord.attenuation),rayColor(scattered,depth-1,world, lights)));
+                Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation),rayColor(scattered,depth-1,world, lights)));
 
         return Vector.add(emissionColor, scatterColor);
     }
