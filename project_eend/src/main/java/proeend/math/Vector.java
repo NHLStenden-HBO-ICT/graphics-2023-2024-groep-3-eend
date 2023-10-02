@@ -82,6 +82,7 @@ public class Vector {
     public static Vector scale(double scalar, Vector scaled) {
         return new Vector(scaled.x()*scalar, scaled.y()*scalar, scaled.z()*scalar);
     }
+
     //dotproduct
     public static double dot(Vector vector1, Vector vector2) {
         return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
@@ -131,5 +132,18 @@ public class Vector {
             return p;
         }
         return inverse(p);
+    }
+
+    /**
+     * Subtract second vector to first vector.
+     * @param vectorA is the first vector.
+     * @param vectorB is the second vector to subtract.
+     * @return the result of the vector subtraction.
+     */
+    public static Vector subtract(Vector vectorA, Vector vectorB) {
+        double x = vectorA.d[0] - vectorB.d[0];
+        double y = vectorA.d[1] - vectorB.d[1];
+        double z = vectorA.d[2] - vectorB.d[2];
+        return new Vector(x, y, z);
     }
 }

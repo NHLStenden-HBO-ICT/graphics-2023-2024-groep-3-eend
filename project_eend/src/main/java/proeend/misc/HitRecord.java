@@ -5,42 +5,155 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 
 /**
- * Een HitRecord houdt informatie bij over een botsing tussen een straal en een object.
+ * Een klasse die informatie opslaat over een botsing (hit) tussen een lichtstraal en een object in een 3D-scène.
  */
 public class HitRecord {
-    /** De positie (punt) waar de botsing plaatsvond. */
-    public Vector p;
-
-    /** De normaalvector op het punt van botsing. */
-    public Vector normal;
-
-    /** De afstand langs de straal waar de botsing plaatsvond. */
-    public double t;
+    private Vector p;
+    private Vector normal;
+    private double t;
+    private boolean frontFace;
+    private double u;
+    private double v;
+    private Material material;
 
     /**
-     * Geeft aan of de straal aan de voorkant (front face) van het object raakte.
-     * Dit wordt gebruikt om te bepalen of de normaal naar binnen of naar buiten wijst.
+     * Constructor voor een HitRecord-object.
      */
-    public boolean frontFace;
-
-    /** Voor driehoeken en texture-mapping: u-coördinaat. */
-    public double u;
-
-    /** Voor driehoeken en texture-mapping: v-coördinaat. */
-    public double v;
-
-    /** Voor driehoeken en texture-mapping: w-coördinaat. */
-    public double w = 0.0;
-
-    /** Het materiaal van het getroffen object. */
-    public Material material;
+    public HitRecord() {
+        // Initialiseer alle velden
+    }
 
     /**
-     * Stelt de normaalvector van het front face van het object in op basis van de
-     * inkomende straal en de naar buiten gerichte normaalvector.
+     * Haal het raakpunt (punt van impact) van de lichtstraal met het object op.
      *
-     * @param ray            De inkomende straal.
-     * @param outwardNormal De naar buiten gerichte normaalvector op het botsingspunt.
+     * @return Het raakpunt.
+     */
+    public Vector getP() {
+        return p;
+    }
+
+    /**
+     * Stel het raakpunt (punt van impact) van de lichtstraal met het object in.
+     *
+     * @param p Het nieuwe raakpunt.
+     */
+    public void setP(Vector p) {
+        this.p = p;
+    }
+
+    /**
+     * Haal de normaalvector op op het raakpunt van het oppervlak van het object.
+     *
+     * @return De normaalvector.
+     */
+    public Vector getNormal() {
+        return normal;
+    }
+
+    /**
+     * Stel de normaalvector in op het raakpunt van het oppervlak van het object.
+     *
+     * @param normal De nieuwe normaalvector.
+     */
+    public void setNormal(Vector normal) {
+        this.normal = normal;
+    }
+
+    /**
+     * Haal de parameter 't' op die de afstand vertegenwoordigt van het beginpunt van de lichtstraal tot het raakpunt.
+     *
+     * @return De parameter 't'.
+     */
+    public double getT() {
+        return t;
+    }
+
+    /**
+     * Stel de parameter 't' in die de afstand vertegenwoordigt van het beginpunt van de lichtstraal tot het raakpunt.
+     *
+     * @param t De nieuwe parameter 't'.
+     */
+    public void setT(double t) {
+        this.t = t;
+    }
+
+    /**
+     * Geeft aan of het frontale oppervlak van het object wordt geraakt.
+     *
+     * @return True als het frontale oppervlak wordt geraakt, anders false.
+     */
+    public boolean isFrontFace() {
+        return frontFace;
+    }
+
+    /**
+     * Stel in of het frontale oppervlak van het object wordt geraakt.
+     *
+     * @param frontFace True als het frontale oppervlak wordt geraakt, anders false.
+     */
+    public void setFrontFace(boolean frontFace) {
+        this.frontFace = frontFace;
+    }
+
+    /**
+     * Haal de textuurcoördinaat 'u' op op het raakpunt van het oppervlak van het object.
+     *
+     * @return De textuurcoördinaat 'u'.
+     */
+    public double getU() {
+        return u;
+    }
+
+    /**
+     * Stel de textuurcoördinaat 'u' in op het raakpunt van het oppervlak van het object.
+     *
+     * @param u De nieuwe textuurcoördinaat 'u'.
+     */
+    public void setU(double u) {
+        this.u = u;
+    }
+
+    /**
+     * Haal de textuurcoördinaat 'v' op op het raakpunt van het oppervlak van het object.
+     *
+     * @return De textuurcoördinaat 'v'.
+     */
+    public double getV() {
+        return v;
+    }
+
+    /**
+     * Stel de textuurcoördinaat 'v' in op het raakpunt van het oppervlak van het object.
+     *
+     * @param v De nieuwe textuurcoördinaat 'v'.
+     */
+    public void setV(double v) {
+        this.v = v;
+    }
+
+    /**
+     * Haal het materiaal op van het object waarop is gebotst.
+     *
+     * @return Het materiaal.
+     */
+    public Material getMaterial() {
+        return material;
+    }
+
+    /**
+     * Stel het materiaal in van het object waarop is gebotst.
+     *
+     * @param material Het nieuwe materiaal.
+     */
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    /**
+     * Bepaalt de normaalvector op basis van de richting van de lichtstraal en de uitgaande normaalvector.
+     *
+     * @param ray           De lichtstraal die is gebruikt voor de botsing.
+     * @param outwardNormal De uitgaande normaalvector op het raakpunt van het oppervlak.
      */
     public void setFaceNormal(Ray ray, Vector outwardNormal) {
         frontFace = Vector.dot(ray.direction, outwardNormal) < 0;
@@ -48,9 +161,9 @@ public class HitRecord {
     }
 
     /**
-     * Kopieert de eigenschappen van een ander HitRecord naar dit HitRecord.
+     * Kopieert gegevens van een ander HitRecord-object naar dit object.
      *
-     * @param rec Het andere HitRecord om te kopiëren.
+     * @param rec Het HitRecord-object waarnaar de gegevens worden gekopieerd.
      */
     public void copy(HitRecord rec) {
         this.p = rec.p;
@@ -61,4 +174,6 @@ public class HitRecord {
         this.u = rec.u;
         this.v = rec.v;
     }
+
+
 }

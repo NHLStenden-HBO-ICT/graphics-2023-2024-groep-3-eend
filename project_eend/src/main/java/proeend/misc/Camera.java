@@ -15,8 +15,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Deze klasse vertegenwoordigt een camera voor het renderen van beelden.
+ */
 public class Camera {
-
     public static boolean block;
     static int frames = 0;
     private Vector u,v,w;
@@ -41,9 +43,17 @@ public class Camera {
             Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
     public Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
 
+    /**
+     * Geeft de hoogte van het beeld terug.
+     *
+     * @return De hoogte van het beeld.
+     */
     public double getHeight() {
         return imageHeight;
     }
+    /**
+     * Initialiseert de camera-instellingen.
+     */
     private void init() {
         focalLength = Vector.length(Vector.add(cameraCenter, Vector.inverse(lookat)));
         imageHeight = (int)(imageWidth /aspectRatio);
@@ -62,6 +72,13 @@ public class Camera {
                 Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
         pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
     }
+
+    /**
+     * Slaat het gegenereerde beeld op als een PNG-bestand.
+     *
+     * @param image Het te opslaan beeld.
+     * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
+     */
     private void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int x = 0; x < (int) image.getWidth(); x++) {
@@ -75,7 +92,13 @@ public class Camera {
         System.out.println("opgeslagen");
     }
 
-    //gooit een plaatje 'render.ppm' in de src folder
+    /**
+     * Rendert een beeld.
+     *
+     * @param save  Geeft aan of het beeld moet worden opgeslagen.
+     * @param world Het 3D-wereldobject dat moet worden weergegeven.
+     * @return Een WritableImage van het beeld.
+     */
     public WritableImage render(boolean save, Hittable world){
 
         init();
@@ -111,6 +134,14 @@ public class Camera {
         }
         return writableImage;
     }
+
+    /**
+     * Geeft een ray terug die door het opgegeven pixel gaat.
+     *
+     * @param x De x-coördinaat van het pixel.
+     * @param y De y-coördinaat van het pixel.
+     * @return Een Ray-object dat het pixel vertegenwoordigt.
+     */
     private Ray getRay(int x, int y) {
         Vector pixelcenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
         Vector pixelSample = Vector.add(pixelcenter, pixelSampleSquare());
@@ -120,43 +151,85 @@ public class Camera {
         return new Ray(rayOrigin, direction);
 
     }
+
+    /**
+     * Genereert een willekeurige pixelverschuiving voor anti-aliasing.
+     *
+     * @return Een Vector die de pixelverschuiving vertegenwoordigt.
+     */
     private Vector pixelSampleSquare() {
         double px = -.5 + Math.random();
         double py = -.5 + Math.random();
         return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
+
+    /**
+     * Rendert een beeld zonder op te slaan.
+     *
+     * @param world Het 3D-wereldobject dat moet worden weergegeven.
+     * @return Een WritableImage van het beeld.
+     */
     public WritableImage render(Hittable world) {
         return render(false, world);
     }
 
-
+    /**
+     * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
+     *
+     * @param r     De ray om te traceren.
+     * @param depth Het maximum aantal reflecties.
+     * @param world Het 3D-wereldobject dat moet worden weergegeven.
+     * @return Een Vector die de kleur van de ray vertegenwoordigt.
+     */
     private Vector rayColor(Ray r, int depth, Hittable world) {
+        // Controleer of er geen wereld is (bijv. achtergrondkleur)
         if (world == null) {
             return Vector.randomVec();
         }
-        if (depth<=0) {
-            System.out.println("hit");
-            return new Vector(.0,.0,.0);
-        }
-        HitRecord rec = new HitRecord();
-        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
-            return background;
 
+        // Controleer of het maximumaantal reflecties is bereikt
+        if (depth <= 0) {
+            System.out.println("hit");
+            return new Vector(.0, .0, .0);
+        }
+
+        // Maak een HitRecord om gegevens over het getroffen object op te slaan
+        HitRecord rec = new HitRecord();
+
+        // Controleer of de ray een object in de wereld raakt
+        // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
+        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+
+            // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
+            // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
+            // Geen raakpunt, retourneer de achtergrondkleur
+            return background;
+        }
+
+        // Initialiseer een verstrooide ray en attenuatievector
         Ray scattered = new Ray(new Vector(), new Vector());
         Vector attenuation = new Vector();
-        Vector emissionColor = rec.material.emit(rec.u, rec.v, rec.p);
-        if (!rec.material.scatter(r,rec,attenuation,scattered)) {
-            if (rec.material instanceof Normal) {
-                return Vector.scale(.5, new Vector(rec.normal.x()+1,
-                        rec.normal.y()+1, rec.normal.z()+1));
+
+        // Bereken de emissiekleur van het materiaal
+        Vector emissionColor = rec.getMaterial().emit(rec.getU(), rec.getV(), rec.getP());
+
+        // Controleer of het materiaal van het object licht verstrooit
+        if (!rec.getMaterial().scatter(r, rec, attenuation, scattered)) {
+            // Als het materiaal een normaal is, verstrooi het met een bias
+            if (rec.getMaterial() instanceof Normal) {
+                return Vector.scale(.5, new Vector(rec.getNormal().x() + 1, rec.getNormal().y() + 1, rec.getNormal().z() + 1));
             }
 
+            // Retourneer de emissiekleur als er geen verstrooiing is
             return emissionColor;
         }
 
-        Vector scatterColor = Vector.multiply(attenuation,rayColor(scattered,depth-1,world));
+        // Bereken de kleur na verstrooiing recursief
+        Vector scatterColor = Vector.multiply(attenuation, rayColor(scattered, depth - 1, world));
 
+        // Combineer emissiekleur en verstrooide kleur
         return Vector.add(emissionColor, scatterColor);
     }
+
 
 }
