@@ -4,10 +4,7 @@ import proeend.hittable.HittableList;
 import proeend.hittable.Sphere;
 import proeend.hittable.Triangle;
 import proeend.hittable.TriangleMesh;
-import proeend.material.Emitter;
-import proeend.material.Lambertian;
-import proeend.material.Mirror;
-import proeend.material.Normal;
+import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.material.texture.Texture;
 import proeend.math.Vector;
@@ -51,8 +48,9 @@ public class Utility {
         Normal normal = new Normal();
         CheckerTexture checkerTexture = new CheckerTexture(.1, new Vector(.6,.1,.7), new Vector());
         Lambertian errorCheckers = new Lambertian(checkerTexture);
-        Emitter whiteLight = new Emitter(new Vector(100,100,100));
+        Emitter whiteLight = new Emitter(new Vector(40,40,20));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
+        Dielectric glass = new Dielectric(2);
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -83,10 +81,10 @@ public class Utility {
                 break;
             case 1:
                 world.add(new Sphere(new Vector(0,-100.5,-.55), 100, greyLambertian));
-                world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
+                world.add(new Sphere(new Vector(0,0,-.7),.5,glass));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
                 world.add(new Sphere(new Vector(0,0,.7),.5,normal));
-                world.add(new Sphere(new Vector(1,0,-.55),.5,whiteLight));
+                world.add(new Sphere(new Vector(1,0,-.55),.3,whiteLight));
 
                 break;
             case 2:

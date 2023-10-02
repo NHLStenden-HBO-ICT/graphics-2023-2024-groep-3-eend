@@ -30,7 +30,7 @@ public class Camera {
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
     public int imageWidth = 800;
-    public Vector background = new Vector();
+    public Vector background = new Vector(1,.5,1);
     private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     private double viewportHeight;
@@ -110,7 +110,7 @@ public class Camera {
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
         for (int y = 0; y < imageHeight; ++y){
             if (save)
-                System.out.println(Integer.toString(y)+ "lines to go");
+                System.out.println(Integer.toString(imageHeight - y)+ " lines left");
 
              for (int x = 0; x < imageWidth; ++x) {
                  Vector colorVec = new Vector();

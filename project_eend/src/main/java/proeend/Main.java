@@ -113,9 +113,9 @@ public class Main extends Application {
                         break;
                     case C:
                         int store = cam1.imageWidth;
-                        cam1.imageWidth = 1920;
-                        cam1.maxDepth = 50;
-                        cam1.samplesPerPixel = 100;
+                        cam1.imageWidth = 800;
+                        cam1.maxDepth = 40;
+                        cam1.samplesPerPixel = 300;
                         System.out.println("starting capture...");
                         cam1.render(true, world);
                         cam1.maxDepth = 3;
