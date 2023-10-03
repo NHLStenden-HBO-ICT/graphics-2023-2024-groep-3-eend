@@ -30,7 +30,7 @@ public class Dielectric extends Material {
      */
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
-        attenuation.setValues(1.0, 1.0, 1.0);
+        attenuation.setValues(1,1,1);
         double refraction_ratio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;
 
         Vector unit_direction = Vector.unitVector(rayIn.getDirection());
@@ -50,7 +50,7 @@ public class Dielectric extends Material {
      */
     public Vector refract(Vector uv, Vector n, double etai_over_etat) {
         // Bereken de cosinus van de hoek tussen de invallende straal en de normaal.
-        double cos_theta = Math.min(-Vector.dot(uv, n), 1.0);
+        double cos_theta = Math.min(- Vector.dot(uv, n), 1.0);
 
         // Bereken het loodrechte deel van de gebroken lichtstraal.
         Vector r_out_perp = Vector.scale(etai_over_etat, Vector.add(uv, Vector.scale(cos_theta, n)));

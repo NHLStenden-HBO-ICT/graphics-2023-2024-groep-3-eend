@@ -1,9 +1,6 @@
 package proeend.misc;
 
-import proeend.hittable.HittableList;
-import proeend.hittable.Sphere;
-import proeend.hittable.Triangle;
-import proeend.hittable.TriangleMesh;
+import proeend.hittable.*;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.material.texture.Texture;
@@ -50,7 +47,8 @@ public class Utility {
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(40,40,20));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
-        Dielectric glass = new Dielectric(2);
+        Dielectric glass = new Dielectric(1.31);
+
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -75,8 +73,12 @@ public class Utility {
 
             case 0:
                 world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
-                world.add(new Sphere(new Vector(0,-100.5,-1), 100, perfectMirror));
+                world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
+                world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
                 world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
+                world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
+                // world.add(vierkant);
+
 
                 break;
             case 1:
@@ -99,7 +101,7 @@ public class Utility {
             case 3:
                 faceArray = new int[]{3,3,3};
                 vertexIndexArray = new int[]{0,1,2,0,2,3,1,4,2};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
+                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, glass));
                 world.add(new Sphere(v1, .3, whiteLight));
 
                 break;
