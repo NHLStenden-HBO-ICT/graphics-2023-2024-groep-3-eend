@@ -1,5 +1,6 @@
 package proeend.material;
 
+import proeend.Main;
 import proeend.ScatterRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -14,10 +15,10 @@ public class Dielectric extends Material {
     /**
      * Constructs a dielectric material with the given index of refraction.
      *
-     * @param index_of_refraction The index of refraction for the material.
+     * @param indexOfRefraction The index of refraction for the material.
      */
-    public Dielectric(double index_of_refraction) {
-        refractionIndex = index_of_refraction;
+    public Dielectric(double indexOfRefraction) {
+        refractionIndex = indexOfRefraction;
     }
 
     /**
@@ -32,13 +33,33 @@ public class Dielectric extends Material {
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scRecord) {
         scRecord.attenuation.setValues(1,1,1);
-        double refraction_ratio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;
+        scRecord.pdf = null;
+        scRecord.skipPDF = true;
+        double refractionRatio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;
 
-        Vector unit_direction = Vector.unitVector(rayIn.getDirection());
-        Vector refracted = refract(unit_direction, rec.getNormal(), refraction_ratio);
+        Vector unitDirection = Vector.unitVector(rayIn.getDirection());
 
-        scRecord.skipRay.updateRay((rec.getP()), refracted);
+        double cosTheta = Math.min(Vector.dot(Vector.inverse(unitDirection),rec.getNormal()),1.0);
+        double sinTheta = Math.sqrt(1.0-cosTheta*cosTheta);
+
+        boolean cannotRefract = refractionRatio * sinTheta > 1.0;
+
+        Vector direction;
+        if (cannotRefract || reflectance(cosTheta, refractionRatio) > Math.random())
+            direction = Vector.reflect(unitDirection, rec.getNormal());
+        else
+            direction = refract(unitDirection,rec.normal,refractionRatio);
+
+        //Vector refracted = refract(unitDirection, rec.getNormal(), refractionRatio);
+
+        scRecord.skipRay.updateRay((rec.getP()), direction);
         return true;
+    }
+
+    private static double reflectance(double cos, double refInd) {
+        double r0 = (1-refInd) / (1+refInd);
+        r0 = r0*r0;
+        return r0 + (1-r0)* Math.pow((1-cos),5);
     }
 
     /**

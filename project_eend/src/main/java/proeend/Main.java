@@ -118,7 +118,7 @@ public class Main extends Application {
                         int store = cam1.imageWidth;
                         cam1.imageWidth = 600;
                         cam1.maxDepth = 50;
-                        cam1.samplesPerPixel = 600;
+                        cam1.samplesPerPixel = 810;
                         System.out.println("starting capture...");
                         cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
                         cam1.maxDepth = 3;
@@ -139,7 +139,7 @@ public class Main extends Application {
 
     private void update() {
         if (!Camera.block)
-            frame.setImage(cam1.render(world, lights));
+            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
     }
 
