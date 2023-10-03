@@ -48,4 +48,13 @@ public class Ray {
     public Vector at(double t) {
         return Vector.add(origin, Vector.scale(t, direction));
     }
+
+    public void updateRay(Vector origin, Vector direction){
+        this.origin = origin;
+        this.direction = direction;
+    }
+
+    public Vector getDirection() {
+        return direction;
+    }
 }

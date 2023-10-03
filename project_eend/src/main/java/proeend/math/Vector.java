@@ -14,9 +14,16 @@ public class Vector {
         d[2]=z;
     }
 
+    public void setValues(double x, double y, double z){
+        d[0]=x;
+        d[1]=y;
+        d[2]=z;
+    }
+
     public static Vector multiply(Vector attenuation, Vector vec) {
         return new Vector(attenuation.x()* vec.x(), attenuation.y()* vec.y(),attenuation.z()* vec.z());
     }
+
 
     public static Vector reflect(Vector vec, Vector normal) {
         return add(vec, inverse(scale(2.0*dot(vec,normal),normal)));
