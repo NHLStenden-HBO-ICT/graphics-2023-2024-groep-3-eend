@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.image.WritableImage;
 
 
 import java.awt.*;
@@ -71,7 +72,7 @@ public class Main extends Application {
                         cam1.maxDepth = 50;
                         cam1.samplesPerPixel = 100;
                         System.out.println("starting capture...");
-                        cam1.render(true, world);
+                        cam1.render(true, world, 1, 1);
                         cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1;
 
@@ -93,16 +94,49 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
+        int beschikbareProcessors = Runtime.getRuntime().availableProcessors();
+        System.out.println("Aantal beschikbare processors: " + beschikbareProcessors);
+        // Bereken het aantal threads dat je wilt maken (bijv. helft van beschikbare processors)
+        int numberOfThreads = beschikbareProcessors / 2;
+
+
         Lambertian greyLambertian = new Lambertian(new Vec(.5,.5,.5));
         Mirror redMirror = new Mirror(new Vec(1,.5,.5), .3);
         world.add(new Sphere(new Vec(0,0,-1),0.5, redMirror));
         world.add(new Sphere(new Vec(0,-100.5,-1), 100, greyLambertian));
         world.add(new Sphere(new Vec(-1,0,-1),.5,greyLambertian));
-        cam1.render(true, world); //TODO vervang door capture
+        //cam1.render(true, world, 1, 1); //TODO vervang door capture
 
-        cam1.samplesPerPixel = 1;
+        cam1.samplesPerPixel = 100;
         cam1.maxDepth = 3;
-        //launch();
+
+
+        int[] threadCounter = {0}; // Use an array to store the counter
+
+        Runnable taak = () -> {
+            int currentThreadCounter;
+            synchronized (threadCounter) {
+                currentThreadCounter = threadCounter[0];
+                threadCounter[0]++;
+            }
+            WritableImage image;
+            image = cam1.render(true, world, numberOfThreads, currentThreadCounter);
+            try {
+                Camera.saveImage(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+
+
+        for (int i = 0; i < numberOfThreads+1; i++) {
+            Thread thread = new Thread(taak);
+
+            thread.start();
+
+            //launch();
+        }
 
 
     }

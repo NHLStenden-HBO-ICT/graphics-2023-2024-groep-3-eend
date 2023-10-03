@@ -15,7 +15,7 @@ public class Camera {
     public int samplesPerPixel = 100;
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
-    public int image_width = 800;
+    public int image_width = 1920;
     private int image_height = (int)(image_width/aspectRatio);
     public double focalLength = 1.0;
     public double viewportHeight = 2.0;
@@ -37,7 +37,7 @@ public class Camera {
         image_height = (image_height<1) ? 1 : image_height;
 
     }
-    private void saveImage(WritableImage image) throws IOException{
+    public static void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int x = 0; x < (int) image.getWidth(); x++) {
             for (int y = 0; y < (int) image.getHeight(); y++) {
@@ -51,30 +51,36 @@ public class Camera {
     }
 
     //gooit een plaatje 'render.ppm' in de src folder
-    public WritableImage render(boolean save, Hittable world){
+    public WritableImage render(boolean save, Hittable world, int threads, int threadCounter){
 
         init();
         WritableImage writableImage = new WritableImage(image_width,image_height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
+        int startPixelY = image_height / threads * threadCounter;
+        int endPixelY = image_height / threads * (threadCounter +1 );
+
+
+
+
         //Color color;
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
-        for (int y = 0; y < image_height; ++y){
-            //System.out.println(Integer.toString(y)+ "lines to go");
-             for (int x = 0; x < image_width; ++x) {
-                 Vec colorVec = new Vec();
-                 for (int sample = 0; sample < samplesPerPixel; ++sample) {
-                     Ray ray = getRay(x, y);
-                     //colorVec = new Vec();
-                     colorVec = Vec.add(colorVec, rayColor(ray, maxDepth, world));
-                 }
-                 int[] colors = colorVec.toColor(samplesPerPixel, save);
-                 pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+        for (int y = startPixelY; y < endPixelY; ++y){
+            System.out.println(Integer.toString(endPixelY - y) + " lines to go op thread: " + threadCounter);
+            for (int x = 0; x < image_width; ++x) {
+                Vec colorVec = new Vec();
+                for (int sample = 0; sample < samplesPerPixel; ++sample) {
+                    Ray ray = getRay(x, y);
+                    //colorVec = new Vec();
+                    colorVec = Vec.add(colorVec, rayColor(ray, maxDepth, world));
+                }
+                int[] colors = colorVec.toColor(samplesPerPixel, save);
+                pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
 
-             }
+            }
         }
         System.out.println("frame " + frames);
-        frames++;
+        startPixelY += frames++;
         if (save) {
             try {
                 saveImage(writableImage);
@@ -97,8 +103,10 @@ public class Camera {
         return Vec.add(Vec.scale(px, pixelDeltaU), Vec.scale(py, pixelDeltaV));
     }
     public WritableImage render(Hittable world) {
-        return render(false, world);
+        return render(false, world,1,1);
     }
+
+
 
 
     private Vec rayColor(Ray r, int depth, Hittable world) {
