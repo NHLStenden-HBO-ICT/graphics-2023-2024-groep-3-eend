@@ -139,8 +139,7 @@ public class Main extends Application {
 
     private void update() {
         if (!Camera.block)
-
-            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
+            frame.setImage(cam1.render(world));
 
     }
 

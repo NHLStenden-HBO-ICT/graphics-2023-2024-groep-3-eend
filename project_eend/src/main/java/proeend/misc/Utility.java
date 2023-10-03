@@ -76,6 +76,7 @@ public class Utility {
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
 
+
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
         Vector v2 = new Vector(0,.3,-2);
@@ -99,8 +100,12 @@ public class Utility {
 
             case 0:
                 world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
-                world.add(new Sphere(new Vector(0,-100.5,-1), 100, perfectMirror));
+                world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
+                world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
                 world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
+                world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
+                // world.add(vierkant);
+
 
                 break;
             case 1:
@@ -139,7 +144,7 @@ public class Utility {
                 world.add(new Sphere(new Vector(1,0,-2), .5, whiteLambertian));
                 world.add(new Sphere(v1, .3, whiteLight));
                 break;
-            case 6: //box
+            case 6:
                 faceArray = new int[]{3,3,3,3};
                 vertexIndexArray = new int[]{5,6,7,6,8,7,8,9,10,7,8,10};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));

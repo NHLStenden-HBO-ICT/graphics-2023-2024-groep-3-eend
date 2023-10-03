@@ -1,7 +1,6 @@
 package proeend.material;
 
 import proeend.Main;
-import proeend.ScatterRecord;
 import proeend.material.texture.SolidColor;
 import proeend.material.texture.Texture;
 import proeend.math.Ray;
