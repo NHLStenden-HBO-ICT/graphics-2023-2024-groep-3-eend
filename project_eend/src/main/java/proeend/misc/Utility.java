@@ -4,10 +4,7 @@ import proeend.hittable.HittableList;
 import proeend.hittable.Sphere;
 import proeend.hittable.Triangle;
 import proeend.hittable.TriangleMesh;
-import proeend.material.Emitter;
-import proeend.material.Lambertian;
-import proeend.material.Mirror;
-import proeend.material.Normal;
+import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.material.texture.Texture;
 import proeend.math.Vector;
@@ -75,6 +72,7 @@ public class Utility {
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
+        Dielectric glass = new Dielectric(1.31);
 
 
         Vector v0 = new Vector(-1,-1,-2);

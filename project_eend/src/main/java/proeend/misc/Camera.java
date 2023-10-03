@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
  * Deze klasse vertegenwoordigt een camera voor het renderen van beelden.
  */
@@ -53,6 +54,7 @@ public class Camera {
      *
      * @return De hoogte van het beeld.
      */
+
     public double getHeight() {
         return imageHeight;
     }
@@ -209,6 +211,8 @@ public class Camera {
      */
     private Vector rayColor(Ray r, int depth, Hittable world) {
         // Controleer of er geen wereld is (bijv. achtergrondkleur)
+        return new Vector();
+    }
 
     private Vector rayColor(Ray r, int depth, Hittable world, Hittable lights) {
         if (world == null) {
@@ -219,55 +223,49 @@ public class Camera {
         if (depth <= 0) {
             //System.out.println("hit");
             return new Vector(.0, .0, .0);
-        if (depth<=0) {
-            //System.out.println("hit");
-            return new Vector(.0,.0,.0);
         }
+            // Maak een HitRecord om gegevens over het getroffen object op te slaan
+            HitRecord rec = new HitRecord();
+            r.direction = Vector.unitVector(r.direction);
+            if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
 
-        // Maak een HitRecord om gegevens over het getroffen object op te slaan
-        HitRecord rec = new HitRecord();
-        r.direction = Vector.unitVector(r.direction);
-        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
+                // Controleer of de ray een object in de wereld raakt
+                // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
+                if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
 
-        // Controleer of de ray een object in de wereld raakt
-        // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
-        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+                    // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
+                    // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
+                    // Geen raakpunt, retourneer de achtergrondkleur
+                    return background;
+                }
 
-            // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
-            // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
-            // Geen raakpunt, retourneer de achtergrondkleur
-            return background;
-        }
-
-        ScatterRecord scatterRecord = new ScatterRecord();
-        Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
-        if (!rec.material.scatter(r,rec,scatterRecord)) {
-            if (rec.material instanceof Normal) {
-                return Vector.scale(.5, new Vector(rec.normal.x()+1,
-                        rec.normal.y()+1, rec.normal.z()+1));
+            ScatterRecord scatterRecord = new ScatterRecord();
+            Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
+            if (!rec.material.scatter(r, rec, scatterRecord)) {
+                if (rec.material instanceof Normal) {
+                    return Vector.scale(.5, new Vector(rec.normal.x() + 1,
+                            rec.normal.y() + 1, rec.normal.z() + 1));
+                }
+                return emissionColor;
             }
-            return emissionColor;
+            if (scatterRecord.skipPDF) {
+                return Vector.multiply(scatterRecord.attenuation, rayColor(scatterRecord.skipRay,
+                        depth - 1, world, lights));
+            }
+
+            HittablePDF lightPDF = new HittablePDF(lights, rec.p);
+            CosPDF surfacePDF = new CosPDF(rec.normal);
+            MixturePDF mixPDF = new MixturePDF(lightPDF, surfacePDF);
+
+            Ray scattered = new Ray(rec.p, mixPDF.generate());
+            double pdfVal = mixPDF.value(scattered.direction());
+            double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
+            //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
+            //double pdf = scatteringPDF;
+            //blijkbaar mag je floats(...) wel delen door nul...
+            Vector scatterColor = Vector.scale(1.0 / pdfVal,
+                    Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation), rayColor(scattered, depth - 1, world, lights)));
+
+            return Vector.add(emissionColor, scatterColor);
         }
-        if (scatterRecord.skipPDF) {
-            return Vector.multiply(scatterRecord.attenuation, rayColor(scatterRecord.skipRay,
-                    depth-1,world, lights));
         }
-
-        HittablePDF lightPDF = new HittablePDF(lights, rec.p);
-        CosPDF surfacePDF = new CosPDF(rec.normal);
-        MixturePDF mixPDF = new MixturePDF(lightPDF, surfacePDF);
-
-        Ray scattered = new Ray(rec.p, mixPDF.generate());
-        double pdfVal = mixPDF.value(scattered.direction());
-        double scatteringPDF = rec.material.scatteringPDF(r,rec,scattered);
-        //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
-        //double pdf = scatteringPDF;
-        //blijkbaar mag je floats(...) wel delen door nul...
-        Vector scatterColor = Vector.scale(1.0/pdfVal,
-                Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation),rayColor(scattered,depth-1,world, lights)));
-
-        return Vector.add(emissionColor, scatterColor);
-    }
-
-
-}}}

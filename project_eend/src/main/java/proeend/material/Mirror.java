@@ -3,6 +3,7 @@ package proeend.material;
 import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
+import proeend.ScatterRecord;
 
 public class Mirror extends Material{
     private Vector albedo;

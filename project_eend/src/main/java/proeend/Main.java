@@ -139,7 +139,7 @@ public class Main extends Application {
 
     private void update() {
         if (!Camera.block)
-            frame.setImage(cam1.render(world));
+            frame.setImage(cam1.render(world, lights));
 
     }
 

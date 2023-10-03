@@ -9,4 +9,6 @@ public class ScatterRecord {
     public PDF pdf;
     public boolean skipPDF;
     public Ray skipRay;
+
+
 }

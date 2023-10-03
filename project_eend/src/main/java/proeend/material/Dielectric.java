@@ -1,5 +1,6 @@
 package proeend.material;
 
+import proeend.ScatterRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.misc.HitRecord;
@@ -29,14 +30,14 @@ public class Dielectric extends Material {
      * @return `true` if scattering occurs, `false` otherwise.
      */
     @Override
-    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
-        attenuation.setValues(1,1,1);
+    public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scRecord) {
+        scRecord.attenuation.setValues(1,1,1);
         double refraction_ratio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;
 
         Vector unit_direction = Vector.unitVector(rayIn.getDirection());
         Vector refracted = refract(unit_direction, rec.getNormal(), refraction_ratio);
 
-        scattered.updateRay((rec.getP()), refracted);
+        scRecord.skipRay.updateRay((rec.getP()), refracted);
         return true;
     }
 
