@@ -122,9 +122,17 @@ public class Main extends Application {
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
                     case C:
-                        Thread thread = new Thread(renderTask);
-                        thread.setDaemon(true);
-                        thread.start();
+                        try {
+                            Camera.saveImage(cam1.multiThreadRender(world, lights)
+                            );
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+                        //Thread thread = new Thread(renderTask);
+                        //thread.setDaemon(true);
+                        //thread.start();
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
                     System.out.println("Escape key pressed");
@@ -145,15 +153,19 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        cam1.imageWidth = 400;
+        cam1.imageWidth = 1920;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);
         //cam1.render(true, world); //TODO vervang door capture
 
-        cam1.samplesPerPixel = 1;
-        cam1.maxDepth = 3;
-        launch();
-
+        cam2.imageWidth = 800;
+        cam1.samplesPerPixel = 100;
+        cam1.maxDepth = 50;
+        cam2.samplesPerPixel = 100;
+        cam2.maxDepth = 50;
+        //launch();
+        cam1.multiThreadRender(world,new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        //cam1.multiThreadRender(world);
 
     }
 }

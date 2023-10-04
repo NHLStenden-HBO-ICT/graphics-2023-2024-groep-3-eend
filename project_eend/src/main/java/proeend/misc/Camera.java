@@ -1,10 +1,13 @@
 package proeend.misc;
 
+import java.util.HashSet;
+import java.util.Set;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.ScatterRecord;
 import proeend.hittable.Hittable;
+import proeend.hittable.HittableList;
 import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
 import proeend.material.pdf.HittablePDF;
@@ -17,6 +20,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -35,9 +40,9 @@ public class Camera {
     private int rootSPP = (int) Math.sqrt(samplesPerPixel);
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
-    public int imageWidth = 800;
+    public int imageWidth = 1920;
     public Vector background = new Vector();
-    private int imageHeight = (int)(imageWidth /aspectRatio);
+    public int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     private double viewportHeight;
     public double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
@@ -65,7 +70,7 @@ public class Camera {
         rootSPP = (int) Math.sqrt(samplesPerPixel);
         focalLength = Vector.length(Vector.add(cameraCenter, Vector.inverse(lookat)));
         imageHeight = (int)(imageWidth /aspectRatio);
-        imageHeight = (imageHeight <1) ? 1 : imageHeight;
+        imageHeight = imageHeight < 1 ? 1 : imageHeight;
         double h = Math.tan(verticalFOV/2);
         w = Vector.unitVector(Vector.add(cameraCenter, Vector.inverse(lookat)));
         u = Vector.unitVector(Vector.cross(up, w));
@@ -87,7 +92,7 @@ public class Camera {
      * @param image Het te opslaan beeld.
      * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
      */
-    private void saveImage(WritableImage image) throws IOException{
+    public static void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int x = 0; x < (int) image.getWidth(); x++) {
             for (int y = 0; y < (int) image.getHeight(); y++) {
@@ -155,6 +160,83 @@ public class Camera {
         }
         return writableImage;
     }
+
+    public int[] calculateStartAndEnd(int numberOfThreads, int threadCounter, int imageHeight) {
+        int startPixel = imageHeight / numberOfThreads * threadCounter;
+        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1);
+
+        return new int[]{startPixel, endPixel};
+    }
+
+    WritableImage writableImage = new WritableImage(imageWidth, imageHeight);// /threads
+    PixelWriter pixelWriter = writableImage.getPixelWriter();
+    public WritableImage multiThreadRender(HittableList world, Hittable lights) {
+        init();
+        int beschikbareProcessors = Runtime.getRuntime().availableProcessors();
+        System.out.println("Aantal beschikbare processors: " + beschikbareProcessors);
+        // Bereken het aantal threads dat je wilt maken (bijv. helft van beschikbare processors)
+        int numberOfThreads = beschikbareProcessors / 2;
+
+        int[] threadCounter = {0}; // Use an array to store the counter
+
+
+        Runnable taak = () -> {
+            synchronized (threadCounter) {
+                threadCounter[0]++;
+            }
+            WritableImage image;
+            image = multiTaak(true,world,numberOfThreads,threadCounter[0],lights);
+
+            try {
+                Camera.saveImage(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        for (int i = 0; i < numberOfThreads - 1; i++) {
+            Thread thread = new Thread(taak);
+            thread.start();
+            //launch();
+        }
+        return writableImage;
+    }
+
+public WritableImage multiTaak(boolean save, Hittable world, int threads, int threadCounter, Hittable lights){
+    int[] startAndEnd = calculateStartAndEnd(threads, threadCounter, imageHeight);
+    int startPixelY = startAndEnd[0];
+    int endPixelY = startAndEnd[1];
+
+    for (int y = startPixelY; y < endPixelY; ++y) {
+        System.out.println(Integer.toString(endPixelY - y) + " lines to go op Thread: " + threadCounter);
+
+        for (int x = 0; x < imageWidth; ++x) {
+            Vector colorVec = new Vector();
+
+            //nieuwe AA, een stuk minder snell, maar wel beter
+            for (int sy = 0; sy < rootSPP; ++sy) {
+                for (int sx = 0; sx < rootSPP; ++sx) {
+                    Ray ray = getRay(x, y, sx, sy);
+                    colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
+                }
+            }
+            int[] colors = colorVec.toColor(samplesPerPixel, true);
+            try{
+                synchronized (pixelWriter) {
+                    pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+                }
+            }catch (Exception ex){
+                System.out.println(ex.toString());
+            }
+
+
+        }
+    }
+    return writableImage;
+}
+
+
+
     private Ray getRay(int x, int y, int sx, int sy) {
         Vector pixelCenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
         Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(sx, sy));
