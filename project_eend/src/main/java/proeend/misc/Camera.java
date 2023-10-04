@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 public class Camera {
 
-    public static boolean block;
+    public boolean block;
     static int frames = 0;
     private Vector u,v,w;
     public Vector cameraCenter = new Vector(0,0,0);
