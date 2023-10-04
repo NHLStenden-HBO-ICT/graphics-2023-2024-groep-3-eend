@@ -22,6 +22,8 @@ public abstract class Hittable {
      */
     public abstract boolean hit(Ray ray, Interval rayT, HitRecord rec);
 
+    public AABB boundingBox(){return null;}
+
     public double pdfValue(Vector origin, Vector direction) {
         return 0;
     }

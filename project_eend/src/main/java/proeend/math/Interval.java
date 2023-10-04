@@ -8,8 +8,8 @@ public class Interval {
     public double min;
     public double max;
     public Interval() {
-        min = Double.NEGATIVE_INFINITY;
-        max = Double.POSITIVE_INFINITY;
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
     }
 
     /**
@@ -76,8 +76,21 @@ public class Interval {
     }
 
     /** Een leeg interval dat alle reële getallen uitsluit. */
-    static Interval empty = new Interval(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+    static Interval empty = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     /** Een interval dat alle reële getallen bevat. */
-    static Interval universe = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    static Interval universe = new Interval(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+
+    public Interval add(double x) {
+        return new Interval(min + x, max + x);
+    }
+
+    public double size() {
+        return max - min;
+    }
+
+    public Interval expand(double delta) {
+        return new Interval(min - delta, max + delta);
+    }
+
 }

@@ -46,6 +46,7 @@ public class HittableList extends Hittable {
         boolean hasHitSomething = false;
         double closestSoFar = rayT.max;
 
+        // TODO: Eerst hier box controleren
         for (Hittable object: objects) {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
                 //if (object instanceof Triangle)
