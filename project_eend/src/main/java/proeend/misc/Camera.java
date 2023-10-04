@@ -56,7 +56,7 @@ public class Camera {
         rootSPP = (int) Math.sqrt(samplesPerPixel);
         focalLength = Vector.length(Vector.add(cameraCenter, Vector.inverse(lookat)));
         imageHeight = (int)(imageWidth /aspectRatio);
-        imageHeight = (imageHeight <1) ? 1 : imageHeight;
+        imageHeight = Math.max(1, imageHeight);
         double h = Math.tan(verticalFOV/2);
         w = Vector.unitVector(Vector.add(cameraCenter, Vector.inverse(lookat)));
         u = Vector.unitVector(Vector.cross(up, w));

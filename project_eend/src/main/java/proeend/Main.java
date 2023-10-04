@@ -1,6 +1,9 @@
 package proeend;
 
 import javafx.scene.control.Label;
+import org.w3c.dom.ls.LSOutput;
+import proeend.hittable.Hittable;
+import proeend.hittable.ObjectLoader;
 import proeend.hittable.Sphere;
 import proeend.material.Lambertian;
 import proeend.misc.Camera;
@@ -145,6 +148,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        try {
+            ObjectLoader.loadObj("Models/uploads_files_4534682_Duck.obj");
+        } catch (IOException e) {return;}
         Utility.loadWorld(world,lights,1);
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
