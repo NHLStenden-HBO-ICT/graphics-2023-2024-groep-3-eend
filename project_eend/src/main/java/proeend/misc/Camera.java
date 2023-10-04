@@ -116,6 +116,8 @@ public class Camera {
      */
     public WritableImage render(boolean save, Hittable world, Hittable lights){
 
+        long startTime = System.currentTimeMillis();
+
         init();
         block = true;
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
@@ -156,14 +158,16 @@ public class Camera {
         if (save) {
             try {
                 saveImage(writableImage);
+                long totalTime = System.currentTimeMillis() - startTime;
+                System.out.println( "Single thread gerendered in " + totalTime  + "ms" );
             } catch (IOException e) {e.printStackTrace();}
         }
         return writableImage;
     }
 
     public int[] calculateStartAndEnd(int numberOfThreads, int threadCounter, int imageHeight) {
-        int startPixel = imageHeight / numberOfThreads * threadCounter -180;
-        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1) - 180;
+        int startPixel = imageHeight / numberOfThreads * threadCounter - (imageHeight / numberOfThreads);
+        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1) - (imageHeight / numberOfThreads);
 
         return new int[]{startPixel, endPixel};
     }
@@ -175,7 +179,10 @@ public class Camera {
         int beschikbareProcessors = Runtime.getRuntime().availableProcessors();
         System.out.println("Aantal beschikbare processors: " + beschikbareProcessors);
         // Bereken het aantal threads dat je wilt maken (bijv. helft van beschikbare processors)
-        int numberOfThreads = beschikbareProcessors / 2;
+        int numberOfThreads = beschikbareProcessors;
+        //int numberOfThreads = 5;
+
+        long startTime = System.currentTimeMillis();
 
         int[] threadCounter = {0}; // Use an array to store the counter
 
@@ -189,6 +196,10 @@ public class Camera {
 
             try {
                 Camera.saveImage(image);
+                if(threadCounter[0] == 6){
+                    long totalTime = System.currentTimeMillis() - startTime;
+                    System.out.println( "Multithread gerendered in " + totalTime  + "ms" );
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -199,10 +210,16 @@ public class Camera {
             thread.start();
             //launch();
         }
+
+
         return writableImage;
     }
 
 public WritableImage multiTaak(boolean save, Hittable world, int threads, int threadCounter, Hittable lights){
+
+
+
+
     int[] startAndEnd = calculateStartAndEnd(threads, threadCounter, imageHeight);
     int startPixelY = startAndEnd[0];
     int endPixelY = startAndEnd[1];
@@ -232,6 +249,9 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
 
         }
     }
+
+
+
     return writableImage;
 }
 
