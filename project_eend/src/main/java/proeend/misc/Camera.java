@@ -162,8 +162,8 @@ public class Camera {
     }
 
     public int[] calculateStartAndEnd(int numberOfThreads, int threadCounter, int imageHeight) {
-        int startPixel = imageHeight / numberOfThreads * threadCounter;
-        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1);
+        int startPixel = imageHeight / numberOfThreads * threadCounter -180;
+        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1) - 180;
 
         return new int[]{startPixel, endPixel};
     }
@@ -194,7 +194,7 @@ public class Camera {
             }
         };
 
-        for (int i = 0; i < numberOfThreads - 1; i++) {
+        for (int i = 0; i < numberOfThreads; i++) {
             Thread thread = new Thread(taak);
             thread.start();
             //launch();
