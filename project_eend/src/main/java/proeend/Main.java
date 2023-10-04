@@ -167,8 +167,8 @@ public class Main extends Application {
         //launch();
 
 
-        cam2.multiThreadRender( world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
-        //cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        //cam2.multiThreadRender( world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         //cam1.multiThreadRender(world);
 
 

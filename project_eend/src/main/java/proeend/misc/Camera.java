@@ -196,7 +196,7 @@ public class Camera {
 
             try {
                 Camera.saveImage(image);
-                if(threadCounter[0] == 6){
+                if(threadCounter[0] == numberOfThreads){
                     long totalTime = System.currentTimeMillis() - startTime;
                     System.out.println( "Multithread gerendered in " + totalTime  + "ms" );
                 }
