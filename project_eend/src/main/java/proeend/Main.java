@@ -122,7 +122,7 @@ public class Main extends Application {
                         cam1.maxDepth = 50;
                         cam1.samplesPerPixel = 1000;
                         System.out.println("starting capture...");
-                        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+                        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
                         cam1.maxDepth = 3;
                         cam1.samplesPerPixel = 1;
                         cam1.imageWidth=store;
@@ -142,7 +142,7 @@ public class Main extends Application {
     private void update() {
         if (!Camera.block)
 
-            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
+            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector()))));
 
     }
 
@@ -166,18 +166,28 @@ public class Main extends Application {
         world.add(icoSphere);
 
         cam1.background = new Vector(1,1,1);
-        cam1.imageWidth = 590;
+        cam1.imageWidth = 1000;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0, .0, .0);
 
         cam1.cameraCenter = new Vector(0,5,4);
+
+        //cam1.cameraCenter = new Vector(0,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 17*17;
+        cam1.samplesPerPixel = 32*32;
         cam1.maxDepth = 29;
 
-        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        var startTime = System.currentTimeMillis();
+        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
         //launch();
-
+        var endTime = System.currentTimeMillis() - startTime;
+        var minutes = endTime/60_000.0;
+        var hours = minutes/60.0;
+        System.out.print("seconds:\t\t");
+        System.out.println(endTime/1000.0);
+        System.out.print("minutes:\t\t");
+        System.out.println(minutes);
+        System.out.println("hours:\t\t\t" + hours);
 
     }
 }

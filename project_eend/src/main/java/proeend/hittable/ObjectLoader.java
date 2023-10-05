@@ -29,7 +29,7 @@ public class ObjectLoader {
         int[] textureArray;
         File file = new File(filepath);
         Scanner scanner = new Scanner(file);
-        int i = 0;
+
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] lineA = line.split(" ");
@@ -46,13 +46,9 @@ public class ObjectLoader {
                     String[] faceSplit = lineA[j].split("/");
                     vertexIndexList.add(Integer.parseInt(faceSplit[0]));
                 }
-                System.out.println("beginwithf");
             }
-            i++;
-            System.out.println(i);
-            //scanner.nextLine();
         }
-        System.out.println("object loaded from file");
+        System.out.println("object \""+filepath+"\" loaded from file");
         return new TriangleMesh(faceList.toArray(new Integer[0]),vertexIndexList.toArray(new Integer[0]),vertexList.toArray(new Vector[0]),material);
     }
     public void polyToTriangleMesh() {
