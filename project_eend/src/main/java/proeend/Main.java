@@ -162,18 +162,18 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
-        //Utility.loadWorld(world, lights, 1);
+        Utility.loadWorld(world, lights, 1);
         world.add(icoSphere);
 
         cam1.background = new Vector(1,1,1);
-        cam1.imageWidth = 200;
+        cam1.imageWidth = 590;
         cam1.cameraCenter = camOrigin;
-        //cam1.background = new Vector(.0, .0, .0);
+        cam1.background = new Vector(.0, .0, .0);
 
-        //cam1.cameraCenter = new Vector(0,20,40);
+        cam1.cameraCenter = new Vector(0,5,4);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 100;
-        cam1.maxDepth = 10;
+        cam1.samplesPerPixel = 17*17;
+        cam1.maxDepth = 29;
 
         cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         //launch();
