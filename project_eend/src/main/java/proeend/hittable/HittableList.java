@@ -14,11 +14,15 @@ import java.util.List;
  */
 public class HittableList extends Hittable {
 
-    private List<Hittable> objects = new ArrayList<>();
+    private List<Hittable> objects;
+    private BoundingBox boundingBox;
+
+    // optioneel
     public static List<BoundingBox> BBoxes = new ArrayList<>();
 
-    private BBNode wholeWorld;
-
+    public HittableList(){
+        objects = new ArrayList<>();
+    }
     public static List<BoundingBox> getBBoxes() {
         return BBoxes;
     }
@@ -34,7 +38,7 @@ public class HittableList extends Hittable {
      */
     public void add(Hittable object) {
         objects.add(object);
-        BBoxes.add(((Sphere)object).getBoundingBox());
+        boundingBox = (((Sphere)object).getBoundingBox());
     }
 
     /**

@@ -56,19 +56,14 @@ public class BoundingBox extends Hittable{
 
 
     @Override
-    public boolean hit(Ray r, Interval ray_t, HitRecord rec) {
+    public boolean hit(Ray r, Interval rayT, HitRecord rec) {
+        double tMax = rayT.getMax();
+        double tMin = rayT.getMin();
 
-
-      return true;
-    }
-
-
-
-    public boolean hit2(Ray r, BoundingBox aabb, double tMin, double tMax, HitRecord rec) {
         for (int axis = 0; axis < 3; axis++) {
             double invD = 1.0 / r.direction().getAll()[axis];
-            double t0 = (aabb.min.getAll()[axis] - r.origin().getAll()[axis]) * invD;
-            double t1 = (aabb.max.getAll()[axis] - r.origin().getAll()[axis]) * invD;
+            double t0 = (this.min.getAll()[axis] - r.origin().getAll()[axis]) * invD;
+            double t1 = (this.max.getAll()[axis] - r.origin().getAll()[axis]) * invD;
 
             if (invD < 0.0) {
                 double temp = t0;
@@ -89,13 +84,13 @@ public class BoundingBox extends Hittable{
 
         // Berekent de normaalvector van de hit.
         for (int axis = 0; axis < 3; axis++) {
-            if (rec.getP().getAll()[axis] == aabb.min.getAll()[axis]) {
+            if (rec.getP().getAll()[axis] == this.min.getAll()[axis]) {
                 Vector normal = new Vector();
                 normal.getNormal(axis, -1.0);
                 rec.setNormal(normal);
                 break;
             }
-            if (rec.getP().getAll()[axis] == aabb.max.getAll()[axis]) {
+            if (rec.getP().getAll()[axis] == this.max.getAll()[axis]) {
                 Vector normal = new Vector();
                 rec.setNormal(normal.getNormal(axis, 1.0));
                 break;

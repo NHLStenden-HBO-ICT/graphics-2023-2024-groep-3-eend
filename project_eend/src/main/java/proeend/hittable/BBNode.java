@@ -55,11 +55,7 @@ public class BBNode extends Hittable{
         }
 
     }
-
-
-
-
-
+    
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {

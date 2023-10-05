@@ -124,9 +124,9 @@ public class Utility {
                 // Maak een nieuwe HittableList en voeg de BVH-node toe als enkel object
                 hittableList.add(bvh);
 
-                world = world;*/
+                world = world;
 
-
+*/
 
                 break;
             case 2:
