@@ -10,7 +10,18 @@ import proeend.math.Ray;
  * Abstracte klasse die dient als basis voor hittable objecten in een 3D-scène.
  * Hittable objecten kunnen worden geraakt door een lichtstraal (Ray).
  */
-public abstract class Hittable {
+public abstract class Hittable{
+
+    public BoundingBox getBoundingbox(){
+        return null;
+    }
+
+
+
+    /**
+     * Constructor voor een hittable object zonder een gespecificeerd materiaal.
+     */
+    public Hittable(){}
 
     /**
      * Bepaalt of een lichtstraal (Ray) het hittable object raakt en berekent de raakpunten.
@@ -22,7 +33,7 @@ public abstract class Hittable {
      */
     public abstract boolean hit(Ray ray, Interval rayT, HitRecord rec);
 
-    public AABB boundingBox(){return null;}
+
 
     public double pdfValue(Vector origin, Vector direction) {
         return 0;
@@ -34,10 +45,7 @@ public abstract class Hittable {
 
     private Material material; // Het materiaal van het hittable object.
 
-    /**
-     * Constructor voor een hittable object zonder een gespecificeerd materiaal.
-     */
-    public Hittable(){}
+
 
     /**
      * Constructor voor een hittable object met een gespecificeerd materiaal.
@@ -65,4 +73,7 @@ public abstract class Hittable {
     public void setMaterial(Material material) {
         this.material = material;
     }
+
+
+
 }

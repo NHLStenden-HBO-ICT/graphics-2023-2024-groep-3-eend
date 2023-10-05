@@ -5,6 +5,7 @@ import proeend.misc.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,18 @@ import java.util.List;
  */
 public class HittableList extends Hittable {
 
-    private List<Hittable> objects = new LinkedList<>();
+    private List<Hittable> objects = new ArrayList<>();
+    public static List<BoundingBox> BBoxes = new ArrayList<>();
+
+    private BBNode wholeWorld;
+
+    public static List<BoundingBox> getBBoxes() {
+        return BBoxes;
+    }
+
+    public List<Hittable> getObjects() {
+        return objects;
+    }
 
     /**
      * Voegt een hittable object toe aan de lijst.
@@ -22,6 +34,7 @@ public class HittableList extends Hittable {
      */
     public void add(Hittable object) {
         objects.add(object);
+        BBoxes.add(((Sphere)object).getBoundingBox());
     }
 
     /**
@@ -47,10 +60,11 @@ public class HittableList extends Hittable {
         double closestSoFar = rayT.max;
 
         // TODO: Eerst hier box controleren
+
         for (Hittable object: objects) {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
                 //if (object instanceof Triangle)
-                    //continue;
+                //continue;
                 hasHitSomething = true;
 
                 closestSoFar = tempRec.t;
@@ -61,6 +75,8 @@ public class HittableList extends Hittable {
         }
         return hasHitSomething;
     }
+
+
     @Override
     public double pdfValue(Vector origin, Vector direction) {
         for (Hittable object : objects) {
@@ -75,5 +91,7 @@ public class HittableList extends Hittable {
         }
         return new Vector(1,0,0);
     }
+
+
 
 }

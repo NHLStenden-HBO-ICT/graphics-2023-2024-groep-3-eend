@@ -162,4 +162,12 @@ public class Vector {
         double z = vectorA.d[2] - vectorB.d[2];
         return new Vector(x, y, z);
     }
+
+    public Vector getNormal(int axis, double v) {
+
+        if (axis == 1) return new Vector(0,v,0);
+        if (axis == 2) return new Vector(0,0,v);
+        return new Vector(v,0,0);
+
+    }
 }

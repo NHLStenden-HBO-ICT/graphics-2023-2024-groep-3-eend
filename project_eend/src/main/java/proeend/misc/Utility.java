@@ -1,9 +1,6 @@
 package proeend.misc;
 
-import proeend.hittable.HittableList;
-import proeend.hittable.Sphere;
-import proeend.hittable.Triangle;
-import proeend.hittable.TriangleMesh;
+import proeend.hittable.*;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.material.texture.Texture;
@@ -116,6 +113,20 @@ public class Utility {
 
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
+
+
+
+              /*  // Eerst een BVH-node maken van alle objecten in de world lijst
+                BBNode bvh = new BBNode(world.getObjects(), 0, world.getObjects().size());
+                BBNode newWorld = new BBNode(world.getObjects(),0, world.getObjects().size());
+
+                world = newWorld;
+                // Maak een nieuwe HittableList en voeg de BVH-node toe als enkel object
+                hittableList.add(bvh);
+
+                world = world;*/
+
+
 
                 break;
             case 2:

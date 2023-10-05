@@ -1,6 +1,5 @@
 package proeend.hittable;
 
-import proeend.Main;
 import proeend.misc.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
@@ -15,7 +14,7 @@ public class Sphere extends Hittable {
 
     private final double radius;
     private final Vector center;
-
+    private BoundingBox boundingBox;
     /**
      * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
      *
@@ -27,6 +26,10 @@ public class Sphere extends Hittable {
         this.center = center;
         this.radius = radius;
         super.setMaterial(material);
+    }
+
+    public BoundingBox getBoundingbox(){
+        return new BoundingBox(center, radius);
     }
 
     /**
@@ -93,5 +96,9 @@ public class Sphere extends Hittable {
         double y = Math.sin(fi)*Math.sqrt(1-z*z);
 
         return new Vector(x,y,z);
+    }
+
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
 }

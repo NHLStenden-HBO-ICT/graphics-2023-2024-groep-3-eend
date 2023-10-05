@@ -227,7 +227,6 @@ public class Camera {
             // Maak een HitRecord om gegevens over het getroffen object op te slaan
             HitRecord rec = new HitRecord();
             r.direction = Vector.unitVector(r.direction);
-            if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
 
                 // Controleer of de ray een object in de wereld raakt
                 // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
@@ -238,6 +237,7 @@ public class Camera {
                     // Geen raakpunt, retourneer de achtergrondkleur
                     return background;
                 }
+
 
             ScatterRecord scatterRecord = new ScatterRecord();
             Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);

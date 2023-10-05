@@ -51,7 +51,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
-            cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+            cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
@@ -122,8 +122,11 @@ public class Main extends Application {
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
                     case C:
+                        cam1.samplesPerPixel = 100;
+                        cam1.maxDepth = 30;
+                        cam1.imageWidth = 800;
                         Thread thread = new Thread(renderTask);
-                        thread.setDaemon(true);
+                       // thread.setDaemon(true);
                         thread.start();
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
@@ -141,10 +144,13 @@ public class Main extends Application {
         if (!cam1.block)
             frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
+
+
     }
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
+        Utility.loadBoundingboxes();
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);
