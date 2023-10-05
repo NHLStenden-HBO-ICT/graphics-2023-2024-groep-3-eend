@@ -2,10 +2,10 @@ package proeend;
 
 import javafx.scene.control.Label;
 import org.w3c.dom.ls.LSOutput;
-import proeend.hittable.Hittable;
-import proeend.hittable.ObjectLoader;
-import proeend.hittable.Sphere;
+import proeend.hittable.*;
 import proeend.material.Lambertian;
+import proeend.material.texture.SolidColor;
+import proeend.material.texture.Texture;
 import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -22,7 +22,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import proeend.hittable.HittableList;
 import proeend.math.Vector;
 import proeend.misc.Utility;
 
@@ -148,18 +147,36 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        try {
-            ObjectLoader.loadObj("Models/uploads_files_4534682_Duck.obj");
-        } catch (IOException e) {return;}
-        Utility.loadWorld(world,lights,1);
-        cam1.imageWidth = 400;
-        cam1.cameraCenter = camOrigin;
-        cam1.background = new Vector(.0,.0,.0);
-        //cam1.render(true, world); //TODO vervang door capture
+        Lambertian white = new Lambertian(new Vector(1, .5, .5));
+        TriangleMesh duck = null;
+        TriangleMesh icoSphere = null;
 
-        cam1.samplesPerPixel = 1;
-        cam1.maxDepth = 3;
-        launch();
+        try {
+            duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Utility.loadWorld(world, lights, 1);
+        world.add(icoSphere);
+
+        cam1.background = new Vector(1,1,1);
+        cam1.imageWidth = 200;
+        cam1.cameraCenter = camOrigin;
+        //cam1.background = new Vector(.0, .0, .0);
+
+        //cam1.cameraCenter = new Vector(0,20,40);
+        //cam1.lookat = new Vector(0,20,39);
+        cam1.samplesPerPixel = 100;
+        cam1.maxDepth = 10;
+
+        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        //launch();
 
 
     }

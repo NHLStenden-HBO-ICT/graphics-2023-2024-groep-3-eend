@@ -89,8 +89,8 @@ public class Utility {
         Vector v9 = new Vector(250, 50, -105);
         Vector v10 = new Vector(-250, 50, -105);
 
-        int[] faceArray = {3,3,3};
-        int[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
+        Integer[] faceArray = {3,3,3};
+        Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
         Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
 
 
@@ -123,15 +123,15 @@ public class Utility {
                 //world.add(new Triangle(v2,v1,v0, yellowLambertian));
                 break;
             case 3:
-                faceArray = new int[]{3,3,3};
-                vertexIndexArray = new int[]{0,1,2,0,2,3,1,4,2};
+                faceArray = new Integer[]{3,3,3};
+                vertexIndexArray = new Integer[]{0,1,2,0,2,3,1,4,2};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
                 world.add(new Sphere(v1, .3, whiteLight));
 
                 break;
             case 4:
-                faceArray = new int[]{4};
-                vertexIndexArray = new int[]{0,1,2,4};
+                faceArray = new Integer[]{4};
+                vertexIndexArray = new Integer[]{0,1,2,4};
                 vertexArray = new Vector[]{v0,v1,v2,v3,v4};
                 //world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror).toTriangleMesh());
                 break;
@@ -140,8 +140,8 @@ public class Utility {
                 world.add(new Sphere(v1, .3, whiteLight));
                 break;
             case 6: //box
-                faceArray = new int[]{3,3,3,3};
-                vertexIndexArray = new int[]{5,6,7,6,8,7,8,9,10,7,8,10};
+                faceArray = new Integer[]{3,3,3,3};
+                vertexIndexArray = new Integer[]{5,6,7,6,8,7,8,9,10,7,8,10};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
                 break;
             case 7:

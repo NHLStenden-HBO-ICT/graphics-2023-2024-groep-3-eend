@@ -8,11 +8,11 @@ import proeend.misc.HitRecord;
 
 public class TriangleMesh extends Hittable {
     private boolean isObj = true;
-    private int[] faceArray;
-    private int[] vertexIndexArray;
+    private Integer[] faceArray;
+    private Integer[] vertexIndexArray;
     private Vector[] vertexArray;
     private Material material;
-    public TriangleMesh(int[] faceArray, int[] vertexIndexArray, Vector[] vertexArray, Material material) {
+    public TriangleMesh(Integer[] faceArray, Integer[] vertexIndexArray, Vector[] vertexArray, Material material) {
         this.faceArray = faceArray;
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
