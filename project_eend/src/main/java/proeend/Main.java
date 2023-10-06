@@ -150,6 +150,7 @@ public class Main extends Application {
         Lambertian white = new Lambertian(new Vector(1, .5, .5));
         TriangleMesh duck = null;
         TriangleMesh icoSphere = null;
+        TriangleMesh uvSphere = null;
 
         try {
             duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
@@ -161,9 +162,15 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Utility.loadWorld(world, lights, 1);
-        world.add(icoSphere);
+        uvSphere.toTriangles();
+        world.add(uvSphere);
 
         cam1.background = new Vector(1,1,1);
         cam1.imageWidth = 1000;
@@ -174,7 +181,7 @@ public class Main extends Application {
 
         //cam1.cameraCenter = new Vector(0,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 32*32;
+        cam1.samplesPerPixel = 8*8;
         cam1.maxDepth = 29;
 
         var startTime = System.currentTimeMillis();

@@ -40,7 +40,7 @@ public class ObjectLoader {
                 double z = Double.parseDouble(lineA[3]);
                 vertexList.add(new Vector(x,y,z));
             }
-            if (Objects.equals(lineA[0], "f")){
+            if (Objects.equals( lineA[0], "f")){
                 faceList.add(lineA.length-1);
                 for (int j = 1; j <lineA.length; j++) {
                     String[] faceSplit = lineA[j].split("/");
