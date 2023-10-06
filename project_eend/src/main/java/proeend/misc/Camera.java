@@ -17,6 +17,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Camera {
 
@@ -88,7 +90,9 @@ public class Camera {
                 bufferedImage.setRGB(x, y, argb);
             }
         }
-        File output = new File("render.png");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-HHmmss");
+        LocalDateTime now = LocalDateTime.now();
+        File output = new File("renders/"+dtf.format(now)+"_"+imageWidth+"x"+imageHeight+"_s"+samplesPerPixel);
         ImageIO.write(bufferedImage, "png", output);
         System.out.println("opgeslagen");
     }
