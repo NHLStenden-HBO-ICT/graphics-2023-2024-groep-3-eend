@@ -155,17 +155,17 @@ public class Main extends Application {
         try {
             duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("load failed");
         }
         try {
             icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("load failed");
         }
         try {
             uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("load failed");
         }
 
         Utility.loadWorld(world, lights, 1);
@@ -181,7 +181,7 @@ public class Main extends Application {
 
         //cam1.cameraCenter = new Vector(0,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 8*8;
+        cam1.samplesPerPixel = 9;
         cam1.maxDepth = 29;
 
         var startTime = System.currentTimeMillis();

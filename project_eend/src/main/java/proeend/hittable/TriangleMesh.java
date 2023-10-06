@@ -26,24 +26,23 @@ public class TriangleMesh extends Hittable {
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         //TODO maak minder slecht
         boolean tempHit = false;
+        double closest = rayT.max;
         int j = 0;
         Vector v0,v1,v2;
         for (int i = 0;i<faceArray.length;i++) {
             v0 = vertexArray[vertexIndexArray[j]];
             v1 = vertexArray[vertexIndexArray[j+1]];
             v2 = vertexArray[vertexIndexArray[j+2]];
-            /*
+            /*oude code
             Triangle triangle = new Triangle(v0,v1,v2,material);
             if (triangle.hit(ray, rayT, rec)) {
                 return true;
                 //tempHit = true;
+            }*/
+            if (Triangle.MThit(ray, new Interval(rayT.min,closest), rec, v0,v1,v2,material)){
+                closest = rec.t;
+                tempHit = true;
             }
-
-             */
-            if (Triangle.MThit(ray, rayT, rec, v0,v1,v2,material)){
-                return true;
-            }
-
             j += 3;
         }
         return tempHit;
