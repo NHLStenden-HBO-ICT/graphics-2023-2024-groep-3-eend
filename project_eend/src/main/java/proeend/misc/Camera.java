@@ -92,7 +92,7 @@ public class Camera {
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-HHmmss");
         LocalDateTime now = LocalDateTime.now();
-        File output = new File("renders/"+dtf.format(now)+"_"+imageWidth+"x"+imageHeight+"_s"+samplesPerPixel);
+        File output = new File("renders/"+dtf.format(now)+"_"+imageWidth+"x"+imageHeight+"_s"+samplesPerPixel+".png");
         ImageIO.write(bufferedImage, "png", output);
         System.out.println("opgeslagen");
     }

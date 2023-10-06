@@ -41,6 +41,7 @@ public class ObjectLoader {
                 vertexList.add(new Vector(x,y,z));
             }
             if (Objects.equals( lineA[0], "f")){
+                if (lineA.length > 5) {System.out.println("5+");}
                 faceList.add(lineA.length-1);
                 for (int j = 1; j <lineA.length; j++) {
                     String[] faceSplit = lineA[j].split("/");
