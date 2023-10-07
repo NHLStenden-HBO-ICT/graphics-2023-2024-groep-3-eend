@@ -99,13 +99,19 @@ public class Camera {
         ImageIO.write(bufferedImage, "png", output);
         System.out.println("opgeslagen");
     }
+
+    /**
+     * zelfde als (multi)render, maar dan wordt voor elke lijn een thread aangemaakt, met maximaal standaard 5 threads.
+     * lijkt de snelste rendermethode te zijn in de meeste situaties
+     */
     public void multiRenderLines(boolean save, final Hittable world, final Hittable lights) {
         init();
         block = true;
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        int numberOfThreads = 4;
+        //TODO bedenk of er een extra numberOfThreads parameter toegevoegd kan worden
+        int numberOfThreads = 5;
         int[] activethreads = {0};
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         class WorkerThread implements Runnable {
@@ -151,6 +157,7 @@ public class Camera {
                 }
             }
             //TODO vervang door notify/wait achtig iets
+            //als er hier niks staat houdt de while loop op
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
