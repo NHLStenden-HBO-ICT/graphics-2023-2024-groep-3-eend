@@ -105,8 +105,8 @@ public class Utility {
                 break;
             case 1:
                 world.add(new Sphere(new Vector(0,-101.5,-.55), 100, greyLambertian));
-                //world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
-                //world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
+                world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
+                world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
                 //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
                 world.add(new Sphere(new Vector(1,2,-.55),.5,whiteLight));
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));

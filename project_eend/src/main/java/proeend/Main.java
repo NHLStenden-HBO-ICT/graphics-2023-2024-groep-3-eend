@@ -168,24 +168,25 @@ public class Main extends Application {
             System.out.println("load failed");
         }
 
-        Utility.loadWorld(world, lights, -1);
-        duck.toTriangles();
-        world.add(duck);
+        Utility.loadWorld(world, lights, 1);
+        icoSphere.toTriangles();
+        world.add(icoSphere);
 
         cam1.background = new Vector(1,1,1);
         cam1.imageWidth = 1000;
         cam1.cameraCenter = camOrigin;
-        //cam1.background = new Vector(.0, .0, .0);
+        cam1.background = new Vector(.0, .0, .0);
 
         cam1.cameraCenter = new Vector(0,5,4);
 
-        cam1.cameraCenter = new Vector(0,20,40);
-        cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 1;
+        //cam1.cameraCenter = new Vector(-.5,20,40);
+        //cam1.lookat = new Vector(0,20,39);
+        cam1.samplesPerPixel = 32*32;
         cam1.maxDepth = 29;
 
         var startTime = System.currentTimeMillis();
-        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+        //cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+        cam1.multiRender(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
         //launch();
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;

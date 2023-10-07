@@ -19,6 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Camera {
 
@@ -97,6 +100,71 @@ public class Camera {
         System.out.println("opgeslagen");
     }
 
+    public void multiRender(boolean save, final Hittable world, final Hittable lights) {
+        //TODO maak een werkende taakverdeler
+        //TODO of verdeel per lijn
+        init();
+        block = true;
+        WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+        int totalLines = imageHeight;
+
+        int numberOfThreads = 4;
+        int chunkSize = imageHeight/numberOfThreads;
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+
+        class WorkerThread implements Runnable {
+            private final int start;
+            private final int id;
+            private final int end;
+            public WorkerThread(int start, int end, int id) {
+                this.start = start;
+                this.end = end;
+                this.id = id;
+            }
+            @Override
+            public void run() {
+                for (int y = start; y < end; ++y){
+                    if (save) {
+                        System.out.println(y + " line");
+                    }
+
+                    for (int x = 0; x < imageWidth; ++x) {
+                        Vector colorVec = new Vector();
+                        for (int sy = 0; sy < rootSPP; ++sy) {
+                            for (int sx = 0; sx < rootSPP; ++sx) {
+                                Ray ray = getRay(x,y,sx,sy);
+                                colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
+                            }
+                        }
+                        int[] colors = colorVec.toColor(samplesPerPixel, save);
+                        synchronized (pixelWriter) {
+                            pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+                        }
+                    }
+                }
+                System.out.println("thread "+id+" finished");
+            }
+        }
+        for (int i = 0; i < numberOfThreads; i++) {
+            int chunkStart = i * chunkSize;
+            int chunkEnd = (1+i) * chunkSize;
+            executor.submit(new WorkerThread(chunkStart, chunkEnd, i));
+        }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        block = false;
+        if (save) {
+            try {
+                saveImage(writableImage);
+            } catch (IOException e) {e.printStackTrace();}
+        }
+
+    }
     /**
      * rendert plaatje met voorwaarden vanuit het camera object
      * @param save
@@ -180,6 +248,7 @@ public class Camera {
         double py = -.5 + Math.random();
         return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
+
     public WritableImage render(Hittable world, Hittable lights) {
         return render(false, world, lights);
     }
@@ -227,5 +296,4 @@ public class Camera {
 
         return Vector.add(emissionColor, scatterColor);
     }
-
 }
