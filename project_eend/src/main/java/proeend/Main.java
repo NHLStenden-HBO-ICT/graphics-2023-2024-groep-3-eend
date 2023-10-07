@@ -181,7 +181,7 @@ public class Main extends Application {
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 32*32;
+        cam1.samplesPerPixel = 3*3;
         cam1.maxDepth = 29;
 
         var startTime = System.currentTimeMillis();

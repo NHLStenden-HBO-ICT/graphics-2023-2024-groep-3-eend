@@ -93,7 +93,7 @@ public class Camera {
                 bufferedImage.setRGB(x, y, argb);
             }
         }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-HHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
         LocalDateTime now = LocalDateTime.now();
         File output = new File("renders/"+dtf.format(now)+"_"+imageWidth+"x"+imageHeight+"_s"+samplesPerPixel+".png");
         ImageIO.write(bufferedImage, "png", output);
