@@ -186,7 +186,8 @@ public class Main extends Application {
 
         var startTime = System.currentTimeMillis();
         //cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
-        cam1.multiRender(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+        //cam1.multiRender(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+        cam1.multiRenderLines(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
         //launch();
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;

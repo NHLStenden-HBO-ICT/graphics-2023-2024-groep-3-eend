@@ -99,7 +99,82 @@ public class Camera {
         ImageIO.write(bufferedImage, "png", output);
         System.out.println("opgeslagen");
     }
+    public void multiRenderLines(boolean save, final Hittable world, final Hittable lights) {
+        init();
+        block = true;
+        WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
 
+        int numberOfThreads = 4;
+        int[] activethreads = {0};
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        class WorkerThread implements Runnable {
+            private final int line;
+            public WorkerThread(int line) {
+                this.line = line;
+            }
+            @Override
+            public void run() {
+                int y = line;
+
+                if (save) {
+                    System.out.println(imageHeight - y + " lines left");
+                }
+                for (int x = 0; x < imageWidth; ++x) {
+                    Vector colorVec = new Vector();
+                    for (int sy = 0; sy < rootSPP; ++sy) {
+                        for (int sx = 0; sx < rootSPP; ++sx) {
+                            Ray ray = getRay(x,y,sx,sy);
+                            colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
+                        }
+                    }
+                    int[] colors = colorVec.toColor(samplesPerPixel, save);
+                    synchronized (pixelWriter) {
+                        pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+                    }
+                }
+                synchronized (activethreads) {
+                    activethreads[0]--;
+                }
+            }
+        }
+
+        int[] line = {0};
+        while (line[0] < imageHeight) {
+            if (activethreads[0] < numberOfThreads) {
+                synchronized (activethreads) {
+                    activethreads[0]++;
+                }
+                executorService.submit(new WorkerThread(line[0]));
+                synchronized (line) {
+                    line[0]++;
+                }
+            }
+            //TODO vervang door notify/wait achtig iets
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            //////////////////////////////////////////////////////////////////////////////////////////
+        }
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(1,TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        if (save) {
+            try {
+                saveImage(writableImage);
+            } catch (IOException e) {e.printStackTrace();}
+        }
+
+    }
+
+    /**
+     * render(), maar dan multithreaded en void
+     */
     public void multiRender(boolean save, final Hittable world, final Hittable lights) {
         //TODO maak een werkende taakverdeler
         //TODO of verdeel per lijn
@@ -126,7 +201,7 @@ public class Camera {
             public void run() {
                 for (int y = start; y < end; ++y){
                     if (save) {
-                        System.out.println(y + " line");
+                        System.out.println(imageHeight-y);
                     }
 
                     for (int x = 0; x < imageWidth; ++x) {
