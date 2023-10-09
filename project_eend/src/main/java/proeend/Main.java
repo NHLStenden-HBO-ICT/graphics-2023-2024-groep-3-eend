@@ -170,8 +170,8 @@ public class Main extends Application {
         }
 
         Utility.loadWorld(world, lights, 1);
-        uvSphere.toTriangles();
-        world.add(uvSphere);
+        icoSphere.toTriangles();
+        world.add(icoSphere);
 
         cam1.background = new Vector(1,1,1);
         cam1.imageWidth = 1000;
@@ -183,7 +183,7 @@ public class Main extends Application {
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
         cam1.samplesPerPixel = 32*32;
-        cam1.maxDepth = 29;
+        cam1.maxDepth = 5;
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
