@@ -12,8 +12,9 @@ import proeend.math.Ray;
  */
 public abstract class Hittable{
 
+    private BoundingBox boundingBox = null;
     public BoundingBox getBoundingbox(){
-        return null;
+        return boundingBox;
     }
 
 

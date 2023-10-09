@@ -132,6 +132,8 @@ public class Camera {
                  for (int sy = 0; sy < rootSPP; ++sy) {
                      for (int sx = 0; sx < rootSPP; ++sx) {
                          Ray ray = getRay(x,y,sx,sy);
+                         //if hit bounding box, then color vec
+                         //if not hit, then next node item
                          colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
                      }
                  }

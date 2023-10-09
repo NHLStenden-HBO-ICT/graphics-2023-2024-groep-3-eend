@@ -2,6 +2,7 @@ package proeend;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
+import proeend.hittable.BBNode;
 import proeend.hittable.Sphere;
 import proeend.material.Lambertian;
 import proeend.misc.Camera;
@@ -30,6 +31,7 @@ import java.io.IOException;
 public class Main extends Application {
 
     static HittableList world = new HittableList();
+    static HittableList worldWithBoundingboxes;
     static HittableList lights = new HittableList();
 
     static Camera cam1 = new Camera();
@@ -51,7 +53,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
-            cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+            cam1.render(true, worldWithBoundingboxes, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
@@ -150,6 +152,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
+        world = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);

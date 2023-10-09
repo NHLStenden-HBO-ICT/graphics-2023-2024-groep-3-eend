@@ -8,18 +8,22 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Een klasse die een bounding volume hierarchy knoop voor hittable objecten vertegenwoordigt.
+ * Een klasse die een bounding volume hierarchy boom voor hittable objecten vertegenwoordigt.
  */
 public class BBNode extends Hittable{
 
     private Hittable left;
     private Hittable right;
     private BoundingBox bbox;
-    private List<Hittable> objects;
 
+    public BBNode(HittableList objects){
+        new BBNode(objects.getObjects(), 0, objects.getObjects().size());
+    }
+
+    // constructor overloading
     public BBNode(List<Hittable> objects, int start, int end) {
+        bbox = getBoundingbox();
 
-        this.objects = objects;
 
         // Creëer een Random-object
         Random random = new Random();
@@ -54,6 +58,8 @@ public class BBNode extends Hittable{
             right = new BBNode(objects, mid, end);
         }
 
+        bbox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
+
     }
     
 
@@ -67,10 +73,6 @@ public class BBNode extends Hittable{
         boolean hitRight = right.hit(r, new Interval(rayT.min, hitLeft ? rec.t : rayT.max), rec);
 
         return hitLeft || hitRight;
-    }
-
-    public BoundingBox boundingBox() {
-        return bbox;
     }
 
 

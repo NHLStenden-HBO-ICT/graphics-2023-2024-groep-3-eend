@@ -28,6 +28,7 @@ public class Sphere extends Hittable {
         super.setMaterial(material);
     }
 
+    @Override
     public BoundingBox getBoundingbox(){
         return new BoundingBox(center, radius);
     }

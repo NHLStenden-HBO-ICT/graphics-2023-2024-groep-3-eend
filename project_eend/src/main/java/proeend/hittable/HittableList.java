@@ -4,6 +4,8 @@ import proeend.math.Vector;
 import proeend.misc.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
+import proeend.hittable.BBNode;
+import proeend.hittable.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,19 +16,20 @@ import java.util.List;
  */
 public class HittableList extends Hittable {
 
-    private List<Hittable> objects;
+    private List<Hittable> objects = new ArrayList<>();
     private BoundingBox boundingBox;
 
-
-    // optioneel
-    public static List<BoundingBox> BBoxes = new ArrayList<>();
-
-    public HittableList(){
-        objects = new ArrayList<>();
+    @Override
+    public BoundingBox getBoundingbox() {
+        return boundingBox;
     }
-    public static List<BoundingBox> getBBoxes() {
-        return BBoxes;
+
+    public HittableList(){}
+
+    public HittableList(Hittable object){
+        add(object);
     }
+
 
     public List<Hittable> getObjects() {
         return objects;
@@ -39,8 +42,9 @@ public class HittableList extends Hittable {
      */
     public void add(Hittable object) {
         objects.add(object);
-        boundingBox = (((Sphere)object).getBoundingBox());
+        boundingBox = object.getBoundingbox();
     }
+
 
     /**
      * Maakt de lijst van hittable objecten leeg.
@@ -63,8 +67,6 @@ public class HittableList extends Hittable {
         HitRecord tempRec = new HitRecord();
         boolean hasHitSomething = false;
         double closestSoFar = rayT.max;
-
-        // TODO: Eerst hier box controleren
 
         for (Hittable object: objects) {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
