@@ -127,12 +127,13 @@ public class Triangle extends Hittable{
         //rec.p = ray.at(rec.t);
 
         //rec.normal = Vector.cross(v0v1,v0v2);
-        rec.u = u;
-        rec.v = v;
-        rec.t = t;
-        rec.material = material;
-        rec.p = Vector.add(ray.origin(), Vector.scale(rec.t, unitDir));
-        rec.normal = Vector.unitVector(Vector.cross(v0v1,v0v2));
+        rec.setU(u);
+        rec.setV(v);
+        rec.setT(t);
+        rec.setMaterial(material);
+        rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
+        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
 

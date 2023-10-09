@@ -1,19 +1,12 @@
 package proeend;
 
-import javafx.concurrent.Task;
-import javafx.scene.control.Label;
-import org.w3c.dom.ls.LSOutput;
-import proeend.hittable.*;
-import proeend.material.Lambertian;
-import proeend.material.texture.SolidColor;
-import proeend.material.texture.Texture;
-import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -23,9 +16,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import proeend.hittable.HittableList;
+import proeend.hittable.ObjectLoader;
+import proeend.hittable.Sphere;
+import proeend.hittable.TriangleMesh;
+import proeend.material.Lambertian;
 import proeend.math.Vector;
+import proeend.misc.Camera;
 import proeend.misc.Utility;
-
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -181,7 +179,7 @@ public class Main extends Application {
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 32*32;
+        cam1.samplesPerPixel = 100;
         cam1.maxDepth = 5;
 
         var startTime = System.currentTimeMillis();

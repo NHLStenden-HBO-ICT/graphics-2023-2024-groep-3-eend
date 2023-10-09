@@ -19,7 +19,7 @@ public class TriangleMesh extends Hittable {
         this.faceArray = faceArray;
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
-        super.setMaterial(material);
+        this.material = material;
     }
 
     @Override
