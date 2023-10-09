@@ -17,6 +17,7 @@ public class HittableList extends Hittable {
     private List<Hittable> objects;
     private BoundingBox boundingBox;
 
+
     // optioneel
     public static List<BoundingBox> BBoxes = new ArrayList<>();
 

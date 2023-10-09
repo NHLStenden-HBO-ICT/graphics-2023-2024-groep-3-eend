@@ -4,6 +4,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.ScatterRecord;
+import proeend.hittable.BBNode;
 import proeend.hittable.Hittable;
 import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
@@ -113,8 +114,10 @@ public class Camera {
 
         init();
         block = true;
+
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
+
 
         //Color color;
         //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
