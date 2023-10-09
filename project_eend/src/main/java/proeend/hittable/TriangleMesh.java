@@ -19,7 +19,7 @@ public class TriangleMesh extends Hittable {
         this.faceArray = faceArray;
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
-        this.material = material;
+        super.setMaterial(material);
     }
 
     @Override
@@ -43,6 +43,7 @@ public class TriangleMesh extends Hittable {
                 closest = rec.t;
                 tempHit = true;
             }
+
             j += 3;
         }
         return tempHit;

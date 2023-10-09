@@ -23,9 +23,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * Deze klasse vertegenwoordigt een camera voor het renderen van beelden.
+ */
 public class Camera {
 
-    public static boolean block;
+    public boolean block;
     static int frames = 0;
     private Vector u,v,w;
     public Vector cameraCenter = new Vector(0,0,0);
@@ -50,12 +54,17 @@ public class Camera {
             Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
     public Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
 
+    /**
+     * Geeft de hoogte van het beeld terug.
+     *
+     * @return De hoogte van het beeld.
+     */
+
     public double getHeight() {
         return imageHeight;
     }
-
     /**
-     * wat voor elk plaatje opnieuw gedaan wordt
+     * Initialiseert de camera-instellingen.
      */
     private void init() {
         rootSPP = (int) Math.sqrt(samplesPerPixel);
@@ -78,12 +87,10 @@ public class Camera {
     }
 
     /**
-     * zet een writable image via een functie om naar een bufferedimage, omdat dat makkelijker
-     * was om op te slaan, slaat het plaatje op in de working directory
-     * @param image
-     * het plaatje dat moet worden opgeslagen
-     * @throws IOException
-     * als de fileinteractie fout gaat
+     * Slaat het gegenereerde beeld op als een PNG-bestand.
+     *
+     * @param image Het te opslaan beeld.
+     * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
      */
     private void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -316,6 +323,14 @@ public class Camera {
         double py = -.5 + 1.0/rootSPP * (sy + Math.random());
         return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
+
+    /**
+     * Geeft een ray terug die door het opgegeven pixel gaat.
+     *
+     * @param x De x-coördinaat van het pixel.
+     * @param y De y-coördinaat van het pixel.
+     * @return Een Ray-object dat het pixel vertegenwoordigt.
+     */
     private Ray getRay(int x, int y) {
         Vector pixelcenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
         Vector pixelSample = Vector.add(pixelcenter, pixelSampleSquare());
@@ -325,6 +340,12 @@ public class Camera {
         return new Ray(rayOrigin, direction);
 
     }
+
+    /**
+     * Genereert een willekeurige pixelverschuiving voor anti-aliasing.
+     *
+     * @return Een Vector die de pixelverschuiving vertegenwoordigt.
+     */
     private Vector pixelSampleSquare() {
         double px = -.5 + Math.random();
         double py = -.5 + Math.random();
@@ -335,46 +356,65 @@ public class Camera {
         return render(false, world, lights);
     }
 
-
+    /**
+     * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
+     *
+     * @param r     De ray om te traceren.
+     * @param depth Het maximum aantal reflecties.
+     * @param world Het 3D-wereldobject dat moet worden weergegeven.
+     * @return Een Vector die de kleur van de ray vertegenwoordigt.
+     */
     private Vector rayColor(Ray r, int depth, Hittable world, Hittable lights) {
         if (world == null) {
             return Vector.randomVec();
         }
-        if (depth<=0) {
+
+        // Controleer of het maximumaantal reflecties is bereikt
+        if (depth <= 0) {
             //System.out.println("hit");
-            return new Vector(.0,.0,.0);
+            return new Vector(.0, .0, .0);
         }
-        HitRecord rec = new HitRecord();
-        r.direction = Vector.unitVector(r.direction);
-        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
-            return background;
+            // Maak een HitRecord om gegevens over het getroffen object op te slaan
+            HitRecord rec = new HitRecord();
+            r.direction = Vector.unitVector(r.direction);
+            if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec))
 
-        ScatterRecord scatterRecord = new ScatterRecord();
-        Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
-        if (!rec.material.scatter(r,rec,scatterRecord)) {
-            if (rec.material instanceof Normal) {
-                return Vector.scale(.5, new Vector(rec.normal.x()+1,
-                        rec.normal.y()+1, rec.normal.z()+1));
+                // Controleer of de ray een object in de wereld raakt
+                // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
+                if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+
+                    // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
+                    // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
+                    // Geen raakpunt, retourneer de achtergrondkleur
+                    return background;
+                }
+
+            ScatterRecord scatterRecord = new ScatterRecord();
+            Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
+            if (!rec.material.scatter(r, rec, scatterRecord)) {
+                if (rec.material instanceof Normal) {
+                    return Vector.scale(.5, new Vector(rec.normal.x() + 1,
+                            rec.normal.y() + 1, rec.normal.z() + 1));
+                }
+                return emissionColor;
             }
-            return emissionColor;
-        }
-        if (scatterRecord.skipPDF) {
-            return Vector.multiply(scatterRecord.attenuation, rayColor(scatterRecord.skipRay,
-                    depth-1,world, lights));
-        }
+            if (scatterRecord.skipPDF) {
+                return Vector.multiply(scatterRecord.attenuation, rayColor(scatterRecord.skipRay,
+                        depth - 1, world, lights));
+            }
 
-        HittablePDF lightPDF = new HittablePDF(lights, rec.p);
-        CosPDF surfacePDF = new CosPDF(rec.normal);
-        MixturePDF mixPDF = new MixturePDF(lightPDF, surfacePDF);
+            HittablePDF lightPDF = new HittablePDF(lights, rec.p);
+            CosPDF surfacePDF = new CosPDF(rec.normal);
+            MixturePDF mixPDF = new MixturePDF(lightPDF, surfacePDF);
 
-        Ray scattered = new Ray(rec.p, mixPDF.generate());
-        double pdfVal = mixPDF.value(scattered.direction());
-        double scatteringPDF = rec.material.scatteringPDF(r,rec,scattered);
-        //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
-        //double pdf = scatteringPDF;
-        //blijkbaar mag je floats(...) wel delen door nul...
-        Vector scatterColor = Vector.scale(1.0/pdfVal,
-                Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation),rayColor(scattered,depth-1,world, lights)));
+            Ray scattered = new Ray(rec.p, mixPDF.generate());
+            double pdfVal = mixPDF.value(scattered.direction());
+            double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
+            //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
+            //double pdf = scatteringPDF;
+            //blijkbaar mag je floats(...) wel delen door nul...
+            Vector scatterColor = Vector.scale(1.0 / pdfVal,
+                    Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation), rayColor(scattered, depth - 1, world, lights)));
 
         return Vector.add(emissionColor, scatterColor);
     }

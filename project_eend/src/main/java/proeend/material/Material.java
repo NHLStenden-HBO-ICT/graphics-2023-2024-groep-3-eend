@@ -7,7 +7,11 @@ import proeend.math.Vector;
 
 public class Material {
 
-    protected Material() {}
+    /**
+     * Geeft aan hoeveel licht wordt gebogen wanneer het door dat materiaal gaat
+     */
+    private double refractionIndex;
+
     /**
      * abstract methode die bepaalt hoe het licht weerkaatst gaat worden
      * @param rayIn
@@ -29,5 +33,9 @@ public class Material {
     }
     public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
         return 1;
+    }
+
+    public double getRefractionIndex() {
+        return refractionIndex;
     }
 }

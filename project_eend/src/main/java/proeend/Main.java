@@ -1,5 +1,6 @@
 package proeend;
 
+import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import org.w3c.dom.ls.LSOutput;
 import proeend.hittable.*;
@@ -35,6 +36,7 @@ public class Main extends Application {
     static HittableList lights = new HittableList();
 
     static Camera cam1 = new Camera();
+    static Camera cam2 = new Camera();
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
     static Vector camOrigin = new Vector(0,0,2);
@@ -49,6 +51,11 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
 
 
+        Runnable renderTask = () -> {
+
+            System.out.println("starting capture...");
+            cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
         root.setAlignment(coordY, Pos.TOP_CENTER);
@@ -118,16 +125,9 @@ public class Main extends Application {
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
                     case C:
-                        int store = cam1.imageWidth;
-                        cam1.imageWidth = 600;
-                        cam1.maxDepth = 50;
-                        cam1.samplesPerPixel = 1000;
-                        System.out.println("starting capture...");
-                        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
-                        cam1.maxDepth = 3;
-                        cam1.samplesPerPixel = 1;
-                        cam1.imageWidth=store;
-
+                        Thread thread = new Thread(renderTask);
+                        thread.setDaemon(true);
+                        thread.start();
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
                     System.out.println("Escape key pressed");
@@ -141,9 +141,8 @@ public class Main extends Application {
     }
 
     private void update() {
-        if (!Camera.block)
-
-            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector()))));
+        if (!cam1.block)
+            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
     }
 

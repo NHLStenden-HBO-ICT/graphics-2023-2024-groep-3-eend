@@ -6,16 +6,40 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.misc.HitRecord;
 
+
+/**
+ * De "Triangle" klasse vertegenwoordigt een driehoekig object dat
+ * door stralen kan worden geraakt in een ray tracing-toepassing.
+ * Het bevat methoden om te bepalen of een straal dit object raakt
+ * en om relevante informatie over het raakpunt vast te leggen.
+ */
 public class Triangle extends Hittable{
+    /**
+     * Constructor om een driehoek te initialiseren met zijn hoekpunten en materiaal.
+     *
+     * @param v0        Het eerste hoekpunt van de driehoek.
+     * @param v1        Het tweede hoekpunt van de driehoek.
+     * @param v2        Het derde hoekpunt van de driehoek.
+     * @param material  Het materiaal dat aan de driehoek is toegewezen.
+     */
     public Triangle(Vector v0, Vector v1, Vector v2, Material material) {
         this.v1 = v1;
         this.v2 = v2;
         this.v0 = v0;
-        this.material = material;
+        super.setMaterial(material);
     }
     private Vector v0,v1,v2;
     private Material material;
     private double area;
+
+    /**
+     * Controleert of een gegeven straal dit driehoekige object raakt en berekent relevante raakpunten.
+     *
+     * @param ray   De straal die wordt getest op een raakpunt met de driehoek.
+     * @param rayT  Het interval waarin de straal de driehoek kan raken.
+     * @param rec   Het HitRecord-object waarin de raakpunten wordt opgeslagen.
+     * @return      True als de straal de driehoek raakt, anders False.
+     */
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         Vector v0v1 = Vector.add(v1, Vector.inverse(v0));
@@ -49,12 +73,13 @@ public class Triangle extends Hittable{
         //rec.p = ray.at(rec.t);
 
         //rec.normal = Vector.cross(v0v1,v0v2);
-        rec.u = u;
-        rec.v = v;
-        rec.t = t;
-        rec.material = material;
-        rec.p = Vector.add(ray.origin(), Vector.scale(rec.t, unitDir));
-        rec.normal = Vector.unitVector(Vector.cross(v0v1,v0v2));
+        rec.setU(u);
+        rec.setV(v);
+        rec.setT(t);
+        rec.setMaterial(material);
+        rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
+        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
 
