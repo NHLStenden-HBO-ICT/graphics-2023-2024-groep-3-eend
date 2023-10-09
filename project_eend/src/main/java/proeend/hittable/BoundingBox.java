@@ -8,7 +8,7 @@ import proeend.misc.HitRecord;
 
 public class BoundingBox extends Hittable{
 
-    Vector min, max, center;
+    public static Vector min, max, center;
     Interval x, y, z;
     double radius;
 
@@ -37,11 +37,11 @@ public class BoundingBox extends Hittable{
         }
     }
 
-    public Vector getMin() {
+    public static Vector getMin() {
         return min;
     }
 
-    public Vector getMax() {
+    public static Vector getMax() {
         return max;
     }
 
@@ -70,7 +70,7 @@ public class BoundingBox extends Hittable{
     }
 
 
-
+    //TODO axis wordt niet gebruikt?
      public Interval axis(int n) {
         if (n == 1) return y;
         if (n == 2) return z;

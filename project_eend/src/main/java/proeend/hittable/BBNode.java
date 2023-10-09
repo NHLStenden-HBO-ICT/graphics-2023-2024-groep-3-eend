@@ -22,11 +22,11 @@ public class BBNode extends Hittable{
 
     // constructor overloading
     public BBNode(List<Hittable> objects, int start, int end) {
-        bbox = getBoundingbox();
 
+        Vector min = BoundingBox.getMin();
+        Vector max = BoundingBox.getMax();
+        bbox = new BoundingBox(min, max);
 
-        // Creëer een Random-object
-        Random random = new Random();
 
         // Genereer een willekeurig getal tussen 0 (inclusief) en 2 (exclusief)
         int axis = (int)(3 * Math.random());
@@ -53,7 +53,7 @@ public class BBNode extends Hittable{
             // Bereken het midden van de objecten
             int mid = start + objectSpan / 2;
 
-            // Recursief bouwen van de linker- en rechterkinderen van de BVH-knoop
+            // Recursief bouwen van de linker en rechter kinderen van de BVH-knoop
             left = new BBNode(objects, start, mid);
             right = new BBNode(objects, mid, end);
         }
@@ -65,7 +65,8 @@ public class BBNode extends Hittable{
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
-        if (!bbox.hit(r, rayT, rec)){
+        //TODO Null point reference exception oplossen
+        if (!bbox.hit(r, rayT, rec)) {
             return false;
         }
 

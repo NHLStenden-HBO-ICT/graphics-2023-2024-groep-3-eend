@@ -19,6 +19,8 @@ public abstract class Hittable{
 
 
 
+
+
     /**
      * Constructor voor een hittable object zonder een gespecificeerd materiaal.
      */
