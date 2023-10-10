@@ -72,7 +72,6 @@ public class BBNode extends Hittable{
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
-        //TODO Null point reference exception oplossen
         if (!boundingBox.hit(r, rayT, rec)) {
             return false;
         }

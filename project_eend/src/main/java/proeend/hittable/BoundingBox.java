@@ -8,9 +8,8 @@ import proeend.misc.HitRecord;
 
 public class BoundingBox extends Hittable{
 
-    public static Vector min, max, center;
+    public static Vector min, max;
     Interval x, y, z;
-    double radius;
 
     // Constructor voor het behandelen van twee punten als extrema voor de bounding box
     public BoundingBox(Vector a, Vector b) {
@@ -61,18 +60,6 @@ public class BoundingBox extends Hittable{
         x = new Interval(min.x(), max.x());
         y = new Interval(min.y(), max.y());
         z = new Interval(min.z(), max.z());
-
-        this.radius = radius;
-        this.center = center;
-
-    }
-
-
-    //TODO axis wordt niet gebruikt?
-     public Interval axis(int n) {
-        if (n == 1) return y;
-        if (n == 2) return z;
-        return x;
     }
 
     @Override
@@ -82,8 +69,8 @@ public class BoundingBox extends Hittable{
 
         for (int axis = 0; axis < 3; axis++) {
             double invD = 1.0 / r.direction().getAll()[axis];
-            double t0 = (this.min.getAll()[axis] - r.origin().getAll()[axis]) * invD;
-            double t1 = (this.max.getAll()[axis] - r.origin().getAll()[axis]) * invD;
+            double t0 = (min.getAll()[axis] - r.origin().getAll()[axis]) * invD;
+            double t1 = (max.getAll()[axis] - r.origin().getAll()[axis]) * invD;
 
             if (invD < 0.0) {
                 double temp = t0;
@@ -104,13 +91,13 @@ public class BoundingBox extends Hittable{
 
         // Berekent de normaalvector van de hit.
         for (int axis = 0; axis < 3; axis++) {
-            if (rec.getP().getAll()[axis] == this.min.getAll()[axis]) {
+            if (rec.getP().getAll()[axis] == min.getAll()[axis]) {
                 Vector normal = new Vector();
                 normal.getNormal(axis, -1.0);
                 rec.setNormal(normal);
                 break;
             }
-            if (rec.getP().getAll()[axis] == this.max.getAll()[axis]) {
+            if (rec.getP().getAll()[axis] == max.getAll()[axis]) {
                 Vector normal = new Vector();
                 rec.setNormal(normal.getNormal(axis, 1.0));
                 break;
