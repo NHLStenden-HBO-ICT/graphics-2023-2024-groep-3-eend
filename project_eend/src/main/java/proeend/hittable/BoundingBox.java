@@ -6,7 +6,7 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.misc.HitRecord;
 
-public class BoundingBox{
+public class BoundingBox extends Hittable{
 
     public static Vector min, max, center;
     Interval x, y, z;
@@ -30,7 +30,7 @@ public class BoundingBox{
 
     // Constructor voor het combineren van twee bestaande bounding boxes
     public BoundingBox(BoundingBox box0, BoundingBox box1) {
-        if (!(box1 == null && box0 == null)){
+        if (box1 != null && box0 != null){
             x = new Interval(box0.x.getMin(), box1.x.getMax());
             y = new Interval(box0.y.getMin(), box1.y.getMax());
             z = new Interval(box0.z.getMin(), box1.z.getMax());
@@ -75,6 +75,7 @@ public class BoundingBox{
         return x;
     }
 
+    @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
         double tMax = rayT.getMax();
         double tMin = rayT.getMin();

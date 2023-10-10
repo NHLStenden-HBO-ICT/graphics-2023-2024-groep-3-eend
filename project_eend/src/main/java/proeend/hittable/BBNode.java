@@ -16,7 +16,7 @@ public class BBNode extends Hittable{
     private BoundingBox boundingBox;
 
     public BBNode(HittableList objects){
-        new BBNode(objects.getObjects(), 0, objects.getObjects().size());
+        this(objects.getObjects(), 0, objects.getObjects().size());
     }
 
     // constructor overloading
@@ -53,9 +53,7 @@ public class BBNode extends Hittable{
         }
 
         //TODO de bbox wordt niet goed aangemaakt, blijft null. Dat zorgt later voor de NullExceptionReference
-        if (left != null && right != null) {
             boundingBox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
-        }
 
     }
 
