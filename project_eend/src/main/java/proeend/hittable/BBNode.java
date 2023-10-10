@@ -23,11 +23,6 @@ public class BBNode extends Hittable{
     // constructor overloading
     public BBNode(List<Hittable> objects, int start, int end) {
 
-        Vector min = BoundingBox.getMin();
-        Vector max = BoundingBox.getMax();
-        bbox = new BoundingBox(min, max);
-
-
         // Genereer een willekeurig getal tussen 0 (inclusief) en 2 (exclusief)
         int axis = (int)(3 * Math.random());
 
@@ -58,10 +53,23 @@ public class BBNode extends Hittable{
             right = new BBNode(objects, mid, end);
         }
 
+        //TODO de bbox wordt niet goed aangemaakt, blijft null. Dat zorgt later voor de NullExceptionReference
         bbox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
 
     }
-    
+
+    private static Vector getMin() {
+        Vector min = new Vector(0,0,0);
+        return min;
+    }
+
+    private static Vector getMax() {
+        Vector max = new Vector(1080,1080,1080);
+        return max;
+    }
+
+
+
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
