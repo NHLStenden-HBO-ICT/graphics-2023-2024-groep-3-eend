@@ -26,12 +26,13 @@ import proeend.math.Vector;
 import proeend.misc.Utility;
 
 
+
 import java.io.IOException;
 
 public class Main extends Application {
 
     static HittableList world = new HittableList();
-    static HittableList worldWithBoundingboxes;
+    static HittableList worldWithBoundingboxes = new HittableList();
     static HittableList lights = new HittableList();
 
     static Camera cam1 = new Camera();
@@ -144,15 +145,13 @@ public class Main extends Application {
 
     private void update() {
         if (!cam1.block)
-            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
-
-
+            frame.setImage(cam1.render(worldWithBoundingboxes, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
     }
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        world = new HittableList(new BBNode(world));
+        worldWithBoundingboxes = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);
@@ -160,7 +159,8 @@ public class Main extends Application {
 
         cam1.samplesPerPixel = 1;
         cam1.maxDepth = 3;
-        launch();
+        launch(args);
+
 
 
     }

@@ -42,7 +42,11 @@ public class HittableList extends Hittable {
      */
     public void add(Hittable object) {
         objects.add(object);
-        boundingBox = object.getBoundingbox();
+        if(boundingBox == null){
+            boundingBox = object.getBoundingbox();
+        }else{
+            boundingBox = new BoundingBox(boundingBox, object.getBoundingbox());
+        }
     }
 
 

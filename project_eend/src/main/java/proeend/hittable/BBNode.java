@@ -5,7 +5,6 @@ import proeend.misc.HitRecord;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Een klasse die een bounding volume hierarchy boom voor hittable objecten vertegenwoordigt.
@@ -14,7 +13,7 @@ public class BBNode extends Hittable{
 
     private Hittable left;
     private Hittable right;
-    private BoundingBox bbox;
+    private BoundingBox boundingBox;
 
     public BBNode(HittableList objects){
         new BBNode(objects.getObjects(), 0, objects.getObjects().size());
@@ -54,7 +53,9 @@ public class BBNode extends Hittable{
         }
 
         //TODO de bbox wordt niet goed aangemaakt, blijft null. Dat zorgt later voor de NullExceptionReference
-        bbox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
+        if (left != null && right != null) {
+            boundingBox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
+        }
 
     }
 
@@ -74,7 +75,7 @@ public class BBNode extends Hittable{
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
         //TODO Null point reference exception oplossen
-        if (!bbox.hit(r, rayT, rec)) {
+        if (!boundingBox.hit(r, rayT, rec)) {
             return false;
         }
 

@@ -6,7 +6,7 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.misc.HitRecord;
 
-public class BoundingBox extends Hittable{
+public class BoundingBox{
 
     public static Vector min, max, center;
     Interval x, y, z;
@@ -65,8 +65,6 @@ public class BoundingBox extends Hittable{
         this.radius = radius;
         this.center = center;
 
-
-        this.setMaterial(new Lambertian(new Vector(100,100,100)));
     }
 
 
@@ -77,8 +75,6 @@ public class BoundingBox extends Hittable{
         return x;
     }
 
-
-    @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
         double tMax = rayT.getMax();
         double tMin = rayT.getMin();
@@ -119,9 +115,6 @@ public class BoundingBox extends Hittable{
                 break;
             }
         }
-
-        // Stel het materiaal in als dat nodig is.
-        rec.setMaterial(getMaterial());
 
         return true;
     }

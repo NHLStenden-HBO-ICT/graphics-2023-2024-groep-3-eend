@@ -12,14 +12,16 @@ import proeend.math.Ray;
  */
 public abstract class Hittable{
 
-    private BoundingBox boundingBox = null;
+    private Material material; // Het materiaal van het hittable object.
+    private BoundingBox boundingBox;
+
     public BoundingBox getBoundingbox(){
         return boundingBox;
     }
 
-
-
-
+    public void setBoundingBox(BoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
+    }
 
     /**
      * Constructor voor een hittable object zonder een gespecificeerd materiaal.
@@ -45,8 +47,6 @@ public abstract class Hittable{
     public Vector random(Vector origin) {
         return new Vector(1,0,0);
     }
-
-    private Material material; // Het materiaal van het hittable object.
 
 
 
