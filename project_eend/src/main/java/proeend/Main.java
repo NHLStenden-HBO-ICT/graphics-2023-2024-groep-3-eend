@@ -1,5 +1,7 @@
 package proeend;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import proeend.hittable.Sphere;
@@ -32,11 +34,15 @@ public class Main extends Application {
     static HittableList world = new HittableList();
     static HittableList lights = new HittableList();
 
+
+
     static Camera cam1 = new Camera();
     static Camera cam2 = new Camera();
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
     static Vector camOrigin = new Vector(0,0,2);
+
+
 
     ImageView frame = new ImageView();
     StackPane root = new StackPane();
@@ -51,7 +57,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
-            cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+            cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
@@ -154,17 +160,19 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        cam1.imageWidth = 200;
+        //cam1.imageWidth = 1920;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);
         //cam1.render(true, world); //TODO vervang door capture
 
-        cam2.imageWidth = 400;
-        cam1.samplesPerPixel = 5;
-        cam1.maxDepth = 5;
+        cam1.samplesPerPixel = 1;
+        cam1.maxDepth = 3;
+        launch();
+
+        // voor cam 2
+        //cam2.imageWidth = 400;
         cam2.samplesPerPixel = 100;
         cam2.maxDepth = 50;
-        launch();
 
 
         //cam2.multiThreadRender( world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));

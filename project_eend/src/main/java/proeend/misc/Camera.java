@@ -1,5 +1,6 @@
 package proeend.misc;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.scene.image.PixelWriter;
@@ -29,6 +30,14 @@ import java.util.List;
  */
 public class Camera {
 
+    // Toolkit is een klasse voor het beheren van systeembronnen
+     Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+    // De dimensie van het scherm ophalen
+     Dimension screenSize = toolkit.getScreenSize();
+
+    // De schermbreedte ophalen
+      int screenWidth = screenSize.width;
     public boolean block;
     static int frames = 0;
     private Vector u,v,w;
@@ -40,9 +49,9 @@ public class Camera {
     private int rootSPP = (int) Math.sqrt(samplesPerPixel);
     public int maxDepth = 50;
     public double aspectRatio = 16.0/9.0;
-    public int imageWidth = 1920;
+    public int imageWidth = screenWidth / 3;
     public Vector background = new Vector();
-    public int imageHeight = (int)(imageWidth /aspectRatio);
+    private int imageHeight = (int)(imageWidth /aspectRatio);
     public double focalLength = 1.0;
     private double viewportHeight;
     public double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
@@ -59,6 +68,9 @@ public class Camera {
      *
      * @return De hoogte van het beeld.
      */
+
+    public Camera(){
+    }
 
     public double getHeight() {
         return imageHeight;
