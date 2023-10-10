@@ -164,11 +164,11 @@ public class Main extends Application {
         cam1.maxDepth = 5;
         cam2.samplesPerPixel = 100;
         cam2.maxDepth = 50;
-        //launch();
+        launch();
 
 
         //cam2.multiThreadRender( world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
-        cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+        //cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         //cam1.multiThreadRender(world);
 
 
