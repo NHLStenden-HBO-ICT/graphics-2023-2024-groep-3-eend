@@ -5,6 +5,6 @@ module com.example.project_eend {
     requires org.kordamp.bootstrapfx.core;
     requires java.desktop;
 
-    opens com.example.project_eend to javafx.fxml;
-    exports com.example.project_eend;
+    exports proeend;
+    opens proeend to javafx.fxml;
 }

@@ -1,12 +1,12 @@
-package classes;
+package proeend.math;
 
-public class Vector {
+public class VectorOld {
     private final double[] coordinates;
 
     /**
      * Constructor for a standard vector, has no length.
      */
-    public Vector(){
+    public VectorOld(){
         this.coordinates = new double[]{0.0, 0.0, 0.0};
     }
 
@@ -15,7 +15,7 @@ public class Vector {
      * @param x The x-coordinate
      * @param y The y-coordinate
      */
-    public Vector(double x, double y){
+    public VectorOld(double x, double y){
         this.coordinates = new double[]{x,y, 0.0};
     }
 
@@ -25,7 +25,7 @@ public class Vector {
      * @param y The y-coordinate.
      * @param z The z-coordinate.
      */
-    public Vector(double x, double y, double z){
+    public VectorOld(double x, double y, double z){
         this.coordinates = new double[]{x,y,z};
     }
 
@@ -57,8 +57,8 @@ public class Vector {
      * Inverse the vector.
      * @return Inversed coordinates from vector.
      */
-    public classes.Vector inverse(){
-        return new Vector(-coordinates[0],-coordinates[1],-coordinates[2]);
+    public VectorOld inverse(){
+        return new VectorOld(-coordinates[0],-coordinates[1],-coordinates[2]);
     }
 
     /**
@@ -67,11 +67,11 @@ public class Vector {
      * @param vectorB is the second vector to add.
      * @return the result of the vector addition.
      */
-    public static Vector add(Vector vectorA, Vector vectorB) {
+    public static VectorOld add(VectorOld vectorA, VectorOld vectorB) {
         double x = vectorA.coordinates[0] + vectorB.coordinates[0];
         double y = vectorA.coordinates[1] + vectorB.coordinates[1];
         double z = vectorA.coordinates[2] + vectorB.coordinates[2];
-        return new Vector(x, y, z);
+        return new VectorOld(x, y, z);
     }
 
     /**
@@ -80,11 +80,11 @@ public class Vector {
      * @param vectorB is the second vector to subtract.
      * @return the result of the vector subtraction.
      */
-    public static Vector subtract(Vector vectorA, Vector vectorB) {
+    public static VectorOld subtract(VectorOld vectorA, VectorOld vectorB) {
         double x = vectorA.coordinates[0] - vectorB.coordinates[0];
         double y = vectorA.coordinates[1] - vectorB.coordinates[1];
         double z = vectorA.coordinates[2] - vectorB.coordinates[2];
-        return new Vector(x, y, z);
+        return new VectorOld(x, y, z);
     }
 
     /**
@@ -92,11 +92,11 @@ public class Vector {
      * @param scalar is the scalar factor.
      * @return the scaled vector.
      */
-    public Vector scale(double scalar) {
+    public VectorOld scale(double scalar) {
         double x = coordinates[0] * scalar;
         double y = coordinates[1] * scalar;
         double z = coordinates[2] * scalar;
-        return new Vector(x, y, z);
+        return new VectorOld(x, y, z);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Vector {
      * @return result of dot product calculation.
      */
 
-    public static double GetDotProduct(Vector vectorA, Vector vectorB) {
+    public static double GetDotProduct(VectorOld vectorA, VectorOld vectorB) {
         double result = 0.0;
         double[] coordsA = vectorA.coordinates;
         double[] coordsB = vectorB.coordinates;
@@ -124,24 +124,29 @@ public class Vector {
      * @param vectorB is second vector.
      * @return cross product.
      */
-    public static Vector GetCrossProduct(Vector vectorA, Vector vectorB) {
+    public static VectorOld GetCrossProduct(VectorOld vectorA, VectorOld vectorB) {
         double[] coordsA = vectorA.coordinates;
         double[] coordsB = vectorB.coordinates;
 
-        return new Vector(
+        return new VectorOld(
                 coordsA[1] * coordsB[2] - coordsA[2] * coordsB[1],
                 coordsA[2] * coordsB[0] - coordsA[0] * coordsB[2],
                 coordsA[0] * coordsB[1] - coordsA[1] * coordsB[0]
         );
     }
 
-
-    public double GetLenght(){
+    /**
+     * Calculate length of the vector.
+     * @return length of the vector.
+     */
+    public double GetLength(){
         double result = 0.0;
         for (int i = 0; i < coordinates.length; i++){
             result += Math.pow(coordinates[i], 2);
         }
         return Math.sqrt(result);
     }
+
+
 
 }
