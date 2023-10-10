@@ -1,5 +1,6 @@
 package proeend.hittable;
 
+import proeend.math.Vector;
 import proeend.material.Material;
 import proeend.misc.HitRecord;
 import proeend.math.Interval;
@@ -20,6 +21,14 @@ public abstract class Hittable {
      * @return      True als de lichtstraal het object raakt, anders false.
      */
     public abstract boolean hit(Ray ray, Interval rayT, HitRecord rec);
+
+    public double pdfValue(Vector origin, Vector direction) {
+        return 0;
+    }
+
+    public Vector random(Vector origin) {
+        return new Vector(1,0,0);
+    }
 
     private Material material; // Het materiaal van het hittable object.
 

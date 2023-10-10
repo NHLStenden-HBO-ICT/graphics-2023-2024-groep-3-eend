@@ -35,6 +35,15 @@ public class Vector {
     public double[] getAll(){
         return d;
     }
+
+    /**
+     * zet een Vector om naar een een array van kleur integers
+     * @param pixelPerSample
+     * @param gamma
+     * of wel of niet de kleur gamma-gecorrigeerd moet worden
+     * @return
+     * RGB integer array, waarden tussen 0 en 255
+     */
     public int[] toColor(int pixelPerSample, boolean gamma) {
         //scale(1.0/pixelPerSample, this);
             double s = (1.0/pixelPerSample);
@@ -130,11 +139,11 @@ public class Vector {
             }
         }
     }
-    public static Vector randomUnitVec() {
+    public static Vector randomOnUnitSphere() {
         return unitVector(randomInUnitSphere());
     }
     public static Vector RandomUnitVecOnHemisphere(Vector normal) {
-        Vector p = randomUnitVec();
+        Vector p = randomOnUnitSphere();
         if (dot(p, normal) >0.0) {
             return p;
         }

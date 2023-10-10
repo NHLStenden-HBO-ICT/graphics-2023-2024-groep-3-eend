@@ -1,6 +1,9 @@
 package proeend.misc;
 
-import proeend.hittable.*;
+import proeend.hittable.HittableList;
+import proeend.hittable.Sphere;
+import proeend.hittable.Triangle;
+import proeend.hittable.TriangleMesh;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.material.texture.Texture;
@@ -30,22 +33,44 @@ public class Utility {
         }
         System.out.println(exitCode);
     }
+    public static double integralMonteCarlo (double a, double b ) {
+        int N = 1000000;
+        double sum = 0;
+        for (int i = 0; i < N; ++i) {
+            double x = a + (b - a) * Math.random();
+            sum += x;
+        }
+        return b - a * sum / N;
 
+
+    }
+    public static Vector randomCosineDirection() {
+        double r1 = Math.random();
+        double r2 = Math.random();
+
+        double fi = 2*Math.PI*r1;
+        double x = Math.cos(fi)*Math.sqrt(r2);
+        double y = Math.sin(fi)*Math.sqrt(r2);
+        double z = Math.sqrt(1-r2);
+
+        return new Vector(x,y,z);
+    }
     /**
      * laad een in de functie gedefineerde wereld in
      * @param selector je keuze
      */
-    public static void loadWorld(HittableList world, int selector) {
+    public static void loadWorld(HittableList world, HittableList lights,int selector) {
         world.clear();
+        lights.clear();
         Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
         Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
-        Mirror halfMirror = new Mirror(new Vector(1,1,1),.5);
+        Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
         Normal normal = new Normal();
-        CheckerTexture checkerTexture = new CheckerTexture(.1, new Vector(.6,.1,.7), new Vector());
+        CheckerTexture checkerTexture = new CheckerTexture(10, new Vector(.6,.1,.7), new Vector());
         Lambertian errorCheckers = new Lambertian(checkerTexture);
-        Emitter whiteLight = new Emitter(new Vector(40,40,20));
+        Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
         Dielectric glass = new Dielectric(1.31);
 
@@ -83,10 +108,14 @@ public class Utility {
                 break;
             case 1:
                 world.add(new Sphere(new Vector(0,-100.5,-.55), 100, greyLambertian));
-                world.add(new Sphere(new Vector(0,0,-.7),.5,glass));
+                world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
-                world.add(new Sphere(new Vector(0,0,.7),.5,normal));
-                world.add(new Sphere(new Vector(1,0,-.55),.3,whiteLight));
+                //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
+                world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
+                world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
+
+                //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
+                //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
 
                 break;
             case 2:
@@ -101,7 +130,7 @@ public class Utility {
             case 3:
                 faceArray = new int[]{3,3,3};
                 vertexIndexArray = new int[]{0,1,2,0,2,3,1,4,2};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, glass));
+                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
                 world.add(new Sphere(v1, .3, whiteLight));
 
                 break;
@@ -119,6 +148,15 @@ public class Utility {
                 faceArray = new int[]{3,3,3,3};
                 vertexIndexArray = new int[]{5,6,7,6,8,7,8,9,10,7,8,10};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
+                break;
+            case 7:
+                Vector bv1 = new Vector(0,0,-1.5);
+                Vector bv2 = new Vector(0,.5,-1.5);
+                Vector bv3 = new Vector(1,.5,-1.5);
+                Triangle behindSphere = new Triangle(bv1,bv3,bv2,whiteLight);
+                world.add(behindSphere);
+                world.add(new Sphere(new Vector(0,0,-1),1,normal));
+                break;
             default:
                 System.out.println("foute wereldkeuze");
                 break;

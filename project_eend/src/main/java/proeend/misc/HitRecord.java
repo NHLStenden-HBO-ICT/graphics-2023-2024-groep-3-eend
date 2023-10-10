@@ -8,13 +8,15 @@ import proeend.math.Vector;
  * Een klasse die informatie opslaat over een botsing (hit) tussen een lichtstraal en een object in een 3D-scène.
  */
 public class HitRecord {
-    private Vector p;
-    private Vector normal;
-    private double t;
-    private boolean frontFace;
-    private double u;
-    private double v;
-    private Material material;
+    public Vector p;
+    public Vector normal;
+    public double t;
+    public boolean frontFace;
+    //voor driehoeken en textures
+    public double u,v,w = 0.0;
+    public double pdf = 1;
+    public Material material;
+    //outwardNormal moet eenheidsvector zijn
 
     /**
      * Constructor voor een HitRecord-object.
@@ -42,7 +44,7 @@ public class HitRecord {
     }
 
     /**
-     * Haal de normaalvector op op het raakpunt van het oppervlak van het object.
+     * Haal de normaalvector op het raakpunt op van het oppervlak van het object.
      *
      * @return De normaalvector.
      */
@@ -173,7 +175,7 @@ public class HitRecord {
         this.material = rec.material;
         this.u = rec.u;
         this.v = rec.v;
+        this.w = rec.w;
+        this.pdf = rec.pdf;
     }
-
-
 }

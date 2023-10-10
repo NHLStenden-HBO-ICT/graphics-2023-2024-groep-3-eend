@@ -1,12 +1,11 @@
 package proeend.material;
 
+import proeend.ScatterRecord;
 import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
 
-public abstract class Material {
-
-    public Material(){}
+public class Material {
 
     /**
      * Geeft aan hoeveel licht wordt gebogen wanneer het door dat materiaal gaat
@@ -26,13 +25,17 @@ public abstract class Material {
      * @return
      * of de scatter wel of niet voldoet
      */
-    public abstract boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered);
-    public Vector emit(double u, double v, Vector p) {
+    public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scatterRecord) {
+        return false;
+    }
+    public Vector emit(Ray rayIn, HitRecord rec, double u, double v, Vector p) {
         return new Vector();
+    }
+    public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
+        return 1;
     }
 
     public double getRefractionIndex() {
         return refractionIndex;
     }
 }
-
