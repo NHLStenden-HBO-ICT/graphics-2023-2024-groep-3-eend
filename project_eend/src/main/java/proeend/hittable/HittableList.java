@@ -24,12 +24,14 @@ public class HittableList extends Hittable {
         return boundingBox;
     }
 
-    public HittableList(){}
-
-    public HittableList(Hittable object){
-        add(object);
+    public HittableList(){
+        this.boundingBox = null;
     }
 
+    public HittableList(Hittable object){
+        this();
+        add(object);
+    }
 
     public List<Hittable> getObjects() {
         return objects;
@@ -55,6 +57,7 @@ public class HittableList extends Hittable {
      */
     public void clear() {
         objects.clear();
+        boundingBox = null;
     }
 
     /**
@@ -74,14 +77,9 @@ public class HittableList extends Hittable {
 
         for (Hittable object: objects) {
             if (object.hit(ray, new Interval(rayT.min, closestSoFar),tempRec)) {
-                //if (object instanceof Triangle)
-                //continue;
                 hasHitSomething = true;
-
                 closestSoFar = tempRec.t;
                 rec.copy(tempRec);
-                //oude
-                //rec = tempRec;
             }
         }
         return hasHitSomething;
@@ -95,6 +93,11 @@ public class HittableList extends Hittable {
         }
         return 0;
     }
+
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
     @Override
     public Vector random(Vector origin) {
         for (Hittable object : objects) {
