@@ -69,8 +69,10 @@ public class BoundingBox extends Hittable{
 
         for (int axis = 0; axis < 3; axis++) {
             double invD = 1.0 / r.direction().getAll()[axis];
-            double t0 = (min.getAll()[axis] - r.origin().getAll()[axis]) * invD;
-            double t1 = (max.getAll()[axis] - r.origin().getAll()[axis]) * invD;
+            double origin = r.origin().getAll()[axis];
+
+            double t0 = (min.getAll()[axis] - origin) * invD;
+            double t1 = (max.getAll()[axis] - origin) * invD;
 
             if (invD < 0.0) {
                 double temp = t0;
@@ -83,24 +85,6 @@ public class BoundingBox extends Hittable{
 
             if (tMax <= tMin) {
                 return false;
-            }
-        }
-
-        rec.setT(tMin);
-        rec.setP(r.at(tMin));
-
-        // Berekent de normaalvector van de hit.
-        for (int axis = 0; axis < 3; axis++) {
-            if (rec.getP().getAll()[axis] == min.getAll()[axis]) {
-                Vector normal = new Vector();
-                normal.getNormal(axis, -1.0);
-                rec.setNormal(normal);
-                break;
-            }
-            if (rec.getP().getAll()[axis] == max.getAll()[axis]) {
-                Vector normal = new Vector();
-                rec.setNormal(normal.getNormal(axis, 1.0));
-                break;
             }
         }
 
