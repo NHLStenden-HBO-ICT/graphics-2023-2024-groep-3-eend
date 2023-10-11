@@ -203,7 +203,7 @@ public class Main extends Application {
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
         cam1.samplesPerPixel = 1;
-        cam1.maxDepth = 5;
+        cam1.maxDepth = 6;
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
