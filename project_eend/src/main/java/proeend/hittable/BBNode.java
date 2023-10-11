@@ -15,13 +15,17 @@ public class BBNode extends Hittable{
     private Hittable right;
     private BoundingBox boundingBox;
 
+    public BoundingBox getBoundingbox(){
+        return boundingBox;
+    }
+
     public BBNode(HittableList objects){
         this(objects.getObjects(), 0, objects.getObjects().size());
         boundingBox = objects.getBoundingBox();
 
     }
-
     // constructor overloading
+
     public BBNode(List<Hittable> objects, int start, int end) {
 
         // Genereer een willekeurig getal tussen 0 (inclusief) en 2 (exclusief)
@@ -58,21 +62,6 @@ public class BBNode extends Hittable{
             boundingBox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
 
     }
-
-    private static Vector getMin() {
-        Vector min = new Vector(0,0,0);
-        return min;
-    }
-
-    private static Vector getMax() {
-        Vector max = new Vector(1080,1080,1080);
-        return max;
-    }
-
-    public BoundingBox getBoundingbox(){
-        return boundingBox;
-    }
-
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
