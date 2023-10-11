@@ -1,10 +1,14 @@
 package proeend.misc;
 
+import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.ScatterRecord;
 import proeend.hittable.Hittable;
+import proeend.hittable.HittableList;
 import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
 import proeend.material.pdf.HittablePDF;
@@ -22,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,6 +35,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class Camera {
 
+    // Toolkit is een klasse voor het beheren van systeembronnen
+     Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+    // De dimensie van het scherm ophalen
+     Dimension screenSize = toolkit.getScreenSize();
+
+    // De schermbreedte ophalen
+      int screenWidth = screenSize.width;
     public boolean block;
     static int frames = 0;
     private Vector u,v,w;
@@ -59,6 +73,9 @@ public class Camera {
      *
      * @return De hoogte van het beeld.
      */
+
+    public Camera(){
+    }
 
     public double getHeight() {
         return imageHeight;
@@ -92,7 +109,7 @@ public class Camera {
      * @param image Het te opslaan beeld.
      * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
      */
-    private void saveImage(WritableImage image) throws IOException{
+    public static void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int x = 0; x < (int) image.getWidth(); x++) {
             for (int y = 0; y < (int) image.getHeight(); y++) {
@@ -265,6 +282,8 @@ public class Camera {
      */
     public WritableImage render(boolean save, Hittable world, Hittable lights){
 
+        long startTime = System.currentTimeMillis();
+
         init();
         block = true;
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
@@ -305,10 +324,105 @@ public class Camera {
         if (save) {
             try {
                 saveImage(writableImage);
+                long totalTime = System.currentTimeMillis() - startTime;
+                System.out.println( "Single thread gerendered in " + totalTime  + "ms" );
             } catch (IOException e) {e.printStackTrace();}
         }
         return writableImage;
     }
+
+    public int[] calculateStartAndEnd(int numberOfThreads, int threadCounter, int imageHeight) {
+        int startPixel = imageHeight / numberOfThreads * threadCounter - (imageHeight / numberOfThreads);
+        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1) - (imageHeight / numberOfThreads);
+
+        return new int[]{startPixel, endPixel};
+    }
+
+    WritableImage writableImage = new WritableImage(imageWidth, imageHeight);// /threads
+    PixelWriter pixelWriter = writableImage.getPixelWriter();
+    public WritableImage multiThreadRender(HittableList world, Hittable lights) {
+        init();
+        int beschikbareProcessors = Runtime.getRuntime().availableProcessors();
+        System.out.println("Aantal beschikbare processors: " + beschikbareProcessors);
+        // Bereken het aantal threads dat je wilt maken (bijv. helft van beschikbare processors)
+        int numberOfThreads = beschikbareProcessors;
+        //int numberOfThreads = 5;
+
+        long startTime = System.currentTimeMillis();
+
+        int[] threadCounter = {0}; // Use an array to store the counter
+
+
+        Runnable taak = () -> {
+            synchronized (threadCounter) {
+                threadCounter[0]++;
+            }
+            WritableImage image;
+            image = multiTaak(true,world,numberOfThreads,threadCounter[0],lights);
+
+            try {
+                Camera.saveImage(image);
+                if(threadCounter[0] == numberOfThreads){
+                    long totalTime = System.currentTimeMillis() - startTime;
+                    System.out.println( "Multithread gerendered in " + totalTime  + "ms" );
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            Thread thread = new Thread(taak);
+            thread.start();
+            //launch();
+        }
+
+
+        return writableImage;
+    }
+
+public WritableImage multiTaak(boolean save, Hittable world, int threads, int threadCounter, Hittable lights){
+
+
+
+
+    int[] startAndEnd = calculateStartAndEnd(threads, threadCounter, imageHeight);
+    int startPixelY = startAndEnd[0];
+    int endPixelY = startAndEnd[1];
+
+    for (int y = startPixelY; y < endPixelY; ++y) {
+        System.out.println(Integer.toString(endPixelY - y) + " lines to go op Thread: " + threadCounter);
+
+        for (int x = 0; x < imageWidth; ++x) {
+            Vector colorVec = new Vector();
+
+            //nieuwe AA, een stuk minder snell, maar wel beter
+            for (int sy = 0; sy < rootSPP; ++sy) {
+                for (int sx = 0; sx < rootSPP; ++sx) {
+                    Ray ray = getRay(x, y, sx, sy);
+                    colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
+                }
+            }
+            int[] colors = colorVec.toColor(samplesPerPixel, true);
+            try{
+                synchronized (pixelWriter) {
+                    pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+                }
+            }catch (Exception ex){
+                System.out.println(ex.toString());
+            }
+
+
+        }
+    }
+
+
+
+    return writableImage;
+}
+
+
+
     private Ray getRay(int x, int y, int sx, int sy) {
         Vector pixelCenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
         Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(sx, sy));

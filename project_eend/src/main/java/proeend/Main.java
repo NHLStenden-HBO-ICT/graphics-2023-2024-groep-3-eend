@@ -1,5 +1,12 @@
 package proeend;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import javafx.concurrent.Task;
+import javafx.scene.control.Label;
+import proeend.hittable.Sphere;
+import proeend.material.Lambertian;
+import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -33,11 +40,15 @@ public class Main extends Application {
     static HittableList world = new HittableList();
     static HittableList lights = new HittableList();
 
+
+
     static Camera cam1 = new Camera();
     static Camera cam2 = new Camera();
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
     static Vector camOrigin = new Vector(0,0,2);
+
+
 
     ImageView frame = new ImageView();
     StackPane root = new StackPane();
@@ -52,7 +63,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
-            cam2.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+            cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
@@ -122,10 +133,19 @@ public class Main extends Application {
                         coordY.setText(Double.toString( Double.parseDouble(coordY.getText())-0.1*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
+                    case M:
+                       try {
+                            Camera.saveImage(cam2.multiThreadRender(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())))
+                            );
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                       break;
                     case C:
                         Thread thread = new Thread(renderTask);
                         thread.setDaemon(true);
                         thread.start();
+                        break;
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
                     System.out.println("Escape key pressed");
