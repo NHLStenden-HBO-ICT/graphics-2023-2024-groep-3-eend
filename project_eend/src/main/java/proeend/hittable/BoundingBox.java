@@ -33,9 +33,9 @@ public class BoundingBox {
     // Constructor voor het combineren van twee bestaande bounding boxes
     public BoundingBox(BoundingBox box0, BoundingBox box1) {
         if (box1 != null && box0 != null){
-            x = new Interval(box0.x.getMin(), box1.x.getMax());
-            y = new Interval(box0.y.getMin(), box1.y.getMax());
-            z = new Interval(box0.z.getMin(), box1.z.getMax());
+            x = new Interval(box1.x.getMin(), box0.x.getMax());
+            y = new Interval( box1.y.getMin(), box0.y.getMax());
+            z = new Interval(box1.z.getMin(),box0.z.getMax());
         }
     }
 
@@ -66,13 +66,13 @@ public class BoundingBox {
 
         min = new Vector(
                 center.x() - radius,
-                center.y() + radius,
+                center.y() - radius,
                 center.z() - radius
         );
 
         max = new Vector(
                 center.x() + radius,
-                center.y() - radius,
+                center.y() + radius,
                 center.z() + radius
         );
         x = new Interval(min.x(), max.x());

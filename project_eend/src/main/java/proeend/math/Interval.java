@@ -5,7 +5,8 @@
 package proeend.math;
 
 public class Interval {
-    public double min, max;
+    private double min = 0;
+    private double max = 0;
     public Interval() {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;

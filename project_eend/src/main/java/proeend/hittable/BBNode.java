@@ -57,10 +57,12 @@ public class BBNode extends Hittable{
             left = new BBNode(objects, start, mid);
             right = new BBNode(objects, mid, end);
         }
-
-        //TODO de bbox wordt niet goed aangemaakt, blijft null. Dat zorgt later voor de NullExceptionReference
-            boundingBox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
-
+            if (left != right) {
+                boundingBox = new BoundingBox(left.getBoundingbox(), right.getBoundingbox());
+            }
+            else {
+                boundingBox = left.getBoundingbox();
+            }
     }
 
     @Override
@@ -70,7 +72,7 @@ public class BBNode extends Hittable{
         }
 
         boolean hitLeft = left.hit(r, rayT, rec);
-        boolean hitRight = right.hit(r, new Interval(rayT.min, hitLeft ? rec.t : rayT.max), rec);
+        boolean hitRight = right.hit(r, new Interval(rayT.getMin(), hitLeft ? rec.t : rayT.getMax()), rec);
 
         return hitLeft || hitRight;
     }
