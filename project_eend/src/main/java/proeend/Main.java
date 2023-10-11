@@ -37,6 +37,7 @@ public class Main extends Application {
 
     static Camera cam1 = new Camera();
     static Camera cam2 = new Camera();
+    private boolean isCameraRotating = true;
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
     static Vector camOrigin = new Vector(0,0,2);
@@ -86,41 +87,51 @@ public class Main extends Application {
                 else shiftMult =1;
                 switch (event.getCode()) {
                     case EQUALS:
+                        isCameraRotating = true;
                         cam1.verticalFOV-=Math.PI/360*shiftMult;
                         break;
                     case MINUS:
+                        isCameraRotating = true;
                         cam1.verticalFOV+=Math.PI/360*shiftMult;
                         break;
                     case Q:
+                        isCameraRotating = true;
                         cam1.lookat.rotateY(-Math.PI/400*shiftMult);
                         break;
                     case E:
+                        isCameraRotating = true;
                         cam1.lookat.rotateY(Math.PI/400*shiftMult);
                         break;
                     case UP:
+                        isCameraRotating = true;
                         coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())-0.04*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,-0.04*shiftMult));
                         cam1.lookat = Vector.add(cam1.lookat, new Vector(0,0,-0.04*shiftMult));
                         break;
                     case LEFT:
+                        isCameraRotating = true;
                         //camOrigin = new Vector(camOrigin.x()-0.02,camOrigin.y(),camOrigin.z());
                         coordX.setText(Double.toString( Double.parseDouble(coordX.getText())-0.02*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(-0.02*shiftMult,0,0));
                         break;
                     case RIGHT:
+                        isCameraRotating = true;
                         coordX.setText(Double.toString( Double.parseDouble(coordX.getText())+0.02*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0.02*shiftMult,0,0));
                         break;
                     case DOWN:
+                        isCameraRotating = true;
                         coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())+0.04*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,0.04*shiftMult));
                         cam1.lookat = Vector.add(cam1.lookat, new Vector(0,0,+0.04*shiftMult));
                         break;
                     case SPACE:
+                        isCameraRotating = true;
                         coordY.setText(Double.toString( Double.parseDouble(coordY.getText())+0.1*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,.1*shiftMult,0));
                         break;
                     case Z:
+                        isCameraRotating = true;
                         coordY.setText(Double.toString( Double.parseDouble(coordY.getText())-0.1*shiftMult));
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
@@ -131,6 +142,7 @@ public class Main extends Application {
                         Thread thread = new Thread(renderTask);
                        // thread.setDaemon(true);
                         thread.start();
+                        break;
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
                     System.out.println("Escape key pressed");
@@ -138,20 +150,39 @@ public class Main extends Application {
             }
         });
 
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case Q:
+                    case E:
+                    case Z:
+                    case UP:
+                    case LEFT:
+                    case RIGHT:
+                    case DOWN:
+                    case SPACE:
+                        isCameraRotating = false;
+                        break;
+                    // Handle other cases as before
+                }
+            }});
+
         stage.setTitle("Project Eend");
         stage.setScene(scene);
         stage.show();
     }
 
     private void update() {
-        if (!cam1.block)
+        if (!cam1.block && isCameraRotating)
             frame.setImage(cam1.render(worldWithBoundingboxes, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
     }
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        worldWithBoundingboxes = new HittableList(new BBNode(world));
+        worldWithBoundingboxes = world;
+        //worldWithBoundingboxes = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.0,.0,.0);

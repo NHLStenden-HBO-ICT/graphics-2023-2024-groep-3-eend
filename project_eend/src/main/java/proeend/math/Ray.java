@@ -54,6 +54,7 @@ public class Ray {
         this.direction = direction;
     }
 
+
     public Vector getDirection() {
         return direction;
     }
