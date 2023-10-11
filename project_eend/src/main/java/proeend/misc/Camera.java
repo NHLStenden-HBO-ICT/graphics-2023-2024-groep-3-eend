@@ -109,7 +109,7 @@ public class Camera {
      * @param image Het te opslaan beeld.
      * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
      */
-    public static void saveImage(WritableImage image) throws IOException{
+    public void saveImage(WritableImage image) throws IOException{
         BufferedImage bufferedImage = new BufferedImage((int)image.getWidth(), (int)image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int x = 0; x < (int) image.getWidth(); x++) {
             for (int y = 0; y < (int) image.getHeight(); y++) {
@@ -361,7 +361,7 @@ public class Camera {
             image = multiTaak(true,world,numberOfThreads,threadCounter[0],lights);
 
             try {
-                Camera.saveImage(image);
+                saveImage(image);
                 if(threadCounter[0] == numberOfThreads){
                     long totalTime = System.currentTimeMillis() - startTime;
                     System.out.println( "Multithread gerendered in " + totalTime  + "ms" );

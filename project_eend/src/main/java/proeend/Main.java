@@ -134,12 +134,15 @@ public class Main extends Application {
                         cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
                         break;
                     case M:
+                        /*
                        try {
                             Camera.saveImage(cam2.multiThreadRender(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())))
                             );
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
+                         */
+                        System.out.println("lege keyevent");
                        break;
                     case C:
                         Thread thread = new Thread(renderTask);
@@ -186,20 +189,20 @@ public class Main extends Application {
             System.out.println("load failed");
         }
 
-        Utility.loadWorld(world, lights, 1);
+        Utility.loadWorld(world, lights, 6);
         icoSphere.toTriangles();
-        world.add(icoSphere);
+        //world.add(icoSphere);
 
         cam1.background = new Vector(1,1,1);
-        cam1.imageWidth = 1000;
+        cam1.imageWidth = 200;
         cam1.cameraCenter = camOrigin;
-        cam1.background = new Vector(.0, .0, .0);
+        cam1.background = new Vector(.1, .9, .9);
 
         cam1.cameraCenter = new Vector(0,5,4);
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 100;
+        cam1.samplesPerPixel = 1;
         cam1.maxDepth = 5;
 
         var startTime = System.currentTimeMillis();
