@@ -231,17 +231,17 @@ public class Camera {
         }
             // Maak een HitRecord om gegevens over het getroffen object op te slaan
             HitRecord rec = new HitRecord();
-            r.direction = Vector.unitVector(r.direction);
+            // r.direction = Vector.unitVector(r.direction);
 
-                // Controleer of de ray een object in de wereld raakt
-                // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
-                if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
+            // Controleer of de ray een object in de wereld raakt
+            // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
+            if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
 
-                    // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
-                    // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
-                    // Geen raakpunt, retourneer de achtergrondkleur
-                    return background;
-                }
+                // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
+                // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
+                // Geen raakpunt, retourneer de achtergrondkleur
+                return background;
+            }
 
 
             ScatterRecord scatterRecord = new ScatterRecord();
