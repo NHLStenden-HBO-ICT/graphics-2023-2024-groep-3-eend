@@ -12,11 +12,9 @@ import proeend.math.Ray;
  */
 public abstract class Hittable{
 
-    private Material material; // Het materiaal van het hittable object.
 
-    abstract BoundingBox getBoundingbox(){
-        return null;
-    }
+    public abstract BoundingBox getBoundingbox();
+
 
     /**
      * Constructor voor een hittable object zonder een gespecificeerd materiaal.
@@ -45,32 +43,6 @@ public abstract class Hittable{
 
 
 
-    /**
-     * Constructor voor een hittable object met een gespecificeerd materiaal.
-     *
-     * @param material  Het materiaal van het hittable object.
-     */
-    public Hittable(Material material){
-        this.material = material;
-    }
-
-    /**
-     * Haal het materiaal op dat aan dit hittable object is gekoppeld.
-     *
-     * @return  Het materiaal van het hittable object.
-     */
-    public Material getMaterial() {
-        return material;
-    }
-
-    /**
-     * Stel het materiaal in dat aan dit hittable object is gekoppeld.
-     *
-     * @param material  Het nieuwe materiaal voor het hittable object.
-     */
-    public void setMaterial(Material material) {
-        this.material = material;
-    }
 
 
 

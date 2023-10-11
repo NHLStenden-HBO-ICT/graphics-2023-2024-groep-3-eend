@@ -14,6 +14,9 @@ public class Sphere extends Hittable {
 
     private final double radius;
     private final Vector center;
+    private BoundingBox boundingBox;
+
+    private Material material;
     /**
      * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
      *
@@ -24,12 +27,14 @@ public class Sphere extends Hittable {
     public Sphere(Vector center, double radius, Material material) {
         this.center = center;
         this.radius = radius;
-        super.setMaterial(material);
-        super.setBoundingBox(new BoundingBox(center, radius));
+        this.material = material;
+        boundingBox = new BoundingBox(center, radius);
     }
+
+
     @Override
     public BoundingBox getBoundingbox(){
-        return super.getBoundingbox();
+        return boundingBox;
     }
 
     /**
@@ -62,7 +67,7 @@ public class Sphere extends Hittable {
         }
         rec.setT(root);
         rec.setP(ray.at(rec.getT()));
-        rec.setMaterial(getMaterial());
+        rec.setMaterial(material);
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;

@@ -14,6 +14,11 @@ import proeend.misc.HitRecord;
  * en om relevante informatie over het raakpunt vast te leggen.
  */
 public class Triangle extends Hittable{
+
+    private Vector v0,v1,v2;
+    private Material material;
+    private double area;
+    private BoundingBox boundingBox;
     /**
      * Constructor om een driehoek te initialiseren met zijn hoekpunten en materiaal.
      *
@@ -26,11 +31,9 @@ public class Triangle extends Hittable{
         this.v1 = v1;
         this.v2 = v2;
         this.v0 = v0;
-        super.setMaterial(material);
+        this.material = material;
+        boundingBox = getBoundingbox();
     }
-    private Vector v0,v1,v2;
-    private Material material;
-    private double area;
 
     /**
      * Controleert of een gegeven straal dit driehoekige object raakt en berekent relevante raakpunten.
@@ -84,4 +87,12 @@ public class Triangle extends Hittable{
 
         return true;
     }
+
+    public BoundingBox getBoundingbox() {
+        Vector min = Vector.min(Vector.min(v0, v1), v2);
+        Vector max = Vector.max(Vector.max(v0, v1), v2);
+
+        return new BoundingBox(min, max).pad();
+    }
+
 }

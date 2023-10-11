@@ -170,4 +170,20 @@ public class Vector {
         return new Vector(v,0,0);
 
     }
+
+    // Method to find the component-wise minimum between two vectors
+    public static Vector min(Vector vector1, Vector vector2) {
+        double x = Math.min(vector1.x(), vector2.x());
+        double y = Math.min(vector1.y(), vector2.y());
+        double z = Math.min(vector1.z(), vector2.z());
+        return new Vector(x, y, z);
+    }
+
+    // Method to find the component-wise maximum between two vectors
+    public static Vector max(Vector vector1, Vector vector2) {
+        double x = Math.max(vector1.x(), vector2.x());
+        double y = Math.max(vector1.y(), vector2.y());
+        double z = Math.max(vector1.z(), vector2.z());
+        return new Vector(x, y, z);
+    }
 }

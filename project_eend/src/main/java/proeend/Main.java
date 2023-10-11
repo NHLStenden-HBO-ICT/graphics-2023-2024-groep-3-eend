@@ -184,7 +184,7 @@ public class Main extends Application {
         worldWithBoundingboxes = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
-        cam1.background = new Vector(.0,.0,.0);
+        cam1.background = new Vector(1,1,1);
         //cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;

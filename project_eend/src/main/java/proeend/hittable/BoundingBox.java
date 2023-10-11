@@ -10,6 +10,9 @@ public class BoundingBox {
 
     public static Vector min, max;
     Interval x, y, z;
+    private double delta = 0.0001;
+
+    public BoundingBox(){}
 
     // Constructor voor het behandelen van twee punten als extrema voor de bounding box
     public BoundingBox(Vector a, Vector b) {
@@ -34,6 +37,21 @@ public class BoundingBox {
             y = new Interval(box0.y.getMin(), box1.y.getMax());
             z = new Interval(box0.z.getMin(), box1.z.getMax());
         }
+    }
+
+    public BoundingBox(Interval ix, Interval iy, Interval iz) {
+        this.x = ix;
+        this.y = iy;
+        this.z = iz;
+    }
+
+    public BoundingBox pad() {
+        // geef een Bounding box terug die net iets groter is dan
+        Interval new_x = (x.getSize() >= delta) ? x : x.expand(delta);
+        Interval new_y = (y.getSize() >= delta) ? y : y.expand(delta);
+        Interval new_z = (z.getSize() >= delta) ? z : z.expand(delta);
+
+        return new BoundingBox(new_x, new_y, new_z);
     }
 
     public static Vector getMin() {
@@ -62,9 +80,7 @@ public class BoundingBox {
         z = new Interval(min.z(), max.z());
     }
 
-    public boolean hit(Ray r, Interval rayT, HitRecord rec) {
-        double tMax = rayT.getMax();
-        double tMin = rayT.getMin();
+    public boolean hit(Ray r, Interval rayT) {
 
         for (int axis = 0; axis < 3; axis++) {
             double invD = 1.0 / r.direction().getAll()[axis];
@@ -79,12 +95,11 @@ public class BoundingBox {
                 t1 = temp;
             }
 
-            tMin = Math.max(t0, tMin);
-            tMax = Math.min(t1, tMax);
+            if(t0 > rayT.getMin()) rayT.setMin(t0);
+            if(t1 < rayT.getMax()) rayT.setMax(t1);
 
-            if (tMax <= tMin) {
-                return false;
-            }
+            if(rayT.getMax() <= rayT.getMin()) return false;
+
         }
 
         return true;

@@ -76,7 +76,7 @@ public class BBNode extends Hittable{
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
-        if (!boundingBox.hit(r, rayT, rec)) {
+        if (!boundingBox.hit(r, rayT)) {
             return false;
         }
 
