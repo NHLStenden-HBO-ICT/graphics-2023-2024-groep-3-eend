@@ -13,14 +13,9 @@ import proeend.math.Ray;
 public abstract class Hittable{
 
     private Material material; // Het materiaal van het hittable object.
-    private BoundingBox boundingBox;
 
-    public BoundingBox getBoundingbox(){
-        return boundingBox;
-    }
-
-    public void setBoundingBox(BoundingBox boundingBox) {
-        this.boundingBox = boundingBox;
+    abstract BoundingBox getBoundingbox(){
+        return null;
     }
 
     /**

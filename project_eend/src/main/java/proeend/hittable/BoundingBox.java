@@ -6,7 +6,7 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.misc.HitRecord;
 
-public class BoundingBox extends Hittable{
+public class BoundingBox {
 
     public static Vector min, max;
     Interval x, y, z;
@@ -62,7 +62,6 @@ public class BoundingBox extends Hittable{
         z = new Interval(min.z(), max.z());
     }
 
-    @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
         double tMax = rayT.getMax();
         double tMin = rayT.getMin();

@@ -17,6 +17,8 @@ public class BBNode extends Hittable{
 
     public BBNode(HittableList objects){
         this(objects.getObjects(), 0, objects.getObjects().size());
+        boundingBox = objects.getBoundingBox();
+
     }
 
     // constructor overloading
@@ -67,7 +69,9 @@ public class BBNode extends Hittable{
         return max;
     }
 
-
+    public BoundingBox getBoundingbox(){
+        return boundingBox;
+    }
 
 
     @Override
