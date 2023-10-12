@@ -92,8 +92,8 @@ public class Interval {
     static Interval universe = new Interval( Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     public Interval merch(Interval i0, Interval i1){
-        double minI = Math.min(i0.getMin(), i1.getMax());
-        double maxI = Math.min(i0.getMin(), i1.getMax());
+        double minI = Math.min(i0.getMin(), i1.getMin());
+        double maxI = Math.min(i0.getMax(), i1.getMax());
         return new Interval(minI, maxI);
     }
 
