@@ -53,7 +53,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
-            cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+            cam1.render(true, world, lights);
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
@@ -173,7 +173,7 @@ public class Main extends Application {
 
     private void update() {
         if (!cam1.block && isCameraRotating)
-            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
+            frame.setImage(cam1.render(world, lights));
 
     }
 
