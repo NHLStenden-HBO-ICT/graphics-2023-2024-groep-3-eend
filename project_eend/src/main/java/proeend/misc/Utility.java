@@ -111,7 +111,7 @@ public class Utility {
                 world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
                 world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
 
-                lights.add(new Sphere(new Vector(1,2,-.55),100,new Lambertian(new Vector())));
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
 
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
