@@ -107,7 +107,7 @@ public class Utility {
                 world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
                 world.add(new Sphere(new Vector(0,-100.5,-.55), 100, greyLambertian));
-                //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
+               //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
                 world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
                 world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
 
