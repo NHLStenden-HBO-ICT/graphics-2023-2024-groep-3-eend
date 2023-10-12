@@ -45,9 +45,9 @@ public class HittableList extends Hittable {
     public void add(Hittable object) {
         objects.add(object);
         if(boundingBox == null){
-            boundingBox = object.getBoundingbox();
+            boundingBox = object.getBoundingbox().pad();
         }else{
-            boundingBox = new BoundingBox(boundingBox, object.getBoundingbox());
+            boundingBox = new BoundingBox(boundingBox, object.getBoundingbox()).pad();
         }
     }
 
@@ -92,10 +92,6 @@ public class HittableList extends Hittable {
             return object.pdfValue(origin,direction);
         }
         return 0;
-    }
-
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
     }
 
     @Override

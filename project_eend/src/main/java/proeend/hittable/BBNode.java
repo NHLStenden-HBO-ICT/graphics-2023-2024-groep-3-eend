@@ -21,7 +21,7 @@ public class BBNode extends Hittable{
 
     public BBNode(HittableList objects){
         this(objects.getObjects(), 0, objects.getObjects().size());
-        boundingBox = objects.getBoundingBox();
+        //boundingBox = objects.getBoundingBox();
 
     }
     // constructor overloading

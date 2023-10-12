@@ -32,12 +32,13 @@ public class BoundingBox {
 
     // Constructor voor het combineren van twee bestaande bounding boxes
     public BoundingBox(BoundingBox box0, BoundingBox box1) {
-        if (box1 != null && box0 != null){
-            x = new Interval(box1.x.getMin(), box0.x.getMax());
-            y = new Interval( box1.y.getMin(), box0.y.getMax());
-            z = new Interval(box1.z.getMin(),box0.z.getMax());
+        if (box0 != null && box1 != null){
+            x = new Interval().merch(box0.x, box1.x);
+            y = new Interval().merch(box0.y, box1.y);
+            z = new Interval().merch(box0.z, box1.z);
         }
     }
+
 
     public BoundingBox(Interval ix, Interval iy, Interval iz) {
         this.x = ix;
