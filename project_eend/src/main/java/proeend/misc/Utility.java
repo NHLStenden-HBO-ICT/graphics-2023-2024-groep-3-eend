@@ -111,22 +111,11 @@ public class Utility {
                 world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
                 world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
 
+
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
 
 
-
-              /*  // Eerst een BVH-node maken van alle objecten in de world lijst
-                BBNode bvh = new BBNode(world.getObjects(), 0, world.getObjects().size());
-                BBNode newWorld = new BBNode(world.getObjects(),0, world.getObjects().size());
-
-                world = newWorld;
-                // Maak een nieuwe HittableList en voeg de BVH-node toe als enkel object
-                hittableList.add(bvh);
-
-                world = world;
-
-*/
 
                 break;
             case 2:

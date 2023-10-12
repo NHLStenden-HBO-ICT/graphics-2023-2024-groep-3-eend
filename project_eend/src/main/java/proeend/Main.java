@@ -32,9 +32,7 @@ import java.io.IOException;
 public class Main extends Application {
 
     static HittableList world = new HittableList();
-    static HittableList worldWithBoundingboxes = new HittableList();
     static HittableList lights = new HittableList();
-
     static Camera cam1 = new Camera();
     static Camera cam2 = new Camera();
     private boolean isCameraRotating = true;
@@ -55,7 +53,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
-            cam1.render(true, worldWithBoundingboxes, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
+            cam1.render(true, world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())));
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
@@ -175,16 +173,16 @@ public class Main extends Application {
 
     private void update() {
         if (!cam1.block && isCameraRotating)
-            frame.setImage(cam1.render(worldWithBoundingboxes, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
+            frame.setImage(cam1.render(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector()))));
 
     }
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        worldWithBoundingboxes = new HittableList(new BBNode(world));
+        world = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
-        cam1.background = new Vector(1,1,1);
+        cam1.background = new Vector(0,0,0);
         //cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;
