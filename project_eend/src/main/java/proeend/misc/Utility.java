@@ -100,6 +100,8 @@ public class Utility {
                 world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
                 world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
                 // world.add(vierkant);
+                lights.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
+
 
 
                 break;
@@ -107,14 +109,19 @@ public class Utility {
                 world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror));
                 world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian));
                 world.add(new Sphere(new Vector(0,-100.5,-.55), 100, greyLambertian));
-               //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
+                //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
                 world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
+                lights.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight));
                 world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
 
-                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
-
+                //lights.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
+             /*   world.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
+                lights.add(new Sphere(new Vector(-1,2,3),10 ,whiteLight));
+                world.add(new Sphere(new Vector(-1,2,3),10 ,whiteLight));
+*/
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
+
 
 
 
@@ -127,6 +134,8 @@ public class Utility {
                 //world.add(new Sphere(new Vector(0,.5,-3),0.5, redMirror));
 
                 //world.add(new Triangle(v2,v1,v0, yellowLambertian));
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
                 break;
             case 3:
                 faceArray = new int[]{3,3,3};
@@ -134,21 +143,33 @@ public class Utility {
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
                 world.add(new Sphere(v1, .3, whiteLight));
 
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
+
                 break;
             case 4:
                 faceArray = new int[]{4};
                 vertexIndexArray = new int[]{0,1,2,4};
                 vertexArray = new Vector[]{v0,v1,v2,v3,v4};
                 //world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror).toTriangleMesh());
+
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
                 break;
             case 5:
                 world.add(new Sphere(new Vector(1,0,-2), .5, whiteLambertian));
                 world.add(new Sphere(v1, .3, whiteLight));
+
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
                 break;
             case 6:
                 faceArray = new int[]{3,3,3,3};
                 vertexIndexArray = new int[]{5,6,7,6,8,7,8,9,10,7,8,10};
                 world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
+
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
                 break;
             case 7:
                 Vector bv1 = new Vector(0,0,-1.5);
@@ -157,6 +178,9 @@ public class Utility {
                 Triangle behindSphere = new Triangle(bv1,bv3,bv2,whiteLight);
                 world.add(behindSphere);
                 world.add(new Sphere(new Vector(0,0,-1),1,normal));
+
+                lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
                 break;
             default:
                 System.out.println("foute wereldkeuze");

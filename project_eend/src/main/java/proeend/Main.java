@@ -53,6 +53,7 @@ public class Main extends Application {
         Runnable renderTask = () -> {
 
             System.out.println("starting capture...");
+
             cam1.render(true, world, lights);
         };
         Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
@@ -173,16 +174,16 @@ public class Main extends Application {
 
     private void update() {
         if (!cam1.block && isCameraRotating)
-            frame.setImage(cam1.render(world, lights));
+            frame.setImage(cam1.render (world,lights));
 
     }
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        world = new HittableList(new BBNode(world));
+        //world = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
-        cam1.background = new Vector(0,0,0);
+        cam1.background = new Vector(.2,.2,.2);
         //cam1.render(true, world); //TODO vervang door capture
 
         cam1.samplesPerPixel = 1;

@@ -132,18 +132,10 @@ public class Camera {
                  for (int sy = 0; sy < rootSPP; ++sy) {
                      for (int sx = 0; sx < rootSPP; ++sx) {
                          Ray ray = getRay(x,y,sx,sy);
-                         //if hit bounding box, then color vec
-                         //if not hit, then next node item
                          colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
                      }
                  }
 
-                 /* oude AA
-                 for (int sample = 0; sample < samplesPerPixel; ++sample) {
-                     Ray ray = getRay(x, y);
-                     //colorVec = new Vec();
-                     colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world));
-                 }*/
 
                  int[] colors = colorVec.toColor(samplesPerPixel, save);
                  pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
@@ -227,7 +219,7 @@ public class Camera {
         // Controleer of het maximumaantal reflecties is bereikt
         if (depth <= 0) {
             //System.out.println("hit");
-            return new Vector(.0, .0, .0);
+            return new Vector(0, 0, 0);
         }
             // Maak een HitRecord om gegevens over het getroffen object op te slaan
             HitRecord rec = new HitRecord();

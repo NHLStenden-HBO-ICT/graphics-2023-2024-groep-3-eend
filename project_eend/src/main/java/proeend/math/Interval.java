@@ -91,7 +91,7 @@ public class Interval {
     /** Een interval dat alle reële getallen bevat. */
     static Interval universe = new Interval( Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    public Interval merch(Interval i0, Interval i1){
+    public Interval merge(Interval i0, Interval i1){
         double minI = Math.min(i0.getMin(), i1.getMin());
         double maxI = Math.max(i0.getMax(), i1.getMax());
         return new Interval(minI, maxI);

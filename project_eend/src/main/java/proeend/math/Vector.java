@@ -32,6 +32,12 @@ public class Vector {
     public double x() {return d[0];}
     public double y() {return d[1];}
     public double z() {return d[2];}
+
+    public double axis(int n) {
+        if (n == 1) return d[1];
+        if (n == 2) return d[2];
+        return d[0];
+    }
     public double[] getAll(){
         return d;
     }

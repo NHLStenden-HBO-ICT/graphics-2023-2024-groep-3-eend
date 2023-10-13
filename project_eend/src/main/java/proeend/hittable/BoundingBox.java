@@ -1,14 +1,10 @@
 package proeend.hittable;
 
-import proeend.material.Lambertian;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
-import proeend.misc.HitRecord;
 
 public class BoundingBox {
-
-    public static Vector min, max;
     Interval x, y, z;
     private double delta = 0.0001;
 
@@ -16,7 +12,6 @@ public class BoundingBox {
 
     // Constructor voor het behandelen van twee punten als extrema voor de bounding box
     public BoundingBox(Vector a, Vector b) {
-        // Gebruik de functies fmin en fmax om de minimum- en maximumcoördinaten te bepalen
         double minX = Math.min(a.x(), b.x());
         double minY = Math.min(a.y(), b.y());
         double minZ = Math.min(a.z(), b.z());
@@ -28,14 +23,16 @@ public class BoundingBox {
         x = new Interval(minX, maxX);
         y = new Interval(minY, maxY);
         z = new Interval(minZ, maxZ);
+
     }
 
     // Constructor voor het combineren van twee bestaande bounding boxes
     public BoundingBox(BoundingBox box0, BoundingBox box1) {
-        if (box0 != null && box1 != null){
-            x = new Interval().merch(box0.x, box1.x);
-            y = new Interval().merch(box0.y, box1.y);
-            z = new Interval().merch(box0.z, box1.z);
+        if (box0 != null && box1 != null) {
+            x = new Interval().merge(box0.x, box1.x);
+            y = new Interval().merge(box0.y, box1.y);
+            z = new Interval().merge(box0.z, box1.z);
+
         }
     }
 
@@ -46,6 +43,13 @@ public class BoundingBox {
         this.z = iz;
     }
 
+     public Interval axis(int n) {
+        if (n == 1) return y;
+        if (n == 2) return z;
+        return x;
+    }
+
+
     public BoundingBox pad() {
         // geef een Bounding box terug die net iets groter is dan
         Interval new_x = (x.getSize() >= delta) ? x : x.expand(delta);
@@ -55,23 +59,17 @@ public class BoundingBox {
         return new BoundingBox(new_x, new_y, new_z);
     }
 
-    public static Vector getMin() {
-        return min;
-    }
 
-    public static Vector getMax() {
-        return max;
-    }
 
     public BoundingBox(Vector center, double radius) {
 
-        min = new Vector(
+        Vector min = new Vector(
                 center.x() - radius,
                 center.y() - radius,
                 center.z() - radius
         );
 
-        max = new Vector(
+        Vector max = new Vector(
                 center.x() + radius,
                 center.y() + radius,
                 center.z() + radius
@@ -84,11 +82,11 @@ public class BoundingBox {
     public boolean hit(Ray r, Interval rayT) {
 
         for (int axis = 0; axis < 3; axis++) {
-            double invD = 1.0 / r.direction().getAll()[axis];
-            double origin = r.origin().getAll()[axis];
+            double invD = 1.0 / r.direction().axis(axis);
+            double origin = r.origin().axis(axis);
 
-            double t0 = (min.getAll()[axis] - origin) * invD;
-            double t1 = (max.getAll()[axis] - origin) * invD;
+            double t0 = (axis(axis).getMin() - origin) * invD;
+            double t1 = (axis(axis).getMax() - origin) * invD;
 
             if (invD < 0.0) {
                 double temp = t0;
