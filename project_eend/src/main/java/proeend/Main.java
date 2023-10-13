@@ -180,7 +180,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Utility.loadWorld(world,lights,1);
-        //world = new HittableList(new BBNode(world));
+        world = new HittableList(new BBNode(world));
         cam1.imageWidth = 400;
         cam1.cameraCenter = camOrigin;
         cam1.background = new Vector(.2,.2,.2);

@@ -81,12 +81,12 @@ public class BoundingBox {
 
     public boolean hit(Ray r, Interval rayT) {
 
-        for (int axis = 0; axis < 3; axis++) {
-            double invD = 1.0 / r.direction().axis(axis);
-            double origin = r.origin().axis(axis);
+        for (int as = 0; as < 3; as++) {
+            double invD = 1.0 / r.direction().axis(as);
+            double origin = r.origin().axis(as);
 
-            double t0 = (axis(axis).getMin() - origin) * invD;
-            double t1 = (axis(axis).getMax() - origin) * invD;
+            double t0 = (axis(as).getMin() - origin) * invD;
+            double t1 = (axis(as).getMax() - origin) * invD;
 
             if (invD < 0.0) {
                 double temp = t0;

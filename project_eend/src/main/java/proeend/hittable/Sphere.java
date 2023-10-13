@@ -15,6 +15,7 @@ public class Sphere extends Hittable {
     private final double radius;
     private final Vector center;
     private BoundingBox boundingBox;
+    public String name;
 
     private Material material;
     /**
@@ -24,6 +25,14 @@ public class Sphere extends Hittable {
      * @param radius   De straal van de sfeer.
      * @param material Het materiaal van de sfeer.
      */
+    public Sphere(Vector center, double radius, Material material, String name) {
+        this.center = center;
+        this.radius = radius;
+        this.material = material;
+        boundingBox = new BoundingBox(center, radius);
+        this.name = name;
+    }
+
     public Sphere(Vector center, double radius, Material material) {
         this.center = center;
         this.radius = radius;
@@ -70,6 +79,8 @@ public class Sphere extends Hittable {
         rec.setMaterial(material);
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
+        if (name!=null)
+            System.out.println(name);
         return true;
     }
     @Override

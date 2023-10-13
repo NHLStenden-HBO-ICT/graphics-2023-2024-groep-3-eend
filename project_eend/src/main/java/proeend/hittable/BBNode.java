@@ -85,5 +85,4 @@ public class BBNode extends Hittable{
         return hitLeft || hitRight;
     }
 
-
 }
