@@ -12,6 +12,11 @@ public class Interval {
         max = Double.NEGATIVE_INFINITY;
     }
 
+    public void copy(Interval ray) {
+        this.min = ray.getMin();
+        this.max = ray.getMax();
+    }
+
     public void setMax(double max) {
         this.max = max;
     }

@@ -226,10 +226,10 @@ public class Main extends Application {
         }
 
         Utility.loadWorld(world, lights, 1);
-        icoSphere.toTriangles();
-        world.add(icoSphere);
+        uvSphere.toTriangles();
+        world.add(uvSphere);
 
-        cam1.background = new Vector(.2,.2,.2);
+        cam1.background = new Vector();
         cam1.imageWidth = 600;
         cam1.cameraCenter = camOrigin;
         //cam1.render(true, world); //TODO vervang door capture
@@ -246,9 +246,9 @@ public class Main extends Application {
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
-        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
-        //cam1.multiRender(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
-        //cam1.multiRenderLines(true, world, lights);
+        //cam1.render(true, world, lights);
+        //cam1.multiRender(true, world, lights);
+        cam1.multiRenderLines(true, world, lights);
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;
         var hours = minutes/60.0;

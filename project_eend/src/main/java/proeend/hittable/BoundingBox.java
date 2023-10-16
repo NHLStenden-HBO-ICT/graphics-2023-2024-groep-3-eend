@@ -96,7 +96,6 @@ public class BoundingBox {
                 t1 = temp;
             }
 
-            //TODO voor nu deze twee weggehaald, nog uitzoeken waarom dit niet werkt
             if(t0 > rayT.getMin()) rayT.setMin(t0);
             if(t1 < rayT.getMax()) rayT.setMax(t1);
 

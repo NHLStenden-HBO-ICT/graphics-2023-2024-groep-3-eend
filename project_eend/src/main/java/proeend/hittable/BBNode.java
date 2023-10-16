@@ -67,7 +67,12 @@ public class BBNode extends Hittable{
 
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
-        if (!boundingBox.hit(r, rayT)) {
+
+        //om een of andere reden werd dit aangepast, geen zin om uit te zoeken waarom
+        Interval copy = new Interval();
+        copy.copy(rayT);
+
+        if (!boundingBox.hit(r, copy)) {
             return false;
         }
 
