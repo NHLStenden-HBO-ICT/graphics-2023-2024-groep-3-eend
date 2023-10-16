@@ -31,7 +31,7 @@ public class Triangle extends Hittable{
         this.v1 = v1;
         this.v2 = v2;
         this.v0 = v0;
-        super.setMaterial(material);
+        this.material = material;
         boundingBox = getBoundingbox();
     }
 

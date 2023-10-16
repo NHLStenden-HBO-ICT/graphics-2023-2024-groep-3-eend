@@ -203,9 +203,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        Utility.loadWorld(world,lights,1);
-        world = new HittableList(new BBNode(world));
-        cam1.imageWidth = 400;
+
         Lambertian white = new Lambertian(new Vector(1, .5, .5));
         TriangleMesh duck = null;
         TriangleMesh icoSphere = null;
@@ -227,30 +225,30 @@ public class Main extends Application {
             System.out.println("load failed");
         }
 
-        Utility.loadWorld(world, lights, 6);
+        Utility.loadWorld(world, lights, 1);
         icoSphere.toTriangles();
-        //world.add(icoSphere);
+        world.add(icoSphere);
 
-        cam1.background = new Vector(1,1,1);
-        cam1.imageWidth = 200;
+        cam1.background = new Vector(.2,.2,.2);
+        cam1.imageWidth = 600;
         cam1.cameraCenter = camOrigin;
-        cam1.background = new Vector(.0,.0,.0);
         //cam1.render(true, world); //TODO vervang door capture
 
-        cam1.cameraCenter = new Vector(0,5,4);
+        cam1.cameraCenter = new Vector(2,0,4);
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
-        cam1.samplesPerPixel = 1;
-        cam1.maxDepth = 3;
-        launch(args);
+
+        world = new HittableList(new BBNode(world));
+        cam1.samplesPerPixel = 9;
+        cam1.maxDepth = 5;
 
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
-        //cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+        cam1.render(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
         //cam1.multiRender(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
-        cam1.multiRenderLines(true, world, new Sphere(new Vector(1,2,-.55),.5,new Lambertian(new Vector())));
+        //cam1.multiRenderLines(true, world, lights);
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;
         var hours = minutes/60.0;
@@ -260,5 +258,6 @@ public class Main extends Application {
         System.out.println(minutes);
         System.out.println("hours:\t\t\t" + hours);
 
+        //launch(args);
     }
 }

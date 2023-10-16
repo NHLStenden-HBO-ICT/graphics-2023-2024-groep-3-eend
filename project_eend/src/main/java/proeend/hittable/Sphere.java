@@ -57,6 +57,7 @@ public class Sphere extends Hittable {
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
 
+
         Vector OC = Vector.add(ray.origin(), Vector.inverse(center));
         double a = Vector.lengthSquared(ray.direction());
         double halfb = Vector.dot(OC, ray.direction());
@@ -79,8 +80,6 @@ public class Sphere extends Hittable {
         rec.setMaterial(material);
         Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.inverse(center)));
         rec.setFaceNormal(ray, outwardNormal);
-        if (name!=null)
-            System.out.println(name);
         return true;
     }
     @Override

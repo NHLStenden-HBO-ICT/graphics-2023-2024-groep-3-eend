@@ -72,6 +72,12 @@ public class BBNode extends Hittable{
         }
 
         boolean hitLeft = left.hit(r, rayT, rec);
+        /*
+        if (hitLeft)
+        {
+            System.out.println("hit");
+        }
+         */
         boolean hitRight = right.hit(r, new Interval(rayT.getMin(), hitLeft ? rec.t : rayT.getMax()), rec);
 
         /* if (hitLeft){

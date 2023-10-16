@@ -12,13 +12,9 @@ import java.util.List;
 public class TriangleMesh extends Hittable {
     private boolean isObj = true;
     private BoundingBox boundingBox;
-    private int[] faceArray;
-    private int[] vertexIndexArray;
     private Integer[] faceArray;
     private Integer[] vertexIndexArray;
     private Vector[] vertexArray;
-    private Material material;
-    public TriangleMesh(int[] faceArray, int[] vertexIndexArray, Vector[] vertexArray, Material material) {
     private Material material;
     public TriangleMesh(Integer[] faceArray, Integer[] vertexIndexArray, Vector[] vertexArray, Material material) {
         this.faceArray = faceArray;
@@ -35,7 +31,7 @@ public class TriangleMesh extends Hittable {
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         //TODO maak minder slecht
         boolean tempHit = false;
-        double closest = rayT.max;
+        double closest = rayT.getMax();
         int j = 0;
         Vector v0,v1,v2;
         for (int i = 0;i<faceArray.length;i++) {
@@ -48,7 +44,7 @@ public class TriangleMesh extends Hittable {
                 return true;
                 //tempHit = true;
             }*/
-            if (Triangle.MThit(ray, new Interval(rayT.min,closest), rec, v0,v1,v2,material)){
+            if (Triangle.MThit(ray, new Interval(rayT.getMin(),closest), rec, v0,v1,v2,material)){
                 closest = rec.t;
                 tempHit = true;
             }

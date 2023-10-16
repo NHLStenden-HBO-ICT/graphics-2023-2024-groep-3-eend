@@ -426,7 +426,7 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
 
         Vector rayOrigin = cameraCenter;
         Vector direction = Vector.add(pixelSample, Vector.inverse(rayOrigin));
-        return new Ray(rayOrigin, direction);
+        return new Ray(rayOrigin, Vector.unitVector(direction));
 
     }
     private Vector pixelSampleSquare(int sx, int sy) {

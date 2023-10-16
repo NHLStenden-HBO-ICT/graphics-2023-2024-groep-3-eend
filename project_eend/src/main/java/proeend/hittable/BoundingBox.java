@@ -82,6 +82,8 @@ public class BoundingBox {
     public boolean hit(Ray r, Interval rayT) {
 
         for (int as = 0; as < 3; as++) {
+
+
             double invD = 1.0 / r.direction().axis(as);
             double origin = r.origin().axis(as);
 
@@ -94,6 +96,7 @@ public class BoundingBox {
                 t1 = temp;
             }
 
+            //TODO voor nu deze twee weggehaald, nog uitzoeken waarom dit niet werkt
             if(t0 > rayT.getMin()) rayT.setMin(t0);
             if(t1 < rayT.getMax()) rayT.setMax(t1);
 

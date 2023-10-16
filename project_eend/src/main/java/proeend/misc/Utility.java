@@ -106,13 +106,13 @@ public class Utility {
 
                 break;
             case 1:
-                world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror, "a"));
-                world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian,"b"));
-                world.add(new Sphere(new Vector(0,-100.5,-.55), 100, greyLambertian, "c"));
+                //world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror, "a"));
+                //world.add(new Sphere(new Vector(-1,0,-.55),.5,yellowLambertian,"b"));
+                world.add(new Sphere(new Vector(0,-103.5,-.55), 100, greyLambertian, "c"));
                 //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
-                world.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight, "d"));
-                lights.add(new Sphere(new Vector(1,2,-.55),1.5,whiteLight, "e"));
-                world.add(new Sphere(new Vector(0,0,0.5),.2,glass, "f"));
+                world.add(new Sphere(new Vector(1,2,-.55),.5,whiteLight, "d"));
+                lights.add(new Sphere(new Vector(1,2,-.55),.5,whiteLight, "e"));
+                //world.add(new Sphere(new Vector(0,0,0.5),.2,glass, "f"));
                // lights.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
                 //lights.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
              /*   world.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
