@@ -6,17 +6,25 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.misc.HitRecord;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TriangleMesh extends Hittable {
     private boolean isObj = true;
     private BoundingBox boundingBox;
     private int[] faceArray;
     private int[] vertexIndexArray;
+    private Integer[] faceArray;
+    private Integer[] vertexIndexArray;
     private Vector[] vertexArray;
     private Material material;
     public TriangleMesh(int[] faceArray, int[] vertexIndexArray, Vector[] vertexArray, Material material) {
+    private Material material;
+    public TriangleMesh(Integer[] faceArray, Integer[] vertexIndexArray, Vector[] vertexArray, Material material) {
         this.faceArray = faceArray;
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
+        this.material = material;
         this.material = material;
         this.boundingBox = getBoundingbox();
     }
@@ -25,22 +33,59 @@ public class TriangleMesh extends Hittable {
 
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
+        //TODO maak minder slecht
         boolean tempHit = false;
+        double closest = rayT.max;
         int j = 0;
         Vector v0,v1,v2;
         for (int i = 0;i<faceArray.length;i++) {
             v0 = vertexArray[vertexIndexArray[j]];
             v1 = vertexArray[vertexIndexArray[j+1]];
             v2 = vertexArray[vertexIndexArray[j+2]];
-            Triangle triangle = new Triangle(v0,v1,v2, material);
+            /*oude code
+            Triangle triangle = new Triangle(v0,v1,v2,material);
             if (triangle.hit(ray, rayT, rec)) {
                 return true;
                 //tempHit = true;
+            }*/
+            if (Triangle.MThit(ray, new Interval(rayT.min,closest), rec, v0,v1,v2,material)){
+                closest = rec.t;
+                tempHit = true;
             }
 
             j += 3;
         }
         return tempHit;
+    }
+    public void toTriangles(){
+        //niet heel goed doordacht, maar voor nu werkt het
+        List<Integer> newFaceList = new ArrayList<>();
+        List<Integer> newVertexIndexList = new ArrayList<>();
+        int i = 0;
+        for (Integer face: faceArray){
+            if (face == 3){
+                newFaceList.add(3);
+                newVertexIndexList.add(vertexIndexArray[i]);
+                newVertexIndexList.add(vertexIndexArray[i+1]);
+                newVertexIndexList.add(vertexIndexArray[i+2]);
+                i += 3;
+            }
+            if (face == 4){
+                newFaceList.add(3);
+                newFaceList.add(3);
+                newVertexIndexList.add(vertexIndexArray[i]);
+                newVertexIndexList.add(vertexIndexArray[i+1]);
+                newVertexIndexList.add(vertexIndexArray[i+2]);
+
+                newVertexIndexList.add(vertexIndexArray[i]);
+                newVertexIndexList.add(vertexIndexArray[i+2]);
+                newVertexIndexList.add(vertexIndexArray[i+3]);
+                i +=4;
+            }
+        }
+        this.faceArray = newFaceList.toArray(new Integer[0]);
+        this.vertexIndexArray = newVertexIndexList.toArray(new Integer[0]);
+        System.out.println("converted to triangles");
     }
 
 
