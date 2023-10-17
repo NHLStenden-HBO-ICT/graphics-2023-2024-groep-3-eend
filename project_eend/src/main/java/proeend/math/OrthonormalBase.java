@@ -1,6 +1,4 @@
-package proeend.misc;
-
-import proeend.math.Vector;
+package proeend.math;
 
 public class OrthonormalBase {
     public OrthonormalBase(){};

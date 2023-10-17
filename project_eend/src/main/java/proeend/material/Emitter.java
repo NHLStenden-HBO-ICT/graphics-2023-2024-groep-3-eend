@@ -1,12 +1,11 @@
 package proeend.material;
 
-import proeend.Main;
-import proeend.ScatterRecord;
+import proeend.records.ScatterRecord;
 import proeend.material.texture.SolidColor;
 import proeend.material.texture.Texture;
 import proeend.math.Ray;
 import proeend.math.Vector;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 
 public class Emitter extends Material {
     public Emitter(Texture emission) {

@@ -1,16 +1,12 @@
 package proeend.material;
 
-import proeend.Main;
-import proeend.ScatterRecord;
+import proeend.records.ScatterRecord;
 import proeend.material.pdf.CosPDF;
-import proeend.material.pdf.SpherePDF;
 import proeend.material.texture.SolidColor;
 import proeend.material.texture.Texture;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
-import proeend.misc.OrthonormalBase;
-import proeend.misc.Utility;
 
 public class Lambertian extends Material{
     private Texture albedo; // ability of light reflection

@@ -113,13 +113,15 @@ public class Vector {
      *
      * @param angle De rotatiehoek in radialen.
      */
-    public void rotateY(double angle) {
+    public Vector rotateY(double angle) {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
         double newX = cosA * coordinates[x] + sinA * coordinates[z];
         double newZ = -sinA * coordinates[x] + cosA * coordinates[z];
         coordinates[x] = newX;
         coordinates[z] = newZ;
+
+        return this;
     }
     public static Vector inverse(Vector vec) {
         return new Vector(-vec.getX(),-vec.getY(),-vec.getZ());

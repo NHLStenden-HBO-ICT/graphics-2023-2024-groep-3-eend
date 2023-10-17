@@ -1,9 +1,9 @@
 package proeend.material;
 
-import proeend.ScatterRecord;
-import proeend.misc.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
+import proeend.records.HitRecord;
+import proeend.records.ScatterRecord;
 
 public abstract class Material {
 
@@ -11,7 +11,6 @@ public abstract class Material {
      * Geeft aan hoeveel licht wordt gebogen wanneer het door dat materiaal gaat
      */
     private double refractionIndex;
-
 
     public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scatterRecord) {
         return false;

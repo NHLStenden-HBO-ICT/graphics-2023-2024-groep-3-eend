@@ -1,7 +1,7 @@
 package proeend.hittable;
 
 import proeend.math.*;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,10 +21,8 @@ public class BBNode extends Hittable{
 
     public BBNode(HittableList objects){
         this(objects.getObjects(), 0, objects.getObjects().size());
-        //boundingBox = objects.getBoundingBox();
 
     }
-    // constructor overloading
 
     public BBNode(List<Hittable> objects, int start, int end) {
 
@@ -32,7 +30,8 @@ public class BBNode extends Hittable{
         // Genereer een willekeurig getal tussen 0 (inclusief) en 2 (exclusief)
         int axis = (int)(3 * Math.random());
 
-        Comparator<Hittable> comparator = (axis == 0) ? new BoxXCompare(): (axis == 1) ? new BoxYCompare() : new BoxZCompare();
+        // Hier gebruiken we een Comparator om de objecten te vergelijken
+        Comparator<Hittable> comparator = (a, b) -> compareAxis(a, b, axis);
 
         int objectSpan = end - start;
 
@@ -69,7 +68,6 @@ public class BBNode extends Hittable{
     @Override
     public boolean hit(Ray r, Interval rayT, HitRecord rec) {
 
-        //om een of andere reden werd dit aangepast, geen zin om uit te zoeken waarom
         Interval copy = new Interval();
         copy.copy(rayT);
 
@@ -78,23 +76,17 @@ public class BBNode extends Hittable{
         }
 
         boolean hitLeft = left.hit(r, rayT, rec);
-        /*
-        if (hitLeft)
-        {
-            System.out.println("hit");
-        }
-         */
+
         boolean hitRight = right.hit(r, new Interval(rayT.getMin(), hitLeft ? rec.t : rayT.getMax()), rec);
 
-        /* if (hitLeft){
-            System.out.println("left");
-        }
-
-        if (hitRight){
-            System.out.println("right");
-        }*/
 
         return hitLeft || hitRight;
+    }
+
+    public int compareAxis(Hittable a, Hittable b, int axis) {
+        double aMin = a.getBoundingbox().axis(axis).getMin();
+        double bMax = b.getBoundingbox().axis(axis).getMax();
+        return Double.compare(aMin, bMax);
     }
 
 }

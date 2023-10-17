@@ -1,4 +1,4 @@
-package proeend;
+package proeend.records;
 
 import proeend.math.Ray;
 import proeend.math.Vector;

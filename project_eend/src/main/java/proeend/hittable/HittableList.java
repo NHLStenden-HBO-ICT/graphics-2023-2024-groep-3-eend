@@ -1,14 +1,11 @@
 package proeend.hittable;
 
 import proeend.math.Vector;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
-import proeend.hittable.BBNode;
-import proeend.hittable.BoundingBox;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

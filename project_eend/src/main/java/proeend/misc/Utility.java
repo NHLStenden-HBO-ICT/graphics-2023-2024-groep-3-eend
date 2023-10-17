@@ -1,9 +1,11 @@
 package proeend.misc;
 
-import proeend.hittable.*;
+import proeend.hittable.HittableList;
+import proeend.hittable.Sphere;
+import proeend.hittable.Triangle;
+import proeend.hittable.TriangleMesh;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
-import proeend.material.texture.Texture;
 import proeend.math.Vector;
 
 import java.io.IOException;

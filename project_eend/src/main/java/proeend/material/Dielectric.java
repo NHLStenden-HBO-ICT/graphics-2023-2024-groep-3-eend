@@ -1,10 +1,9 @@
 package proeend.material;
 
-import proeend.Main;
-import proeend.ScatterRecord;
+import proeend.records.ScatterRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 
 /**
  * A class representing a dielectric material.

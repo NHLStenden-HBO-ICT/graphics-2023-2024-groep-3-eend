@@ -36,12 +36,12 @@ public class Main extends Application {
 
 
 
-    static Camera cam1 = new Camera();
-    static Camera cam2 = new Camera();
+    static Camera camera = new Camera();
     private boolean isCameraRotating = true;
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
     static Vector camOrigin = new Vector(0,0,2);
+    private double rotationUnit = Math.PI/360;
 
 
 
@@ -59,9 +59,9 @@ public class Main extends Application {
 
             System.out.println("starting capture...");
 
-            cam1.render(true, world, lights);
+            camera.render(true, world, lights);
         };
-        Scene scene = new Scene(root, cam1.imageWidth, cam1.getHeight());
+        Scene scene = new Scene(root, camera.getImageWidth(), camera.getHeight());
         root.setAlignment(coordX, Pos.TOP_LEFT);
         root.setAlignment(coordY, Pos.TOP_CENTER);
         root.setAlignment(coordZ, Pos.TOP_RIGHT);
@@ -92,68 +92,57 @@ public class Main extends Application {
                 switch (event.getCode()) {
                     case EQUALS:
                         isCameraRotating = true;
-                        cam1.verticalFOV-=Math.PI/360*shiftMult;
+                        camera.updateVerticalFOV(rotationUnit * shiftMult);
                         break;
                     case MINUS:
                         isCameraRotating = true;
-                        cam1.verticalFOV+=Math.PI/360*shiftMult;
+                        camera.updateVerticalFOV(-rotationUnit * shiftMult);
                         break;
                     case Q:
                         isCameraRotating = true;
-                        cam1.lookat.rotateY(-Math.PI/400*shiftMult);
+                        camera.setLookat(camera.getLookat().rotateY(-rotationUnit * shiftMult));
                         break;
                     case E:
                         isCameraRotating = true;
-                        cam1.lookat.rotateY(Math.PI/400*shiftMult);
+                        camera.setLookat(camera.getLookat().rotateY(rotationUnit * shiftMult));
                         break;
                     case UP:
                         isCameraRotating = true;
                         coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())-0.04*shiftMult));
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,-0.04*shiftMult));
-                        cam1.lookat = Vector.add(cam1.lookat, new Vector(0,0,-0.04*shiftMult));
+                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0,0,-0.04*shiftMult)));
+                        camera.setLookat(camera.getLookat().rotateY(-rotationUnit * shiftMult));
                         break;
                     case LEFT:
                         isCameraRotating = true;
                         //camOrigin = new Vector(camOrigin.x()-0.02,camOrigin.y(),camOrigin.z());
                         coordX.setText(Double.toString( Double.parseDouble(coordX.getText())-0.02*shiftMult));
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(-0.02*shiftMult,0,0));
+                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(-0.02*shiftMult,0,0)));
                         break;
                     case RIGHT:
                         isCameraRotating = true;
                         coordX.setText(Double.toString( Double.parseDouble(coordX.getText())+0.02*shiftMult));
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0.02*shiftMult,0,0));
+                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0.02*shiftMult,0,0)));
                         break;
                     case DOWN:
                         isCameraRotating = true;
                         coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())+0.04*shiftMult));
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,0,0.04*shiftMult));
-                        cam1.lookat = Vector.add(cam1.lookat, new Vector(0,0,+0.04*shiftMult));
+                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0,0,0.04*shiftMult)));
+                        camera.setLookat(Vector.add(camera.getLookat(), new Vector(0,0,+0.04*shiftMult)));
                         break;
                     case SPACE:
                         isCameraRotating = true;
                         coordY.setText(Double.toString( Double.parseDouble(coordY.getText())+0.1*shiftMult));
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,.1*shiftMult,0));
+                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0,.1*shiftMult,0)));
                         break;
                     case Z:
                         isCameraRotating = true;
                         coordY.setText(Double.toString( Double.parseDouble(coordY.getText())-0.1*shiftMult));
-                        cam1.cameraCenter = Vector.add(cam1.cameraCenter, new Vector(0,-.1*shiftMult,0));
+                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), (new Vector(0,-.1*shiftMult,0))));
                         break;
-                    case M:
-                        /*
-                       try {
-                            Camera.saveImage(cam2.multiThreadRender(world, new Sphere(new Vector(1,2,-.55),1.5,new Lambertian(new Vector())))
-                            );
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                         */
-                        System.out.println("lege keyevent");
-                       break;
                     case C:
-                        cam1.samplesPerPixel = 100;
-                        cam1.maxDepth = 30;
-                        cam1.imageWidth = 800;
+                        camera.setSamplesPerPixel(100);
+                        camera.setMaxDepth(30);
+                        camera.setImageWidth(800);
                         Thread thread = new Thread(renderTask);
                        // thread.setDaemon(true);
                         thread.start();
@@ -189,8 +178,8 @@ public class Main extends Application {
     }
 
     private void update() {
-        if (!cam1.block && isCameraRotating)
-            frame.setImage(cam1.render (world,lights));
+        if (!camera.block && isCameraRotating)
+            frame.setImage(camera.render (world,lights));
 
     }
 
@@ -222,19 +211,17 @@ public class Main extends Application {
         uvSphere.toTriangles();
         //world.add(uvSphere);
 
-        cam1.background = new Vector();
-        cam1.imageWidth = 400;
-        cam1.cameraCenter = camOrigin;
-
-        cam1.cameraCenter = new Vector(2,0,4);
+        camera.setBackground(new Vector(.6,.6,.6));
+        camera.setImageWidth(400);
+        camera.setCameraCenter(camOrigin);
+        camera.setCameraCenter(new Vector(2,0,4));
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
 
         world = new HittableList(new BBNode(world));
-        cam1.samplesPerPixel = 1;
-        cam1.maxDepth = 5;
-        cam1.background = new Vector(.2,.2,.2);
+        camera.setSamplesPerPixel(1);
+        camera.setMaxDepth(5);
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());

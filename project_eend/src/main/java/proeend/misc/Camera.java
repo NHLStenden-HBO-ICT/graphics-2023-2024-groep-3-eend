@@ -1,11 +1,8 @@
 package proeend.misc;
 
-import java.awt.*;
-
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import proeend.ScatterRecord;
 import proeend.hittable.Hittable;
 import proeend.hittable.HittableList;
 import proeend.material.Normal;
@@ -16,8 +13,11 @@ import proeend.math.ColorParser;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
+import proeend.records.HitRecord;
+import proeend.records.ScatterRecord;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,37 +34,114 @@ import java.util.concurrent.TimeUnit;
 public class Camera {
 
     // Toolkit is een klasse voor het beheren van systeembronnen
-     Toolkit toolkit = Toolkit.getDefaultToolkit();
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
 
     // De dimensie van het scherm ophalen
-     Dimension screenSize = toolkit.getScreenSize();
+    Dimension screenSize = toolkit.getScreenSize();
 
     // De schermbreedte ophalen
-      int screenWidth = screenSize.width;
+    int screenWidth = screenSize.width;
     public boolean block;
     static int frames = 0;
     private Vector u,v,w;
-    public Vector cameraCenter = new Vector(0,0,0);
-    public Vector lookat = new Vector(0,0,-1);
-    public Vector up = new Vector(0,1,0);
-    public double verticalFOV = Math.PI/2; //in radialen
-    public int samplesPerPixel = 100;
+    private Vector cameraCenter = new Vector(0,0,0);
+    private Vector lookat = new Vector(0,0,-1);
+    private Vector up = new Vector(0,1,0);
+    private double verticalFOV = Math.PI/2; //in radialen
+    private int samplesPerPixel = 100;
     private int rootSPP = (int) Math.sqrt(samplesPerPixel);
-    public int maxDepth = 50;
-    public double aspectRatio = 16.0/9.0;
-    public int imageWidth = 800;
-    public Vector background = new Vector();
+    private int maxDepth = 50;
+    private double aspectRatio = 16.0/9.0;
+    private int imageWidth = 800;
     private int imageHeight = (int)(imageWidth /aspectRatio);
-    public double focalLength = 1.0;
+    private double focalLength = 1.0;
     private double viewportHeight;
-    public double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
-    public Vector viewportU = new Vector(viewportWidth,0,0);
-    public Vector viewportV = new Vector(0,-viewportHeight,0);
-    public Vector pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
-    public Vector pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
-    public Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(new Vector(0,0,focalLength))),
+    private double viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
+    private Vector viewportU = new Vector(viewportWidth,0,0);
+    private Vector viewportV = new Vector(0,-viewportHeight,0);
+    private Vector pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
+    private Vector pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
+    private Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(new Vector(0,0,focalLength))),
             Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
-    public Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
+    private Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
+    private Vector background = new Vector();
+
+
+    public Vector getCameraCenter() {
+        return cameraCenter;
+    }
+
+    public void setCameraCenter(Vector cameraCenter) {
+        this.cameraCenter = cameraCenter;
+    }
+
+    public Vector getLookat() {
+        return lookat;
+    }
+
+    public void setLookat(Vector lookat) {
+        this.lookat = lookat;
+    }
+
+    public Vector getUp() {
+        return up;
+    }
+
+    public void setUp(Vector up) {
+        this.up = up;
+    }
+
+    public double getVerticalFOV() {
+        return verticalFOV;
+    }
+
+    public void updateVerticalFOV(double difference) {
+        this.verticalFOV += difference;
+    }
+
+    public int getSamplesPerPixel() {
+        return samplesPerPixel;
+    }
+
+    public void setSamplesPerPixel(int samplesPerPixel) {
+        this.samplesPerPixel = samplesPerPixel;
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    public double getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public void setAspectRatio(double aspectRatio) {
+        this.aspectRatio = aspectRatio;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public Vector getBackground() {
+        return background;
+    }
+
+    public void setBackground(Vector background) {
+        this.background = background;
+    }
+
+
+
+
 
     /**
      * Geeft de hoogte van het beeld terug.
@@ -378,7 +455,10 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
 
 
     int[] startAndEnd = calculateStartAndEnd(threads, threadCounter, imageHeight);
-    int startPixelY = startAndEnd[0];
+    int startPixelY = startAndEnd[0];    // Getters
+
+
+
     int endPixelY = startAndEnd[1];
 
     for (int y = startPixelY; y < endPixelY; ++y) {

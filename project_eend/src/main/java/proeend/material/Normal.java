@@ -1,9 +1,8 @@
 package proeend.material;
 
-import proeend.ScatterRecord;
+import proeend.records.ScatterRecord;
 import proeend.math.Ray;
-import proeend.math.Vector;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 
 public class Normal extends Material{
     @Override

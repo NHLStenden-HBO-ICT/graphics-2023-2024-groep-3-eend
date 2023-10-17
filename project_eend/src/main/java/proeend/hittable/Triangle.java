@@ -4,7 +4,7 @@ import proeend.material.Material;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 
 
 /**

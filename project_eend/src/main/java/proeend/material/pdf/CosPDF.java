@@ -1,7 +1,7 @@
 package proeend.material.pdf;
 
 import proeend.math.Vector;
-import proeend.misc.OrthonormalBase;
+import proeend.math.OrthonormalBase;
 import proeend.misc.Utility;
 
 public class CosPDF extends PDF {

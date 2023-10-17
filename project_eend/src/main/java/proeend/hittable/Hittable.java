@@ -1,8 +1,7 @@
 package proeend.hittable;
 
 import proeend.math.Vector;
-import proeend.material.Material;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
 

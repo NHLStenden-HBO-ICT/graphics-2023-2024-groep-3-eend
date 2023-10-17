@@ -1,11 +1,11 @@
 package proeend.hittable;
 
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.material.Material;
-import proeend.misc.OrthonormalBase;
+import proeend.math.OrthonormalBase;
 
 /**
  * Een sfeerobject dat kan worden getroffen door een lichtstraal in een 3D-scène.

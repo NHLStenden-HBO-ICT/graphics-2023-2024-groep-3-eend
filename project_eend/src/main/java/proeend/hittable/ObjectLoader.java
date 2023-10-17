@@ -1,15 +1,14 @@
 package proeend.hittable;
 
+import proeend.material.Material;
+import proeend.math.Vector;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
-
-import proeend.material.Material;
-import proeend.material.texture.Texture;
-import proeend.math.Vector;
 
 /**
  * Deze klasse is verantwoordelijk voor het inladen van geometrische objecten vanuit OBJ-bestanden
