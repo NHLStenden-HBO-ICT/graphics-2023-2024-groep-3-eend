@@ -28,6 +28,7 @@ public class BBNode extends Hittable{
 
     public BBNode(List<Hittable> objects, int start, int end) {
 
+
         // Genereer een willekeurig getal tussen 0 (inclusief) en 2 (exclusief)
         int axis = (int)(3 * Math.random());
 

@@ -86,6 +86,9 @@ public class TriangleMesh extends Hittable {
 
 
     public BoundingBox getBoundingbox() {
+
+
+
         if (vertexArray.length == 0) {
             return null; // Return null if there are no vertices
         }

@@ -93,6 +93,10 @@ public class Sphere extends Hittable {
 
         return 1.0/solidAngle;
     }
+
+    /**
+     * genereer willekeurig vanuit origin een vector richting dit object
+     */
     @Override
     public Vector random(Vector origin) {
         Vector direction = Vector.add(center, Vector.inverse(origin));
