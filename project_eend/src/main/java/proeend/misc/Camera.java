@@ -1,19 +1,18 @@
 package proeend.misc;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
+
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.ScatterRecord;
-import proeend.hittable.BBNode;
 import proeend.hittable.Hittable;
 import proeend.hittable.HittableList;
 import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
 import proeend.material.pdf.HittablePDF;
 import proeend.material.pdf.MixturePDF;
+import proeend.math.ColorParser;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -27,8 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -159,7 +156,7 @@ public class Camera {
                             colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
                         }
                     }
-                    int[] colors = colorVec.toColor(samplesPerPixel, save);
+                    int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
                     synchronized (pixelWriter) {
                         pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
                     }
@@ -244,7 +241,7 @@ public class Camera {
                                 colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
                             }
                         }
-                        int[] colors = colorVec.toColor(samplesPerPixel, save);
+                        int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
                         synchronized (pixelWriter) {
                             pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
                         }
@@ -291,9 +288,6 @@ public class Camera {
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-
-        //Color color;
-        //double[] colorVec = new Vec(Math.random(),Math.random(),Math.random()).toColor();
         for (int y = 0; y < imageHeight; ++y){
             if (save)
                 System.out.println(Integer.toString(imageHeight - y)+ " lines to go");
@@ -310,7 +304,7 @@ public class Camera {
                  }
 
 
-                 int[] colors = colorVec.toColor(samplesPerPixel, save);
+                 int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
                  pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
 
              }
@@ -400,7 +394,7 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
                     colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
                 }
             }
-            int[] colors = colorVec.toColor(samplesPerPixel, true);
+            int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
             try{
                 synchronized (pixelWriter) {
                     pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));

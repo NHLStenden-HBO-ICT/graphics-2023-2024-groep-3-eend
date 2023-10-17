@@ -33,50 +33,21 @@ public class Vector {
     public double y() {return d[1];}
     public double z() {return d[2];}
 
+
     public double axis(int n) {
         if (n == 1) return d[1];
         if (n == 2) return d[2];
         return d[0];
     }
-    public double[] getAll(){
+
+
+    public double[] getCoordinates(){
         return d;
     }
 
-    /**
-     * zet een Vector om naar een een array van kleur integers
-     * @param pixelPerSample
-     * @param gamma
-     * of wel of niet de kleur gamma-gecorrigeerd moet worden
-     * @return
-     * RGB integer array, waarden tussen 0 en 255
-     */
-    public int[] toColor(int pixelPerSample, boolean gamma) {
-        //scale(1.0/pixelPerSample, this);
-            double s = (1.0/pixelPerSample);
-        d[0] = d[0]*s;
-        d[1] = d[1]*s;
-        d[2] = d[2]*s;
-
-        if (gamma) {
-            d[0] = linearToGamma(d[0]);
-            d[1] = linearToGamma(d[1]);
-            d[2] = linearToGamma(d[2]);
-        }
-        Interval intensity = new Interval(0, .9999999);
-        int[] color = new int[3];
-        for (int i = 0; i < d.length; i++) {
-            color[i] = (int) ((intensity.clamp(d[i]) *255.99999));
-        }
-        return color;
-    }
     public void copy(Vector copied) {
         this.d = copied.d;
     }
-    //verandert kleur naar gamma-aangepaste kleur e 1/2
-    public double linearToGamma(double original) {
-        return Math.sqrt(original);
-    }
-    //draait bestaande vector om
     public void invert(){
         Vector vec = scale(-1, this);
         this.d[0]= vec.x();

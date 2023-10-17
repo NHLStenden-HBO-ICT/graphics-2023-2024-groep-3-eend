@@ -1,12 +1,7 @@
 package proeend;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import proeend.hittable.BBNode;
-import proeend.hittable.Sphere;
-import proeend.material.Emitter;
 import proeend.material.Lambertian;
 import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
@@ -15,7 +10,6 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -27,11 +21,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.HittableList;
 import proeend.hittable.ObjectLoader;
-import proeend.hittable.Sphere;
 import proeend.hittable.TriangleMesh;
-import proeend.material.Lambertian;
 import proeend.math.Vector;
-import proeend.misc.Camera;
 import proeend.misc.Utility;
 
 

@@ -32,7 +32,7 @@ public class Dielectric extends Material {
      */
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scRecord) {
-        scRecord.attenuation.setValues(1,1,1);
+        scRecord.attenuation = new Vector(1,1,1);
         scRecord.pdf = null;
         scRecord.skipPDF = true;
         double refractionRatio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;
