@@ -12,13 +12,13 @@ public class BoundingBox {
 
     // Constructor voor het behandelen van twee punten als extrema voor de bounding box
     public BoundingBox(Vector a, Vector b) {
-        double minX = Math.min(a.x(), b.x());
-        double minY = Math.min(a.y(), b.y());
-        double minZ = Math.min(a.z(), b.z());
+        double minX = Math.min(a.getX(), b.getX());
+        double minY = Math.min(a.getY(), b.getY());
+        double minZ = Math.min(a.getZ(), b.getZ());
 
-        double maxX = Math.max(a.x(), b.x());
-        double maxY = Math.max(a.y(), b.y());
-        double maxZ = Math.max(a.z(), b.z());
+        double maxX = Math.max(a.getX(), b.getX());
+        double maxY = Math.max(a.getY(), b.getY());
+        double maxZ = Math.max(a.getZ(), b.getZ());
 
         x = new Interval(minX, maxX);
         y = new Interval(minY, maxY);
@@ -64,19 +64,19 @@ public class BoundingBox {
     public BoundingBox(Vector center, double radius) {
 
         Vector min = new Vector(
-                center.x() - radius,
-                center.y() - radius,
-                center.z() - radius
+                center.getX() - radius,
+                center.getY() - radius,
+                center.getZ() - radius
         );
 
         Vector max = new Vector(
-                center.x() + radius,
-                center.y() + radius,
-                center.z() + radius
+                center.getX() + radius,
+                center.getY() + radius,
+                center.getZ() + radius
         );
-        x = new Interval(min.x(), max.x());
-        y = new Interval(min.y(), max.y());
-        z = new Interval(min.z(), max.z());
+        x = new Interval(min.getX(), max.getX());
+        y = new Interval(min.getY(), max.getY());
+        z = new Interval(min.getZ(), max.getZ());
     }
 
     public boolean hit(Ray r, Interval rayT) {

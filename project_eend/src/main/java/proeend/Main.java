@@ -48,9 +48,9 @@ public class Main extends Application {
     ImageView frame = new ImageView();
     StackPane root = new StackPane();
 
-    Label coordX = new Label(Double.toString(camOrigin.x()));
-    Label coordY = new Label(Double.toString(camOrigin.y()));
-    Label coordZ = new Label(Double.toString(camOrigin.z()));
+    Label coordX = new Label(Double.toString(camOrigin.getX()));
+    Label coordY = new Label(Double.toString(camOrigin.getY()));
+    Label coordZ = new Label(Double.toString(camOrigin.getZ()));
     @Override
     public void start(Stage stage) throws IOException {
 

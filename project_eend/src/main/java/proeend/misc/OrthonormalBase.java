@@ -16,12 +16,12 @@ public class OrthonormalBase {
                 Vector.scale(b, v())), Vector.scale(c, w()));
     }
     public Vector local(Vector a) {
-        return Vector.add(Vector.add(Vector.scale(a.x(), u()),
-                Vector.scale(a.y(), v())), Vector.scale(a.z(), w()));
+        return Vector.add(Vector.add(Vector.scale(a.getX(), u()),
+                Vector.scale(a.getY(), v())), Vector.scale(a.getZ(), w()));
     }
     public void buildFromW(Vector w) {
         Vector unitW = Vector.unitVector(w);
-        Vector a = (Math.abs(unitW.x()) > .9) ? new Vector(0,1,0) : new Vector(1,0,0);
+        Vector a = (Math.abs(unitW.getX()) > .9) ? new Vector(0,1,0) : new Vector(1,0,0);
         Vector v = Vector.unitVector(Vector.cross(unitW,a));
         Vector u = Vector.cross(unitW,v);
         axis[0] = u;

@@ -44,9 +44,9 @@ public class CheckerTexture extends Texture{
      */
     @Override
     public Vector value(double u, double v, Vector p) {
-        int scaledX = (int) (scale * p.x());
-        int scaledY = (int) (scale * p.y());
-        int scaledZ = (int) (scale * p.z());
+        int scaledX = (int) (scale * p.getX());
+        int scaledY = (int) (scale * p.getY());
+        int scaledZ = (int) (scale * p.getZ());
 
         boolean isEven = (scaledX + scaledY + scaledZ) % 2 == 0;
 

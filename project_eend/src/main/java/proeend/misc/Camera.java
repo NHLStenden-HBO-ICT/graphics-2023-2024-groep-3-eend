@@ -498,8 +498,8 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
             Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
             if (!rec.material.scatter(r, rec, scatterRecord)) {
                 if (rec.material instanceof Normal) {
-                    return Vector.scale(.5, new Vector(rec.normal.x() + 1,
-                            rec.normal.y() + 1, rec.normal.z() + 1));
+                    return Vector.scale(.5, new Vector(rec.normal.getX() + 1,
+                            rec.normal.getY() + 1, rec.normal.getZ() + 1));
                 }
                 return emissionColor;
             }
