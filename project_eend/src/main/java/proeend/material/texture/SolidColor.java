@@ -11,7 +11,6 @@ public class SolidColor extends Texture {
 
     /**
      * Constructor voor SolidColor met opgegeven RGB-kleurwaarden.
-     *
      * @param red   De roodwaarde van de solide kleur.
      * @param green De groenwaarde van de solide kleur.
      * @param blue  De blauwwaarde van de solide kleur.
@@ -22,7 +21,6 @@ public class SolidColor extends Texture {
 
     /**
      * Constructor voor SolidColor met opgegeven kleurvector.
-     *
      * @param color De kleurvector die de solide kleur vertegenwoordigt.
      */
     public SolidColor(Vector color) {
@@ -31,7 +29,6 @@ public class SolidColor extends Texture {
 
     /**
      * Berekent de kleurwaarde van de solide kleurtextuur.
-     *
      * @param u De u-coördinaat van het punt (niet gebruikt voor solide kleurtextuur).
      * @param v De v-coördinaat van het punt (niet gebruikt voor solide kleurtextuur).
      * @param p De driedimensionale positie van het punt (niet gebruikt voor solide kleurtextuur).
@@ -41,5 +38,4 @@ public class SolidColor extends Texture {
     public Vector value(double u, double v, Vector p) {
         return color;
     }
-
 }

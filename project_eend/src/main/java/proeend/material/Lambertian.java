@@ -8,12 +8,25 @@ import proeend.records.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
 
+/**
+ * Maakt het Lambertian materiaal aan.
+ */
 public class Lambertian extends Material{
-    private Texture albedo; // ability of light reflection
+    private Texture albedo; // hoeveelheid lichtreflectie
+
+    /**
+     * Maakt een Lambertian materiaal aan.
+     * @param albedo Hoeveelheid weerkaatsing.
+     */
     public Lambertian(Vector albedo) {
         this.albedo = new SolidColor(albedo); {
         }
     }
+
+    /**
+     * Stelt de textuur van het materiaal in.
+     * @param texture De textuur.
+     */
     public Lambertian(Texture texture) {
         this.albedo = texture;
     }

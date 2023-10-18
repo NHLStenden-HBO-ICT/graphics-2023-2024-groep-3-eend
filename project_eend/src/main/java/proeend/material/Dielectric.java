@@ -6,27 +6,19 @@ import proeend.math.Vector;
 import proeend.records.HitRecord;
 
 /**
- * A class representing a dielectric material.
+ * Maakt een dielectric materiaal aan.
  */
 public class Dielectric extends Material {
     private final double refractionIndex; // Index of Refraction
 
     /**
-     * Constructs a dielectric material with the given index of refraction.
-     *
-     * @param indexOfRefraction The index of refraction for the material.
+     * Construeert een dielectric materiaal met de gegeven hoeveelheid lichtbreking
+     * @param indexOfRefraction De hoeveelheid lichtbreking.
      */
     public Dielectric(double indexOfRefraction) {
         refractionIndex = indexOfRefraction;
     }
 
-    /**
-     * Scatter a ray of light when it interacts with this dielectric material.
-     * @param rayIn The incident ray.
-     * @param rec The hit record containing information about the intersection.
-     * @param scRecord Houd de hoeveelheid steekproeven bij.
-     * @return `true` if scattering occurs, `false` otherwise.
-     */
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scRecord) {
         scRecord.attenuation = new Vector(1,1,1);
@@ -53,6 +45,12 @@ public class Dielectric extends Material {
         return true;
     }
 
+    /**
+     * Reflecteert een vector.
+     * @param cos De cosinus.
+     * @param refInd De reflectance index.
+     * @return De gereflecteerde vector.
+     */
     private static double reflectance(double cos, double refInd) {
         double r0 = (1-refInd) / (1+refInd);
         r0 = r0*r0;
@@ -61,7 +59,6 @@ public class Dielectric extends Material {
 
     /**
      * Bereken de gebroken lichtstraal (refractie) wanneer een straal invalt op een oppervlak.
-     *
      * @param uv              De richting van de invallende straal.
      * @param n               De normaalvector van het oppervlak.
      * @param etai_over_etat  De verhouding van de brekingsindices.
@@ -85,8 +82,4 @@ public class Dielectric extends Material {
             return new Vector(0, 0, 0); // Geen breking, de straal wordt volledig gereflecteerd.
         }
     }
-
-
-
-
 }

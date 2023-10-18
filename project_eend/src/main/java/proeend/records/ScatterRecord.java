@@ -7,7 +7,7 @@ import proeend.material.pdf.PDF;
 public class ScatterRecord {
 
     /**
-     * Houd de informatie verstrooide rays bij.
+     * Houd de informatie over de verstrooide rays bij.
      */
     public ScatterRecord (){
         attenuation = new Vector();
