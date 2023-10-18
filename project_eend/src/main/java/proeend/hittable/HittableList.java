@@ -4,7 +4,6 @@ import proeend.math.Vector;
 import proeend.records.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +14,10 @@ public class HittableList extends Hittable {
 
     private List<Hittable> objects = new ArrayList<>();
     private BoundingBox boundingBox;
-
     @Override
     public BoundingBox getBoundingbox() {
         return boundingBox;
     }
-
     public HittableList(){
         this.boundingBox = null;
     }
@@ -47,7 +44,6 @@ public class HittableList extends Hittable {
             boundingBox = new BoundingBox(boundingBox, object.getBoundingbox()).pad();
         }
     }
-
 
     /**
      * Maakt de lijst van hittable objecten leeg.
@@ -82,7 +78,6 @@ public class HittableList extends Hittable {
         return hasHitSomething;
     }
 
-
     @Override
     public double pdfValue(Vector origin, Vector direction) {
         for (Hittable object : objects) {
@@ -98,7 +93,4 @@ public class HittableList extends Hittable {
         }
         return new Vector(1,0,0);
     }
-
-
-
 }

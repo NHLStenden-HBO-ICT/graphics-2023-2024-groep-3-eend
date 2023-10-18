@@ -1,7 +1,6 @@
 package proeend.hittable;
 
 /*
-
 public class Quad extends Hittable{
 
     @Override

@@ -11,9 +11,7 @@ import proeend.math.Ray;
  */
 public abstract class Hittable{
 
-
     public abstract BoundingBox getBoundingbox();
-
 
     /**
      * Constructor voor een hittable object zonder een gespecificeerd materiaal.
@@ -30,8 +28,6 @@ public abstract class Hittable{
      */
     public abstract boolean hit(Ray ray, Interval rayT, HitRecord rec);
 
-
-
     public double pdfValue(Vector origin, Vector direction) {
         return 0;
     }
@@ -39,10 +35,5 @@ public abstract class Hittable{
     public Vector random(Vector origin) {
         return new Vector(1,0,0);
     }
-
-
-
-
-
 
 }

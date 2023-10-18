@@ -54,7 +54,7 @@ public class Lambertian extends Material{
     }
     @Override
     public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
-        var cosTheta = Vector.dot(rec.normal, Vector.unitVector(scattered.direction()));
+        var cosTheta = Vector.dot(rec.normal, Vector.unitVector(scattered.getDirection()));
         return cosTheta < 0 ? 0 : cosTheta/Math.PI;
     }
 }

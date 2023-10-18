@@ -5,7 +5,6 @@ import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.records.HitRecord;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +23,6 @@ public class TriangleMesh extends Hittable {
         this.material = material;
         this.boundingBox = getBoundingbox();
     }
-
-
 
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
@@ -53,6 +50,7 @@ public class TriangleMesh extends Hittable {
         }
         return tempHit;
     }
+
     public void toTriangles(){
         //niet heel goed doordacht, maar voor nu werkt het
         List<Integer> newFaceList = new ArrayList<>();
@@ -84,25 +82,22 @@ public class TriangleMesh extends Hittable {
         System.out.println("converted to triangles");
     }
 
-
     public BoundingBox getBoundingbox() {
 
-
-
         if (vertexArray.length == 0) {
-            return null; // Return null if there are no vertices
+            return null; // Als er geen vertices zijn wordt er null teruggegeven
         }
 
         Vector min = vertexArray[0];
         Vector max = vertexArray[0];
 
-        // Find the minimum and maximum coordinates among all vertices
+        // Dit zorgt voor de minimale en maximale coördinaten.
         for (Vector vertex : vertexArray) {
             min = Vector.min(min, vertex);
             max = Vector.max(max, vertex);
         }
 
-        // Create a bounding box that encompasses all vertices
+        // Maakt een bounding box aan
         BoundingBox boundingBox = new BoundingBox(min, max);
 
         return boundingBox;

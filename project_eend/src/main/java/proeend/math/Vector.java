@@ -3,7 +3,7 @@ package proeend.math;
 public class Vector {
     private double[] coordinates;
 
-    // constanten x,y en z geven de x, y en z coördinaten aan bij het opvragen ervan.
+    // constanten x, y en z geven de x, y en z coördinaten aan bij het opvragen ervan.
     private final int x = 0, y = 1, z = 2;
 
     /**
@@ -15,7 +15,6 @@ public class Vector {
 
     /**
      * Initialiseert een nieuwe vector met de opgegeven coördinaten.
-     *
      * @param x De x-coördinaat.
      * @param y De y-coördinaat.
      * @param z De z-coördinaat.
@@ -26,7 +25,6 @@ public class Vector {
 
     /**
      * Vermenigvuldigt twee vectoren.
-     *
      * @param vecA De eerste vector.
      * @param vecB De tweede vector.
      * @return Het resultaat van de vermenigvuldiging.
@@ -37,49 +35,36 @@ public class Vector {
 
     /**
      * Reflecteert een vector ten opzichte van de normaal vector.
-     *
      * @param vec    De oorspronkelijke vector.
      * @param normal De normaal vector.
      * @return Het gereflecteerde vector.
      */
     public static Vector reflect(Vector vec, Vector normal) {
-        return add(vec, inverse(scale(2.0*dot(vec,normal),normal)));
+        return add(vec, negate(scale(2.0*dot(vec,normal),normal)));
     }
 
-    /**
-     * Haalt de x-coördinaat van de vector op.
-     *
-     * @return De x-coördinaat.
-     */
     public double getX() {
         return coordinates[x];
     }
 
-    /**
-     * Haalt de y-coördinaat van de vector op.
-     *
-     * @return De y-coördinaat.
-     */
     public double getY() {
         return coordinates[y];
     }
 
-    /**
-     * Haalt de z-coördinaat van de vector op.
-     *
-     * @return De z-coördinaat.
-     */
     public double getZ() {
         return coordinates[z];
     }
 
-
+    /**
+     * Zet 0, 1 of 2 om naar x, y of z.
+     * @param n Getal dat omgezet wordt naar een as.
+     * @return De as.
+     */
     public double axis(int n) {
         if (n == 1) return coordinates[y];
         if (n == 2) return coordinates[z];
         return coordinates[x];
     }
-
 
     public double[] getCoordinates(){
         return coordinates;
@@ -88,17 +73,21 @@ public class Vector {
     public void copy(Vector copy) {
         this.coordinates = copy.coordinates;
     }
+
+    /**
+     * Berekent de inverse.
+     */
     public void invert(){
         Vector vec = scale(-1, this);
         this.coordinates[0]= vec.getX();
         this.coordinates[1]= vec.getY();
         this.coordinates[2]= vec.getZ();
     }
+
     /**
      * Roteert de vector om de Z-as met de opgegeven hoek.
      * @param angle De rotatiehoek in radialen
      */
-
     public void rotateZ(double angle) {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
@@ -110,7 +99,6 @@ public class Vector {
 
     /**
      * Roteert de vector om de Y-as met de opgegeven hoek.
-     *
      * @param angle De rotatiehoek in radialen.
      */
     public Vector rotateY(double angle) {
@@ -123,19 +111,18 @@ public class Vector {
 
         return this;
     }
-    public static Vector inverse(Vector vec) {
+
+    /**
+     * Maakt de vector negatief.
+     * @param vec
+     * @return
+     */
+    public static Vector negate(Vector vec) {
         return new Vector(-vec.getX(),-vec.getY(),-vec.getZ());
     }
+
     /**
      * Telt twee vectoren bij elkaar op.
-     *
-     * @param vecA De eerste vector.
-     * @param vecB De tweede vector.
-     * @return Het resultaat van de optelling.
-     */
-    /**
-     * Telt twee vectoren bij elkaar op.
-     *
      * @param vecA De eerste vector.
      * @param vecB De tweede vector.
      * @return Het resultaat van de optelling.
@@ -146,7 +133,6 @@ public class Vector {
 
     /**
      * Schaalt de opgegeven vector met een scalaire waarde.
-     *
      * @param scalar De scalaire waarde waarmee de vector wordt geschaald.
      * @param scaled De vector die wordt geschaald.
      * @return Het geschaalde resultaat.
@@ -157,7 +143,6 @@ public class Vector {
 
     /**
      * Berekent het inwendig product (dotproduct) van twee vectoren.
-     *
      * @param vecA De eerste vector.
      * @param vecB De tweede vector.
      * @return Het inwendig product van de twee vectoren.
@@ -168,7 +153,6 @@ public class Vector {
 
     /**
      * Berekent het kruisproduct van twee vectoren.
-     *
      * @param vecA De eerste vector.
      * @param vecB De tweede vector.
      * @return Het kruisproduct van de twee vectoren.
@@ -183,7 +167,6 @@ public class Vector {
 
     /**
      * Berekent het kwadraat van de lengte van de vector.
-     *
      * @param vec De vector waarvan het kwadraat van de lengte wordt berekend.
      * @return Het kwadraat van de lengte van de vector.
      */
@@ -193,7 +176,6 @@ public class Vector {
 
     /**
      * Berekent de lengte van de vector.
-     *
      * @param vec De vector waarvan de lengte wordt berekend.
      * @return De lengte van de vector.
      */
@@ -203,7 +185,6 @@ public class Vector {
 
     /**
      * Berekent de eenheidsvector (een vector met lengte 1) van de opgegeven vector.
-     *
      * @param vec De vector waarvan de eenheidsvector wordt berekend.
      * @return De eenheidsvector van de vector.
      */
@@ -213,7 +194,6 @@ public class Vector {
 
     /**
      * Genereert een willekeurige vector met waarden tussen 0 en 1.
-     *
      * @return Een willekeurige vector.
      */
     public static Vector randomVec() {
@@ -222,7 +202,6 @@ public class Vector {
 
     /**
      * Genereert een willekeurige vector met waarden tussen het opgegeven minimum en maximum.
-     *
      * @param min Het minimum voor de willekeurige vectorwaarden.
      * @param max Het maximum voor de willekeurige vectorwaarden.
      * @return Een willekeurige vector binnen het opgegeven bereik.
@@ -249,22 +228,18 @@ public class Vector {
         return unitVector(vec);
     }
 
-
     /**
      * Genereert een willekeurige eenheidsvector op het halfrond ten opzichte van de opgegeven normaalvector.
-     *
      * @param normal De normaalvector.
      * @return Een willekeurige eenheidsvector op het halfrond.
      */
     public static Vector RandomUnitVecOnHemisphere(Vector normal) {
         Vector p = randomOnUnitSphere();
-        return (dot(p, normal) > 0.0) ? p : inverse(p);
+        return (dot(p, normal) > 0.0) ? p : negate(p);
     }
-
 
     /**
      * Genereert een willekeurige eenheidsvector op de eenheidssfeer.
-     *
      * @return Een willekeurige eenheidsvector op de eenheidssfeer.
      */
     public static Vector randomOnUnitSphere() {

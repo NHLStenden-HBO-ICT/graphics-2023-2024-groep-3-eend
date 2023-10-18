@@ -6,7 +6,6 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.records.HitRecord;
 
-
 /**
  * De "Triangle" klasse vertegenwoordigt een driehoekig object dat
  * door stralen kan worden geraakt in een ray tracing-toepassing.
@@ -19,6 +18,7 @@ public class Triangle extends Hittable{
     private Material material;
     private double area;
     private BoundingBox boundingBox;
+
     /**
      * Constructor om een driehoek te initialiseren met zijn hoekpunten en materiaal.
      *
@@ -45,9 +45,9 @@ public class Triangle extends Hittable{
      */
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
-        Vector v0v1 = Vector.add(v1, Vector.inverse(v0));
-        Vector v0v2 = Vector.add(v2, Vector.inverse(v0));   //deze twee kloppen
-        Vector unitDir = Vector.unitVector(ray.direction());
+        Vector v0v1 = Vector.add(v1, Vector.negate(v0));
+        Vector v0v2 = Vector.add(v2, Vector.negate(v0));   //deze twee kloppen
+        Vector unitDir = Vector.unitVector(ray.getDirection());
         //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
@@ -58,7 +58,7 @@ public class Triangle extends Hittable{
         //System.out.println(det);
         double invDet = 1/det;
 
-        Vector tvec = Vector.add(ray.origin(), Vector.inverse(v0));
+        Vector tvec = Vector.add(ray.origin(), Vector.negate(v0));
         double u = Vector.dot(tvec,pvec)*invDet;
         if (u < 0 || u > 1) return false;
 
@@ -84,8 +84,6 @@ public class Triangle extends Hittable{
         Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
-
-
 
         //rec.setFaceNormal(ray,rec.normal);
         //System.out.println(v+u);
@@ -100,16 +98,15 @@ public class Triangle extends Hittable{
         return new BoundingBox(min, max).pad();
     }
 
-
     /**
      * deze static method bestaat eigenlijk alleen voor de TriangleMesh hit method, als het nodig is, zou je via
      * deze ook de andere kunnen doen
      * @return of ie raakt of niet
      */
     public static boolean MThit(Ray ray, Interval rayT, HitRecord rec, Vector v0, Vector v1, Vector v2, Material material) {
-        Vector v0v1 = Vector.add(v1, Vector.inverse(v0));
-        Vector v0v2 = Vector.add(v2, Vector.inverse(v0));   //deze twee kloppen
-        Vector unitDir = Vector.unitVector(ray.direction());
+        Vector v0v1 = Vector.add(v1, Vector.negate(v0));
+        Vector v0v2 = Vector.add(v2, Vector.negate(v0));   //deze twee kloppen
+        Vector unitDir = Vector.unitVector(ray.getDirection());
         //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
@@ -120,7 +117,7 @@ public class Triangle extends Hittable{
         //System.out.println(det);
         double invDet = 1/det;
 
-        Vector tvec = Vector.add(ray.origin(), Vector.inverse(v0));
+        Vector tvec = Vector.add(ray.origin(), Vector.negate(v0));
         double u = Vector.dot(tvec,pvec)*invDet;
         if (u < 0 || u > 1) return false;
 
@@ -147,30 +144,9 @@ public class Triangle extends Hittable{
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
-
-
         //rec.setFaceNormal(ray,rec.normal);
         //System.out.println(v+u);
         //rec.normal = pvec;
         return true;
     }
-    /*
-    @Override
-    public double pdfValue(Vector origin, Vector direction) {
-        //kopie van Quad code, weet nog niet of het werkt
-        HitRecord rec = new HitRecord();
-        if(!this.hit(new Ray(origin, direction), new Interval(0.001, Double.POSITIVE_INFINITY), rec)); {
-            return 0;
-        }
-        double v = Vector.lengthSquared(direction);
-        double distanceSquared = rec.t * rec.t;
-
-        return 0;
-    }
-    @Override
-    public Vector random(Vector origin) {
-        return new Vector(1,0,0);
-    }
-     */
-
 }

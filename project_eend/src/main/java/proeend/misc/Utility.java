@@ -8,8 +8,17 @@ import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.math.Vector;
 
+/**
+ * Beheerd de instellingen van de wereld.
+ */
 public class Utility {
 
+    /**
+     * Maakt de wereld aan.
+     * @param world De scene.
+     * @param lights De lichten binnen de scene.
+     * @param selector De geselecteerde wereld.
+     */
     public static void loadWorld(HittableList world, HittableList lights,int selector) {
         world.clear();
         lights.clear();
@@ -24,7 +33,6 @@ public class Utility {
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
         Dielectric glass = new Dielectric(1.31);
-
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -43,8 +51,6 @@ public class Utility {
         Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
         Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
 
-
-
         switch (selector) {
 
             case 0:
@@ -55,8 +61,6 @@ public class Utility {
                 world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
                 // world.add(vierkant);
                 lights.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
-
-
 
                 break;
             case 1:
@@ -75,9 +79,6 @@ public class Utility {
 */
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
-
-
-
 
                 break;
             case 2:
@@ -98,7 +99,6 @@ public class Utility {
                 world.add(new Sphere(v1, .3, whiteLight));
 
                 lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
-
 
                 break;
             case 4:
@@ -140,9 +140,5 @@ public class Utility {
                 System.out.println("foute wereldkeuze");
                 break;
         }
-
     }
-
-
-
 }

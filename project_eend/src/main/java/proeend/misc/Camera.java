@@ -15,7 +15,6 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.records.HitRecord;
 import proeend.records.ScatterRecord;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -26,7 +25,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 
 /**
  * Deze klasse vertegenwoordigt een camera voor het renderen van beelden.
@@ -61,11 +59,10 @@ public class Camera {
     private Vector viewportV = new Vector(0,-viewportHeight,0);
     private Vector pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
     private Vector pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
-    private Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(new Vector(0,0,focalLength))),
-            Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
+    private Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(new Vector(0,0,focalLength))),
+            Vector.negate(Vector.scale(1.0/2.0,viewportU))), Vector.negate(Vector.scale(1.0/2.0,viewportV)));
     private Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
     private Vector background = new Vector();
-
 
     public Vector getCameraCenter() {
         return cameraCenter;
@@ -139,48 +136,38 @@ public class Camera {
         this.background = background;
     }
 
-
-
-
-
-    /**
-     * Geeft de hoogte van het beeld terug.
-     *
-     * @return De hoogte van het beeld.
-     */
-
     public Camera(){
     }
 
     public double getHeight() {
         return imageHeight;
     }
+
     /**
      * Initialiseert de camera-instellingen.
      */
     private void init() {
         rootSPP = (int) Math.sqrt(samplesPerPixel);
-        focalLength = Vector.length(Vector.add(cameraCenter, Vector.inverse(lookat)));
+        focalLength = Vector.length(Vector.add(cameraCenter, Vector.negate(lookat)));
         imageHeight = (int)(imageWidth /aspectRatio);
         imageHeight = Math.max(1, imageHeight);
         double h = Math.tan(verticalFOV/2);
-        w = Vector.unitVector(Vector.add(cameraCenter, Vector.inverse(lookat)));
+        w = Vector.unitVector(Vector.add(cameraCenter, Vector.negate(lookat)));
         u = Vector.unitVector(Vector.cross(up, w));
         v = Vector.cross(w,u);
         viewportHeight = 2*h*focalLength;
         viewportWidth = viewportHeight * (double) imageWidth /(double) imageHeight;
         viewportU = Vector.scale(viewportWidth, u);
-        viewportV = Vector.scale(viewportHeight, Vector.inverse(v));
+        viewportV = Vector.scale(viewportHeight, Vector.negate(v));
         pixelDeltaU = Vector.scale((1.0/ imageWidth), viewportU);
         pixelDeltaV = Vector.scale((1.0/ imageHeight), viewportV);
-        viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.inverse(Vector.scale(focalLength, w))),
-                Vector.inverse(Vector.scale(1.0/2.0,viewportU))), Vector.inverse(Vector.scale(1.0/2.0,viewportV)));
+        viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(Vector.scale(focalLength, w))),
+                Vector.negate(Vector.scale(1.0/2.0,viewportU))), Vector.negate(Vector.scale(1.0/2.0,viewportV)));
         pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0/2.0, Vector.add(pixelDeltaU,pixelDeltaV)));
     }
 
     /**
      * Slaat het gegenereerde beeld op als een PNG-bestand.
-     *
      * @param image Het te opslaan beeld.
      * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
      */
@@ -200,8 +187,8 @@ public class Camera {
     }
 
     /**
-     * zelfde als (multi)render, maar dan wordt voor elke lijn een thread aangemaakt, met maximaal standaard 5 threads.
-     * lijkt de snelste rendermethode te zijn in de meeste situaties
+     * Hetzelfde als (multi)render, maar dan wordt voor elke lijn een thread aangemaakt, met maximaal standaard 5 threads.
+     * Lijkt de snelste render methode te zijn in de meeste situaties.
      */
     public void multiRenderLines(boolean save, final Hittable world, final Hittable lights) {
         init();
@@ -275,11 +262,10 @@ public class Camera {
                 saveImage(writableImage);
             } catch (IOException e) {e.printStackTrace();}
         }
-
     }
 
     /**
-     * render(), maar dan multithreaded en void
+     * render(), maar dan multithreaded en void.
      */
     public void multiRender(boolean save, final Hittable world, final Hittable lights) {
         //TODO maak een werkende taakverdeler
@@ -344,16 +330,13 @@ public class Camera {
                 saveImage(writableImage);
             } catch (IOException e) {e.printStackTrace();}
         }
-
     }
+
     /**
-     * rendert plaatje met voorwaarden vanuit het camera object
-     * @param save
-     * of het plaatje moet worden opgeslagen
-     * @param world
-     * de wereld die gerenderd wordt
-     * @return
-     * een WritableImage, voor een ImageView in de UI of om opgeslagen te worden
+     * Rendert plaatje met voorwaarden vanuit het camera object.
+     * @param save Bepaald of het plaatje moet worden opgeslagen.
+     * @param world De wereld die gerenderd wordt.
+     * @return Een WritableImage, voor een ImageView in de UI of om opgeslagen te worden.
      */
     public WritableImage render(boolean save, Hittable world, Hittable lights){
 
@@ -380,10 +363,8 @@ public class Camera {
                      }
                  }
 
-
                  int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
                  pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
-
              }
         }
         System.out.println("frame " + frames);
@@ -399,6 +380,13 @@ public class Camera {
         return writableImage;
     }
 
+    /**
+     * Berekend de start pixel en de end pixel.
+     * @param numberOfThreads De hoeveelheid threads.
+     * @param threadCounter Telt de hoeveelheid threats op.
+     * @param imageHeight De hoogte van de afbeelding.
+     * @return Geeft de eerste en de laatste pixel terug.
+     */
     public int[] calculateStartAndEnd(int numberOfThreads, int threadCounter, int imageHeight) {
         int startPixel = imageHeight / numberOfThreads * threadCounter - (imageHeight / numberOfThreads);
         int endPixel = imageHeight / numberOfThreads * (threadCounter + 1) - (imageHeight / numberOfThreads);
@@ -408,6 +396,13 @@ public class Camera {
 
     WritableImage writableImage = new WritableImage(imageWidth, imageHeight);// /threads
     PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+    /**
+     * Maakt een afbeelding aan met behulp van meerdere threads.
+     * @param world De scene.
+     * @param lights De lichten binnen de scene.
+     * @return Geeft de afbeelding terug.
+     */
     public WritableImage multiThreadRender(HittableList world, Hittable lights) {
         init();
         int beschikbareProcessors = Runtime.getRuntime().availableProcessors();
@@ -419,7 +414,6 @@ public class Camera {
         long startTime = System.currentTimeMillis();
 
         int[] threadCounter = {0}; // Use an array to store the counter
-
 
         Runnable taak = () -> {
             synchronized (threadCounter) {
@@ -444,20 +438,22 @@ public class Camera {
             thread.start();
             //launch();
         }
-
-
         return writableImage;
     }
 
-public WritableImage multiTaak(boolean save, Hittable world, int threads, int threadCounter, Hittable lights){
-
-
-
+    /**
+     * Geeft meerdere threads tegelijk een taak.
+     * @param save Geeft aan of de afbeelding opgeslagen moet worden of niet.
+     * @param world De scene.
+     * @param threads De hoeveelheid threads.
+     * @param threadCounter Telt de hoeveelheid threats op.
+     * @param lights De lichten binnen de scene.
+     * @return Geeft de afbeelding terug.
+     */
+    public WritableImage multiTaak(boolean save, Hittable world, int threads, int threadCounter, Hittable lights){
 
     int[] startAndEnd = calculateStartAndEnd(threads, threadCounter, imageHeight);
     int startPixelY = startAndEnd[0];    // Getters
-
-
 
     int endPixelY = startAndEnd[1];
 
@@ -467,7 +463,7 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
         for (int x = 0; x < imageWidth; ++x) {
             Vector colorVec = new Vector();
 
-            //nieuwe AA, een stuk minder snell, maar wel beter
+            //AA, een stuk minder snel, maar wel beter.
             for (int sy = 0; sy < rootSPP; ++sy) {
                 for (int sx = 0; sx < rootSPP; ++sx) {
                     Ray ray = getRay(x, y, sx, sy);
@@ -482,27 +478,34 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
             }catch (Exception ex){
                 System.out.println(ex.toString());
             }
-
-
         }
     }
-
-
-
     return writableImage;
 }
 
-
-
+    /**
+     * Haalt de straal die geschoten wordt op.
+     * @param x De x-as coördinaat.
+     * @param y De y-as coördinaat.
+     * @param sx De sample op de x-as, coördinaat.
+     * @param sy De sample op de y-as, coördinaat.
+     * @return Geeft een straal terug.
+     */
     private Ray getRay(int x, int y, int sx, int sy) {
         Vector pixelCenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
         Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(sx, sy));
 
         Vector rayOrigin = cameraCenter;
-        Vector direction = Vector.add(pixelSample, Vector.inverse(rayOrigin));
+        Vector direction = Vector.add(pixelSample, Vector.negate(rayOrigin));
         return new Ray(rayOrigin, Vector.unitVector(direction));
-
     }
+
+    /**
+     * Schaalt een vector aan de hand van het aantal samples per pixel.
+     * @param sx De sample op de x-as, coördinaat.
+     * @param sy De sample op de y-as, coördinaat.
+     * @return Geeft een geschaalde vector terug.
+     */
     private Vector pixelSampleSquare(int sx, int sy) {
         double px = -.5 + 1.0/rootSPP * (sx + Math.random());
         double py = -.5 + 1.0/rootSPP * (sy + Math.random());
@@ -511,7 +514,6 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
 
     /**
      * Geeft een ray terug die door het opgegeven pixel gaat.
-     *
      * @param x De x-coördinaat van het pixel.
      * @param y De y-coördinaat van het pixel.
      * @return Een Ray-object dat het pixel vertegenwoordigt.
@@ -521,14 +523,12 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
         Vector pixelSample = Vector.add(pixelcenter, pixelSampleSquare());
 
         Vector rayOrigin = cameraCenter;
-        Vector direction = Vector.add(pixelSample, Vector.inverse(rayOrigin));
+        Vector direction = Vector.add(pixelSample, Vector.negate(rayOrigin));
         return new Ray(rayOrigin, direction);
-
     }
 
     /**
      * Genereert een willekeurige pixelverschuiving voor anti-aliasing.
-     *
      * @return Een Vector die de pixelverschuiving vertegenwoordigt.
      */
     private Vector pixelSampleSquare() {
@@ -543,7 +543,6 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
 
     /**
      * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
-     *
      * @param r     De ray om te traceren.
      * @param depth Het maximum aantal reflecties.
      * @param world Het 3D-wereldobject dat moet worden weergegeven.
@@ -573,7 +572,6 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
                 return background;
             }
 
-
             ScatterRecord scatterRecord = new ScatterRecord();
             Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
             if (!rec.material.scatter(r, rec, scatterRecord)) {
@@ -593,7 +591,7 @@ public WritableImage multiTaak(boolean save, Hittable world, int threads, int th
             MixturePDF mixPDF = new MixturePDF(lightPDF, surfacePDF);
 
             Ray scattered = new Ray(rec.p, mixPDF.generate());
-            double pdfVal = mixPDF.value(scattered.direction());
+            double pdfVal = mixPDF.value(scattered.getDirection());
             double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
             //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
             //double pdf = scatteringPDF;

@@ -2,7 +2,6 @@ package proeend.hittable;
 
 import proeend.material.Material;
 import proeend.math.Vector;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,11 +74,11 @@ public class ObjectLoader {
             double y = Double.parseDouble(vertexData[2]);
             double z = Double.parseDouble(vertexData[3]);
             vertexes.add(new Vector(x, y, z));
-        } else {
+        }
+        else {
             System.out.println("Ongeldige vertex-gegevens: " + String.join(" ", vertexData));
         }
     }
-
 
     /**
      * Parsed de gegevens van een face uit een regel in een OBJ-bestand.
@@ -102,14 +101,5 @@ public class ObjectLoader {
             String[] vertexIndexParts = faceData[j].split("/");
             vertexIndexList.add(Integer.parseInt(vertexIndexParts[0]));
         }
-    }
-
-    /**
-     * Deze methode zet een polygoon om in een driehoek mesh.
-     *
-     * @return Een {@link TriangleMesh} dat het omgezette mesh representeert.
-     */
-    public void polyToTriangleMesh() {
-        // Methode voor polygoon naar driehoek mesh conversie
     }
 }

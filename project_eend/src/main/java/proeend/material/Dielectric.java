@@ -22,11 +22,9 @@ public class Dielectric extends Material {
 
     /**
      * Scatter a ray of light when it interacts with this dielectric material.
-     *
-     * @param rayIn        The incident ray.
-     * @param rec         The hit record containing information about the intersection.
-     * @param attenuation The attenuation of the ray (color).
-     * @param scattered   The scattered ray.
+     * @param rayIn The incident ray.
+     * @param rec The hit record containing information about the intersection.
+     * @param scRecord Houd de hoeveelheid steekproeven bij.
      * @return `true` if scattering occurs, `false` otherwise.
      */
     @Override
@@ -38,7 +36,7 @@ public class Dielectric extends Material {
 
         Vector unitDirection = Vector.unitVector(rayIn.getDirection());
 
-        double cosTheta = Math.min(Vector.dot(Vector.inverse(unitDirection),rec.getNormal()),1.0);
+        double cosTheta = Math.min(Vector.dot(Vector.negate(unitDirection),rec.getNormal()),1.0);
         double sinTheta = Math.sqrt(1.0-cosTheta*cosTheta);
 
         boolean cannotRefract = refractionRatio * sinTheta > 1.0;

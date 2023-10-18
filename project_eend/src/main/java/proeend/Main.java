@@ -24,8 +24,6 @@ import proeend.hittable.ObjectLoader;
 import proeend.hittable.TriangleMesh;
 import proeend.math.Vector;
 import proeend.misc.Utility;
-
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -33,9 +31,6 @@ public class Main extends Application {
 
     static HittableList world = new HittableList();
     static HittableList lights = new HittableList();
-
-
-
     static Camera camera = new Camera();
     private boolean isCameraRotating = true;
     static double frameRate = 1.0/10.0; //hertz
@@ -43,17 +38,20 @@ public class Main extends Application {
     static Vector camOrigin = new Vector(0,0,2);
     private double rotationUnit = Math.PI/360;
 
-
-
     ImageView frame = new ImageView();
     StackPane root = new StackPane();
 
     Label coordX = new Label(Double.toString(camOrigin.getX()));
     Label coordY = new Label(Double.toString(camOrigin.getY()));
     Label coordZ = new Label(Double.toString(camOrigin.getZ()));
+
+    /**
+     * Start het programma en configureert de besturingselementen.
+     * @param stage Het venster waarin het programma zich afspeelt.
+     * @throws IOException Als er een fout optreedt bij het lezen of schrijven van gegevens.
+     */
     @Override
     public void start(Stage stage) throws IOException {
-
 
         Runnable renderTask = () -> {
 
@@ -66,7 +64,6 @@ public class Main extends Application {
         root.setAlignment(coordY, Pos.TOP_CENTER);
         root.setAlignment(coordZ, Pos.TOP_RIGHT);
 
-
         //animatie
         Duration interval = Duration.seconds(frameRate);
         KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> {
@@ -76,15 +73,20 @@ public class Main extends Application {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-
         StackPane.setAlignment(frame, Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.BLACK,null, null)));
         root.getChildren().add(frame);
         root.getChildren().add(coordX);
         root.getChildren().add(coordY);
         root.getChildren().add(coordZ);
+
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             int shiftMult = 1;
+
+            /**
+             * Zorgt ervoor dat het programma reageert als er een toets wordt ingedrukt.
+             * @param event Geeft aan wat er gebeurt.
+             */
             @Override
             public void handle(KeyEvent event) {
                 if (event.isShiftDown()) {shiftMult=10;}
@@ -155,6 +157,7 @@ public class Main extends Application {
         });
 
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
@@ -168,7 +171,7 @@ public class Main extends Application {
                     case SPACE:
                         isCameraRotating = false;
                         break;
-                    // Handle other cases as before
+                    // Behandeld de casus zoals hiervoor
                 }
             }});
 
@@ -177,12 +180,18 @@ public class Main extends Application {
         stage.show();
     }
 
+    /**
+     * Update de wereld als de camera veranderd.
+     */
     private void update() {
         if (!camera.block && isCameraRotating)
             frame.setImage(camera.render (world,lights));
-
     }
 
+    /**
+     * Initialiseert het programma.
+     * @param args Argumenten die aan het programma meegegeven kunnen worden.
+     */
     public static void main(String[] args) {
 
         Lambertian white = new Lambertian(new Vector(1, .5, .5));

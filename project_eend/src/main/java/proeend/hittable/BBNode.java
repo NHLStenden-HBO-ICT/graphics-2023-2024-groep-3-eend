@@ -2,7 +2,6 @@ package proeend.hittable;
 
 import proeend.math.*;
 import proeend.records.HitRecord;
-
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,11 +20,9 @@ public class BBNode extends Hittable{
 
     public BBNode(HittableList objects){
         this(objects.getObjects(), 0, objects.getObjects().size());
-
     }
 
     public BBNode(List<Hittable> objects, int start, int end) {
-
 
         // Genereer een willekeurig getal tussen 0 (inclusief) en 2 (exclusief)
         int axis = (int)(3 * Math.random());
@@ -79,7 +76,6 @@ public class BBNode extends Hittable{
 
         boolean hitRight = right.hit(r, new Interval(rayT.getMin(), hitLeft ? rec.t : rayT.getMax()), rec);
 
-
         return hitLeft || hitRight;
     }
 
@@ -88,5 +84,4 @@ public class BBNode extends Hittable{
         double bMax = b.getBoundingbox().axis(axis).getMax();
         return Double.compare(aMin, bMax);
     }
-
 }

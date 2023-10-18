@@ -7,7 +7,6 @@ import proeend.math.Vector;
 public class BoundingBox {
     Interval x, y, z;
     private double delta = 0.0001;
-
     public BoundingBox(){}
 
     // Constructor voor het behandelen van twee punten als extrema voor de bounding box
@@ -23,7 +22,6 @@ public class BoundingBox {
         x = new Interval(minX, maxX);
         y = new Interval(minY, maxY);
         z = new Interval(minZ, maxZ);
-
     }
 
     // Constructor voor het combineren van twee bestaande bounding boxes
@@ -32,10 +30,8 @@ public class BoundingBox {
             x = new Interval().merge(box0.x, box1.x);
             y = new Interval().merge(box0.y, box1.y);
             z = new Interval().merge(box0.z, box1.z);
-
         }
     }
-
 
     public BoundingBox(Interval ix, Interval iy, Interval iz) {
         this.x = ix;
@@ -49,7 +45,6 @@ public class BoundingBox {
         return x;
     }
 
-
     public BoundingBox pad() {
         // geef een Bounding box terug die net iets groter is dan
         Interval new_x = (x.getSize() >= delta) ? x : x.expand(delta);
@@ -58,8 +53,6 @@ public class BoundingBox {
 
         return new BoundingBox(new_x, new_y, new_z);
     }
-
-
 
     public BoundingBox(Vector center, double radius) {
 
@@ -83,8 +76,7 @@ public class BoundingBox {
 
         for (int as = 0; as < 3; as++) {
 
-
-            double invD = 1.0 / r.direction().axis(as);
+            double invD = 1.0 / r.getDirection().axis(as);
             double origin = r.origin().axis(as);
 
             double t0 = (axis(as).getMin() - origin) * invD;
@@ -100,12 +92,9 @@ public class BoundingBox {
             if(t1 < rayT.getMax()) rayT.setMax(t1);
 
             if(rayT.getMax() <= rayT.getMin()) return false;
-
         }
-
         return true;
     }
-
 }
 
 
