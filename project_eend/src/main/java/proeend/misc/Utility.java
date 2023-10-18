@@ -3,7 +3,7 @@ package proeend.misc;
 import proeend.hittable.HittableList;
 import proeend.hittable.Sphere;
 import proeend.hittable.Triangle;
-import proeend.hittable.TriangleMesh;
+import proeend.hittable.PolygonMesh;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.math.Vector;
@@ -95,7 +95,7 @@ public class Utility {
             case 3:
                 faceArray = new Integer[]{3,3,3};
                 vertexIndexArray = new Integer[]{0,1,2,0,2,3,1,4,2};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
+                world.add(new PolygonMesh(faceArray, vertexIndexArray, vertexArray, normal));
                 world.add(new Sphere(v1, .3, whiteLight));
 
                 lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
@@ -120,7 +120,7 @@ public class Utility {
             case 6: //box
                 faceArray = new Integer[]{3,3,3,3};
                 vertexIndexArray = new Integer[]{5,6,7,6,8,7,8,9,10,7,8,10};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
+                world.add(new PolygonMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
 
                 lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
 

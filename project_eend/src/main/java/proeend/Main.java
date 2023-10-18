@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.HittableList;
 import proeend.hittable.ObjectLoader;
-import proeend.hittable.TriangleMesh;
+import proeend.hittable.PolygonMesh;
 import proeend.math.Vector;
 import proeend.misc.Utility;
 import java.io.IOException;
@@ -196,9 +196,9 @@ public class Main extends Application {
 
         Lambertian white = new Lambertian(new Vector(1, .5, .5));
         //Emitter white = new Emitter(new Vector(1,1,1));
-        TriangleMesh duck = null;
-        TriangleMesh icoSphere = null;
-        TriangleMesh uvSphere = null;
+        PolygonMesh duck = null;
+        PolygonMesh icoSphere = null;
+        PolygonMesh uvSphere = null;
 
         try {
             duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
@@ -217,7 +217,7 @@ public class Main extends Application {
         }
 
         Utility.loadWorld(world, lights, 1);
-        uvSphere.toTriangles();
+        uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
         camera.setBackground(new Vector(.6,.6,.6));

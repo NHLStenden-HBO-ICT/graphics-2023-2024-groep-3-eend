@@ -14,10 +14,10 @@ import proeend.records.HitRecord;
  */
 public class Triangle extends Hittable{
 
-    private Vector v0,v1,v2;
-    private Material material;
+    private final Vector v0,v1,v2;
+    private final Material material;
     private double area;
-    private BoundingBox boundingBox;
+    private final BoundingBox boundingBox;
 
     /**
      * Constructor om een driehoek te initialiseren met zijn hoekpunten en materiaal.

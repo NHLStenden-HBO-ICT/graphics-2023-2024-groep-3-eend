@@ -8,22 +8,23 @@ import proeend.material.Material;
 import proeend.math.OrthonormalBase;
 
 /**
- * Een sfeerobject dat kan worden getroffen door een lichtstraal in een 3D-scène.
+ * Een sfeerobject dat kan worden geraakt door een lichtstraal in een 3D-scène.
  */
 public class Sphere extends Hittable {
 
     private final double radius;
     private final Vector center;
-    private BoundingBox boundingBox;
+    private final BoundingBox boundingBox;
     public String name;
-    private Material material;
 
+    private final Material material;
     /**
      * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
      *
      * @param center   Het middelpunt van de sfeer.
      * @param radius   De straal van de sfeer.
      * @param material Het materiaal van de sfeer.
+     * @param name De naam van de bol voor identificatie van de sfeer.
      */
     public Sphere(Vector center, double radius, Material material, String name) {
         this.center = center;
@@ -33,12 +34,20 @@ public class Sphere extends Hittable {
         this.name = name;
     }
 
+    /**
+     * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
+     *
+     * @param center   Het middelpunt van de sfeer.
+     * @param radius   De straal van de sfeer.
+     * @param material Het materiaal van de sfeer.
+     */
     public Sphere(Vector center, double radius, Material material) {
         this.center = center;
         this.radius = radius;
         this.material = material;
         boundingBox = new BoundingBox(center, radius);
     }
+
 
     @Override
     public BoundingBox getBoundingbox(){
@@ -55,7 +64,8 @@ public class Sphere extends Hittable {
      */
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
-        
+
+
         Vector OC = Vector.add(ray.origin(), Vector.negate(center));
         double a = Vector.lengthSquared(ray.getDirection());
         double halfb = Vector.dot(OC, ray.getDirection());
@@ -80,7 +90,14 @@ public class Sphere extends Hittable {
         rec.setFaceNormal(ray, outwardNormal);
         return true;
     }
-
+    /**
+     * Bereken de waarschijnlijkheid dichtheid functiewaarde (PDF-waarde) voor een gegeerde richting vanuit een bepaalde oorsprong.
+     * De PDF-waarde wordt gebruikt in ray tracing om de kans te bepalen dat een lichtstraal in deze richting een object raakt.
+     *
+     * @param origin     De oorsprong van de straal.
+     * @param direction  De gewenste richting.
+     * @return De PDF-waarde voor de opgegeven richting vanuit de oorsprong.
+     */
     @Override
     public double pdfValue(Vector origin, Vector direction) {
         HitRecord hitRecord = new HitRecord();
@@ -104,7 +121,6 @@ public class Sphere extends Hittable {
         uvw.buildFromW(direction);
         return uvw.local(randomToSphere(radius, distanceSquared));
     }
-
     private Vector randomToSphere(double radius, double distanceSquared) {
         double r1 = Math.random();
         double r2 = Math.random();
@@ -116,4 +132,6 @@ public class Sphere extends Hittable {
 
         return new Vector(x,y,z);
     }
+
+
 }

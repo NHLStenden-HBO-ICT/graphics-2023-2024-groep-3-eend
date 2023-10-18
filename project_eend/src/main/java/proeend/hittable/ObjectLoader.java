@@ -16,14 +16,14 @@ import java.util.Scanner;
 public class ObjectLoader {
 
     /**
-     * Laadt een geometrisch object vanuit een OBJ-bestand en retourneert een {@link  TriangleMesh}.
+     * Laadt een geometrisch object vanuit een OBJ-bestand en retourneert een {@link  PolygonMesh}.
      *
      * @param filepath Het pad naar het OBJ-bestand.
      * @param material Het materiaal dat aan het geladen object moet worden toegewezen.
-     * @return Een {@link TriangleMesh} dat het geladen object representeert.
+     * @return Een {@link PolygonMesh} dat het geladen object representeert.
      * @throws IOException Als er een fout optreedt bij het lezen van het bestand.
      */
-    public static TriangleMesh loadObj(String filepath, Material material) throws IOException {
+    public static PolygonMesh loadObj(String filepath, Material material) throws IOException {
 
         List<Vector> vertexes = new ArrayList<>();
         List<Integer> vertexIndexes = new ArrayList<>();
@@ -33,7 +33,7 @@ public class ObjectLoader {
         parseVerticesAndFaces(scanner, vertexes, vertexIndexes, faces);
 
         System.out.println("Object \"" + filepath + "\" loaded from file");
-        return new TriangleMesh(faces.toArray(new Integer[0]), vertexIndexes.toArray(new Integer[0]), vertexes.toArray(new Vector[0]), material);
+        return new PolygonMesh(faces.toArray(new Integer[0]), vertexIndexes.toArray(new Integer[0]), vertexes.toArray(new Vector[0]), material);
     }
 
     /**
@@ -74,11 +74,11 @@ public class ObjectLoader {
             double y = Double.parseDouble(vertexData[2]);
             double z = Double.parseDouble(vertexData[3]);
             vertexes.add(new Vector(x, y, z));
-        }
-        else {
+        } else {
             System.out.println("Ongeldige vertex-gegevens: " + String.join(" ", vertexData));
         }
     }
+
 
     /**
      * Parsed de gegevens van een face uit een regel in een OBJ-bestand.
@@ -102,4 +102,6 @@ public class ObjectLoader {
             vertexIndexList.add(Integer.parseInt(vertexIndexParts[0]));
         }
     }
+
+
 }

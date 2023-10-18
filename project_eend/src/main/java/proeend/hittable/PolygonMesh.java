@@ -7,41 +7,46 @@ import proeend.math.Vector;
 import proeend.records.HitRecord;
 import java.util.ArrayList;
 import java.util.List;
-
-public class TriangleMesh extends Hittable {
-    private boolean isObj = true;
-    private BoundingBox boundingBox;
+/**
+ * Een klasse die een verzameling driehoeken vertegenwoordigt als een hittable object.
+ */
+public class PolygonMesh extends Hittable {
+    private final boolean isObj = true;
+    private final BoundingBox boundingBox;
     private Integer[] faceArray;
     private Integer[] vertexIndexArray;
-    private Vector[] vertexArray;
-    private Material material;
-    public TriangleMesh(Integer[] faceArray, Integer[] vertexIndexArray, Vector[] vertexArray, Material material) {
+    private final Vector[] vertexArray;
+    private final Material material;
+
+    /**
+     * Maakt een nieuw TriangleMesh-object met de opgegeven geometrische en een materiaal.
+     *
+     * @param faceArray        Een array met het aantal zijden voor elk vlak.
+     * @param vertexIndexArray Een array met de indexen van de vertices voor elk vlak.
+     * @param vertexArray      Een array met de vertices van het mesh.
+     * @param material         Het materiaal van het mesh.
+     */
+    public PolygonMesh(Integer[] faceArray, Integer[] vertexIndexArray, Vector[] vertexArray, Material material) {
         this.faceArray = faceArray;
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
-        this.material = material;
         this.material = material;
         this.boundingBox = getBoundingbox();
     }
 
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
-        //TODO maak minder slecht
+        //TODO Vreemd effect met meerdere kruisende objecten oplossen.
         boolean tempHit = false;
         double closest = rayT.getMax();
         int j = 0;
         Vector v0,v1,v2;
-        for (int i = 0;i<faceArray.length;i++) {
+        for (int i = 0; i < faceArray.length; i++) {
             v0 = vertexArray[vertexIndexArray[j]];
             v1 = vertexArray[vertexIndexArray[j+1]];
             v2 = vertexArray[vertexIndexArray[j+2]];
-            /*oude code
-            Triangle triangle = new Triangle(v0,v1,v2,material);
-            if (triangle.hit(ray, rayT, rec)) {
-                return true;
-                //tempHit = true;
-            }*/
-            if (Triangle.MThit(ray, new Interval(rayT.getMin(),closest), rec, v0,v1,v2,material)){
+
+            if (Triangle.MThit(ray, new Interval(rayT.getMin(),closest), rec, v0 ,v1, v2, material)){
                 closest = rec.t;
                 tempHit = true;
             }
@@ -51,11 +56,14 @@ public class TriangleMesh extends Hittable {
         return tempHit;
     }
 
-    public void toTriangles(){
-        //niet heel goed doordacht, maar voor nu werkt het
+    /**
+     * Zet veelhoekige vlakken om in driehoeken.
+     */
+    public void ConvertToTriangles(){
         List<Integer> newFaceList = new ArrayList<>();
         List<Integer> newVertexIndexList = new ArrayList<>();
         int i = 0;
+
         for (Integer face: faceArray){
             if (face == 3){
                 newFaceList.add(3);
@@ -63,8 +71,7 @@ public class TriangleMesh extends Hittable {
                 newVertexIndexList.add(vertexIndexArray[i+1]);
                 newVertexIndexList.add(vertexIndexArray[i+2]);
                 i += 3;
-            }
-            if (face == 4){
+            } else if (face == 4){
                 newFaceList.add(3);
                 newFaceList.add(3);
                 newVertexIndexList.add(vertexIndexArray[i]);
@@ -77,11 +84,15 @@ public class TriangleMesh extends Hittable {
                 i +=4;
             }
         }
+
         this.faceArray = newFaceList.toArray(new Integer[0]);
         this.vertexIndexArray = newVertexIndexList.toArray(new Integer[0]);
-        System.out.println("converted to triangles");
+        System.out.println("Converted to triangles");
     }
-
+    /**
+     * Haalt de bounding box van de mesh op.
+     * @return De bounding box van de mesh of null als er geen vertices zijn.
+     */
     public BoundingBox getBoundingbox() {
 
         if (vertexArray.length == 0) {
@@ -97,10 +108,7 @@ public class TriangleMesh extends Hittable {
             max = Vector.max(max, vertex);
         }
 
-        // Maakt een bounding box aan
-        BoundingBox boundingBox = new BoundingBox(min, max);
-
-        return boundingBox;
+       return new BoundingBox(min, max);
     }
 
 }
