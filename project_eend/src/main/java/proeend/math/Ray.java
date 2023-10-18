@@ -1,5 +1,8 @@
 
 package proeend.math;
+
+import proeend.misc.Global;
+
 /**
  * De Ray-klasse vertegenwoordigt een straal in de ruimte, gedefinieerd door een oorsprong (origin) en een richting (direction).
  */
@@ -17,6 +20,7 @@ public class Ray {
      * @param direction De richting van de straal.
      */
     public Ray(Vector origin, Vector direction) {
+        Global.raysMade++;
         this.origin = origin;
         this.direction = direction;
     }

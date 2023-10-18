@@ -10,8 +10,8 @@ afkaatst en dan de gemiddelde kleur neemt van de totaal gevonden kleuren. bevat:
 
 ## Real Time GUI met Capturemogelijkheid
 
-## CPU Acceleratie
-
+## CPU Acceleratie [/////](project_eend)
+[readme](readme.io)
 ## AABB
 
 ## Light en Objectsampling

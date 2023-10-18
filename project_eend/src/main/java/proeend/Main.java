@@ -32,6 +32,7 @@ import proeend.hittable.TriangleMesh;
 import proeend.material.Lambertian;
 import proeend.math.Vector;
 import proeend.misc.Camera;
+import proeend.misc.Global;
 import proeend.misc.Utility;
 
 
@@ -229,7 +230,7 @@ public class Main extends Application {
 
         Utility.loadWorld(world, lights, 1);
         uvSphere.toTriangles();
-        //world.add(uvSphere);
+        world.add(uvSphere);
 
         cam1.background = new Vector();
         cam1.imageWidth = 400;
@@ -241,15 +242,15 @@ public class Main extends Application {
         //cam1.lookat = new Vector(0,20,39);
 
         world = new HittableList(new BBNode(world));
-        cam1.samplesPerPixel = 1;
+        cam1.samplesPerPixel = 100;
         cam1.maxDepth = 5;
-        cam1.background = new Vector(.2,.2,.2);
+        cam1.background = new Vector();
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
         //cam1.render(true, world, lights);
         //cam1.multiRender(true, world, lights);
-        //cam1.multiRenderLines(true, world, lights);
+        cam1.multiRenderLines(true, world, lights);
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;
         var hours = minutes/60.0;
@@ -258,7 +259,9 @@ public class Main extends Application {
         System.out.print("minutes:\t\t");
         System.out.println(minutes);
         System.out.println("hours:\t\t\t" + hours);
+        System.out.println("triangles intersected: " + Global.trianglesIntersected);
+        System.out.println("rays made:  " + Global.raysMade);
 
-        launch(args);
+        //launch(args);
     }
 }

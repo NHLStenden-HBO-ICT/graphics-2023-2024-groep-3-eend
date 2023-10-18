@@ -4,6 +4,7 @@ import proeend.material.Material;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
+import proeend.misc.Global;
 import proeend.misc.HitRecord;
 
 
@@ -107,6 +108,9 @@ public class Triangle extends Hittable{
      * @return of ie raakt of niet
      */
     public static boolean MThit(Ray ray, Interval rayT, HitRecord rec, Vector v0, Vector v1, Vector v2, Material material) {
+
+        Global.trianglesIntersected++;
+
         Vector v0v1 = Vector.add(v1, Vector.inverse(v0));
         Vector v0v2 = Vector.add(v2, Vector.inverse(v0));   //deze twee kloppen
         Vector unitDir = Vector.unitVector(ray.direction());
