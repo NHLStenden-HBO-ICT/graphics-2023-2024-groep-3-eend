@@ -229,7 +229,7 @@ public class Main extends Application {
         //cam1.lookat = new Vector(0,20,39);
 
         world = new HittableList(new BBNode(world));
-        camera.setSamplesPerPixel(1);
+        camera.setSamplesPerPixel(3);
         camera.setMaxDepth(5);
 
         var startTime = System.currentTimeMillis();
