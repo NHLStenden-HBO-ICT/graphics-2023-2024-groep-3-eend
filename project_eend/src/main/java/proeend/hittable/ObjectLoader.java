@@ -1,5 +1,7 @@
 package proeend.hittable;
 
+import proeend.material.Material;
+import proeend.math.Vector;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,52 +9,99 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-import proeend.material.Material;
-import proeend.material.texture.Texture;
-import proeend.math.Vector;
-
+/**
+ * Deze klasse is verantwoordelijk voor het inladen van geometrische objecten vanuit OBJ-bestanden
+ * en het converteren ervan naar een driehoeken genaamd TriangleMesh.
+ */
 public class ObjectLoader {
 
+    /**
+     * Laadt een geometrisch object vanuit een OBJ-bestand en retourneert een {@link  PolygonMesh}.
+     *
+     * @param filepath Het pad naar het OBJ-bestand.
+     * @param material Het materiaal dat aan het geladen object moet worden toegewezen.
+     * @return Een {@link PolygonMesh} dat het geladen object representeert.
+     * @throws IOException Als er een fout optreedt bij het lezen van het bestand.
+     */
+    public static PolygonMesh loadObj(String filepath, Material material) throws IOException {
 
-    public static TriangleMesh loadObj(String filepath, Material material) throws IOException {
+        List<Vector> vertexes = new ArrayList<>();
+        List<Integer> vertexIndexes = new ArrayList<>();
+        List<Integer> faces = new ArrayList<>();
 
-        List<Vector> vertexList = new ArrayList<>();
-        List<Integer> vertexIndexList = new ArrayList<>();
-        List<Integer> faceList = new ArrayList<>();
+        Scanner scanner = new Scanner(new File(filepath));
+        parseVerticesAndFaces(scanner, vertexes, vertexIndexes, faces);
 
-        //omdat bij een obj bestand de vertexindexarray met 1 geindexeerd is los ik dat zo nu op
-        vertexList.add(new Vector());
+        System.out.println("Object \"" + filepath + "\" loaded from file");
+        return new PolygonMesh(faces.toArray(new Integer[0]), vertexIndexes.toArray(new Integer[0]), vertexes.toArray(new Vector[0]), material);
+    }
 
-        int[] vertexIndexArray;
-        int[] faceArray;
-        int[] normalArray;
-        int[] textureArray;
-        File file = new File(filepath);
-        Scanner scanner = new Scanner(file);
+    /**
+     * Parsed de vertex- en face gegevens van het OBJ-bestand.
+     *
+     * @param scanner De scanner voor het lezen van het bestand.
+     * @param vertexes De lijst met vertices.
+     * @param vertexIndexes De lijst met vertex-indices.
+     * @param faces De lijst met face-gegevens.
+     */
+    private static void parseVerticesAndFaces(Scanner scanner, List<Vector> vertexes, List<Integer> vertexIndexes, List<Integer> faces) {
 
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            String[] lineA = line.split(" ");
+            String[] lineParts = scanner.nextLine().split(" ");
 
-            if (Objects.equals(lineA[0], "v")){
-                double x = Double.parseDouble(lineA[1]);
-                double y = Double.parseDouble(lineA[2]);
-                double z = Double.parseDouble(lineA[3]);
-                vertexList.add(new Vector(x,y,z));
+            boolean lineIsVertex = Objects.equals(lineParts[0], "v");
+            boolean lineIsFace = Objects.equals(lineParts[0], "f");
+
+            if (lineIsVertex) {
+                parseVertex(lineParts, vertexes);
             }
-            if (Objects.equals( lineA[0], "f")){
-                if (lineA.length > 5) {System.out.println("5+");}
-                faceList.add(lineA.length-1);
-                for (int j = 1; j <lineA.length; j++) {
-                    String[] faceSplit = lineA[j].split("/");
-                    vertexIndexList.add(Integer.parseInt(faceSplit[0]));
-                }
+            else if (lineIsFace) {
+                parseFace(lineParts, vertexIndexes, faces);
             }
         }
-        System.out.println("object \""+filepath+"\" loaded from file");
-        return new TriangleMesh(faceList.toArray(new Integer[0]),vertexIndexList.toArray(new Integer[0]),vertexList.toArray(new Vector[0]),material);
     }
-    public void polyToTriangleMesh() {
-        //return new Mesh();
+
+    /**
+     * Parsed de gegevens van een vertex uit een regel in een OBJ-bestand en voegt deze toe aan de lijst met vertexes.
+     *
+     * @param vertexData De array met gegevens van een vertex-regel.
+     * @param vertexes De lijst met vertices waar de nieuwe vertex aan wordt toegevoegd.
+     */
+    private static void parseVertex(String[] vertexData, List<Vector> vertexes) {
+        // Controleer of de vertex-data de verwachte structuur heeft (x, y, z)
+        if (vertexData.length >= 4) {
+            double x = Double.parseDouble(vertexData[1]);
+            double y = Double.parseDouble(vertexData[2]);
+            double z = Double.parseDouble(vertexData[3]);
+            vertexes.add(new Vector(x, y, z));
+        } else {
+            System.out.println("Ongeldige vertex-gegevens: " + String.join(" ", vertexData));
+        }
     }
+
+
+    /**
+     * Parsed de gegevens van een face uit een regel in een OBJ-bestand.
+     *
+     * @param faceData De array met gegevens van een face-regel.
+     * @param vertexIndexList De lijst met vertex-indices waar de nieuwe indices aan worden toegevoegd.
+     * @param faces De lijst met face-gegevens waar het aantal vertices van de face wordt toegevoegd.
+     */
+    private static void parseFace(String[] faceData, List<Integer> vertexIndexList, List<Integer> faces) {
+        // Controleer of de face-data te lang is
+        if (faceData.length > 5) {
+            System.out.println("Te veel gegevens in een face-regel (5+).");
+        }
+
+        // Voeg het aantal vertices in de face toe aan de lijst met faces
+        faces.add(faceData.length - 1);
+
+        // Verwerk de vertex-indices in de face-data
+        for (int j = 1; j < faceData.length; j++) {
+            String[] vertexIndexParts = faceData[j].split("/");
+            vertexIndexList.add(Integer.parseInt(vertexIndexParts[0]));
+        }
+    }
+
+
 }

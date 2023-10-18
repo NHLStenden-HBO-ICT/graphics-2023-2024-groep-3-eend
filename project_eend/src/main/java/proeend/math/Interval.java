@@ -27,7 +27,6 @@ public class Interval {
 
     /**
      * Constructor voor een interval met opgegeven minimale en maximale waarden.
-     *
      * @param min De minimale waarde van het interval.
      * @param max De maximale waarde van het interval.
      */
@@ -38,7 +37,6 @@ public class Interval {
 
     /**
      * Controleert of het interval het opgegeven getal bevat.
-     *
      * @param x Het te controleren getal.
      * @return true als het interval het getal bevat, anders false.
      */
@@ -48,7 +46,6 @@ public class Interval {
 
     /**
      * Controleert of het interval het opgegeven getal omringt (inclusief grenzen).
-     *
      * @param x Het te controleren getal.
      * @return true als het interval het getal omringt, anders false.
      */
@@ -60,7 +57,6 @@ public class Interval {
      * Klem het opgegeven getal binnen het interval. Als het getal kleiner is dan de minimale
      * waarde van het interval, wordt de minimale waarde geretourneerd. Als het getal groter is
      * dan de maximale waarde, wordt de maximale waarde geretourneerd.
-     *
      * @param x Het te klemmen getal.
      * @return Het geklemde getal binnen het interval.
      */
@@ -81,7 +77,6 @@ public class Interval {
 
     /**
      * Haal de minimale waarde van het interval op.
-     *
      * @return De minimale waarde van het interval.
      */
     public double getMin() {
@@ -96,14 +91,24 @@ public class Interval {
     /** Een interval dat alle reële getallen bevat. */
     static Interval universe = new Interval( Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
+    /**
+     * Voegt twee intervallen samen.
+     * @param i0 Het eerste interval.
+     * @param i1 Het tweede interval.
+     * @return Het interval dat beide intervallen omvat.
+     */
     public Interval merge(Interval i0, Interval i1){
         double minI = Math.min(i0.getMin(), i1.getMin());
         double maxI = Math.max(i0.getMax(), i1.getMax());
         return new Interval(minI, maxI);
     }
 
+    /**
+     * Vergroot het interval met behulp van delta.
+     * @param delta Hoeveel het interval vergroot moet worden.
+     * @return Het vergrootte interval.
+     */
     public Interval expand(double delta) {
         return new Interval(min - delta, max + delta);
     }
-
 }

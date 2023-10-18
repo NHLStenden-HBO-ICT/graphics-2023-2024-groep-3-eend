@@ -1,29 +1,30 @@
 package proeend.hittable;
 
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.material.Material;
-import proeend.misc.OrthonormalBase;
+import proeend.math.OrthonormalBase;
 
 /**
- * Een sfeerobject dat kan worden getroffen door een lichtstraal in een 3D-scène.
+ * Een sfeerobject dat kan worden geraakt door een lichtstraal in een 3D-scène.
  */
 public class Sphere extends Hittable {
 
     private final double radius;
     private final Vector center;
-    private BoundingBox boundingBox;
+    private final BoundingBox boundingBox;
     public String name;
 
-    private Material material;
+    private final Material material;
     /**
      * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
      *
      * @param center   Het middelpunt van de sfeer.
      * @param radius   De straal van de sfeer.
      * @param material Het materiaal van de sfeer.
+     * @param name De naam van de bol voor identificatie van de sfeer.
      */
     public Sphere(Vector center, double radius, Material material, String name) {
         this.center = center;
@@ -33,6 +34,13 @@ public class Sphere extends Hittable {
         this.name = name;
     }
 
+    /**
+     * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
+     *
+     * @param center   Het middelpunt van de sfeer.
+     * @param radius   De straal van de sfeer.
+     * @param material Het materiaal van de sfeer.
+     */
     public Sphere(Vector center, double radius, Material material) {
         this.center = center;
         this.radius = radius;
@@ -58,9 +66,9 @@ public class Sphere extends Hittable {
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
 
 
-        Vector OC = Vector.add(ray.origin(), Vector.inverse(center));
-        double a = Vector.lengthSquared(ray.direction());
-        double halfb = Vector.dot(OC, ray.direction());
+        Vector OC = Vector.add(ray.origin(), Vector.negate(center));
+        double a = Vector.lengthSquared(ray.getDirection());
+        double halfb = Vector.dot(OC, ray.getDirection());
         double c = Vector.lengthSquared(OC) - radius * radius;
         double D = halfb * halfb - a * c;
         if (D < 0) {
@@ -78,17 +86,25 @@ public class Sphere extends Hittable {
         rec.setT(root);
         rec.setP(ray.at(rec.getT()));
         rec.setMaterial(material);
-        Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.inverse(center)));
+        Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.negate(center)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;
     }
+    /**
+     * Bereken de waarschijnlijkheid dichtheid functiewaarde (PDF-waarde) voor een gegeerde richting vanuit een bepaalde oorsprong.
+     * De PDF-waarde wordt gebruikt in ray tracing om de kans te bepalen dat een lichtstraal in deze richting een object raakt.
+     *
+     * @param origin     De oorsprong van de straal.
+     * @param direction  De gewenste richting.
+     * @return De PDF-waarde voor de opgegeven richting vanuit de oorsprong.
+     */
     @Override
     public double pdfValue(Vector origin, Vector direction) {
         HitRecord hitRecord = new HitRecord();
         if (!hit(new Ray(origin,direction),new Interval(0.001, Double.POSITIVE_INFINITY), hitRecord)) {
             return 0;
         }
-        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(Vector.add(center, Vector.inverse(origin))));
+        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(Vector.add(center, Vector.negate(origin))));
         double solidAngle = 2*Math.PI*(1-cosThetaMax);
 
         return 1.0/solidAngle;
@@ -99,7 +115,7 @@ public class Sphere extends Hittable {
      */
     @Override
     public Vector random(Vector origin) {
-        Vector direction = Vector.add(center, Vector.inverse(origin));
+        Vector direction = Vector.add(center, Vector.negate(origin));
         double distanceSquared = Vector.lengthSquared(direction);
         OrthonormalBase uvw = new OrthonormalBase();
         uvw.buildFromW(direction);

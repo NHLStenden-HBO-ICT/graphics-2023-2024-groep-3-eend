@@ -1,195 +1,274 @@
 package proeend.math;
 
 public class Vector {
-    // vectoren en (?)kleur
-    private double[] d = new double[3]; //4e dimensie voor homogeen (alfa voor kleur)
-    public Vector(){
-        for (int i = 0; i <3; i++){
-            d[i]=0;
-        }
-    }// misschien beter om meteen by de initialisatie al {0,0,0} te maken
-    public Vector(double x, double y, double z){
-        d[0]=x;
-        d[1]=y;
-        d[2]=z;
-    }
+    private double[] coordinates;
 
-    public void setValues(double x, double y, double z){
-        d[0]=x;
-        d[1]=y;
-        d[2]=z;
-    }
+    // constanten x, y en z geven de x, y en z coördinaten aan bij het opvragen ervan.
+    private final int x = 0, y = 1, z = 2;
 
-    public static Vector multiply(Vector attenuation, Vector vec) {
-        return new Vector(attenuation.x()* vec.x(), attenuation.y()* vec.y(),attenuation.z()* vec.z());
-    }
-
-
-    public static Vector reflect(Vector vec, Vector normal) {
-        return add(vec, inverse(scale(2.0*dot(vec,normal),normal)));
-    }
-
-    public double x() {return d[0];}
-    public double y() {return d[1];}
-    public double z() {return d[2];}
-
-    public double axis(int n) {
-        if (n == 1) return d[1];
-        if (n == 2) return d[2];
-        return d[0];
-    }
-    public double[] getAll(){
-        return d;
+    /**
+     * Initialiseert een nieuwe vector met standaard coördinaten (0, 0, 0).
+     */
+    public Vector() {
+        coordinates = new double[]{0, 0, 0};
     }
 
     /**
-     * zet een Vector om naar een een array van kleur integers
-     * @param pixelPerSample
-     * @param gamma
-     * of wel of niet de kleur gamma-gecorrigeerd moet worden
-     * @return
-     * RGB integer array, waarden tussen 0 en 255
+     * Initialiseert een nieuwe vector met de opgegeven coördinaten.
+     * @param x De x-coördinaat.
+     * @param y De y-coördinaat.
+     * @param z De z-coördinaat.
      */
-    public int[] toColor(int pixelPerSample, boolean gamma) {
-        //scale(1.0/pixelPerSample, this);
-            double s = (1.0/pixelPerSample);
-        d[0] = d[0]*s;
-        d[1] = d[1]*s;
-        d[2] = d[2]*s;
+    public Vector(double x, double y, double z) {
+        coordinates = new double[]{x, y, z};
+    }
 
-        if (gamma) {
-            d[0] = linearToGamma(d[0]);
-            d[1] = linearToGamma(d[1]);
-            d[2] = linearToGamma(d[2]);
-        }
-        Interval intensity = new Interval(0, .9999999);
-        int[] color = new int[3];
-        for (int i = 0; i < d.length; i++) {
-            color[i] = (int) ((intensity.clamp(d[i]) *255.99999));
-        }
-        return color;
+    /**
+     * Vermenigvuldigt twee vectoren.
+     * @param vecA De eerste vector.
+     * @param vecB De tweede vector.
+     * @return Het resultaat van de vermenigvuldiging.
+     */
+    public static Vector multiply(Vector vecA, Vector vecB) {
+        return new Vector(vecA.getX()* vecB.getX(), vecA.getY()* vecB.getY(),vecA.getZ()* vecB.getZ());
     }
-    public void copy(Vector copied) {
-        this.d = copied.d;
+
+    /**
+     * Reflecteert een vector ten opzichte van de normaal vector.
+     * @param vec    De oorspronkelijke vector.
+     * @param normal De normaal vector.
+     * @return Het gereflecteerde vector.
+     */
+    public static Vector reflect(Vector vec, Vector normal) {
+        return add(vec, negate(scale(2.0*dot(vec,normal),normal)));
     }
-    //verandert kleur naar gamma-aangepaste kleur e 1/2
-    public double linearToGamma(double original) {
-        return Math.sqrt(original);
+
+    public double getX() {
+        return coordinates[x];
     }
-    //draait bestaande vector om
+
+    public double getY() {
+        return coordinates[y];
+    }
+
+    public double getZ() {
+        return coordinates[z];
+    }
+
+    /**
+     * Zet 0, 1 of 2 om naar x, y of z.
+     * @param n Getal dat omgezet wordt naar een as.
+     * @return De as.
+     */
+    public double axis(int n) {
+        if (n == 1) return coordinates[y];
+        if (n == 2) return coordinates[z];
+        return coordinates[x];
+    }
+
+    public double[] getCoordinates(){
+        return coordinates;
+    }
+
+    public void copy(Vector copy) {
+        this.coordinates = copy.coordinates;
+    }
+
+    /**
+     * Berekent de inverse.
+     */
     public void invert(){
         Vector vec = scale(-1, this);
-        this.d[0]= vec.x();
-        this.d[1]= vec.y();
-        this.d[2]= vec.z();
-    }
-    public void rotateZ(double angle) {
-        double x = d[0];
-        d[0] = d[0]*Math.cos(angle)-d[1]*Math.sin(angle);
-        d[1] = x*Math.sin(angle)+d[1]*Math.cos(angle);
-    }
-    public void rotateY(double angle) {
-        double x = d[0];
-        d[0] = d[0]*Math.cos(angle)+d[2]*Math.sin(angle);
-        d[2] = -x  *Math.sin(angle)+d[2]*Math.cos(angle);
-    }
-    public static Vector inverse(Vector vec) {
-        return new Vector(-vec.x(),-vec.y(),-vec.z());
-    }
-    //voeg twee vectoren bij elkaar (of haalt van elkaar af)
-    public static Vector add(Vector vector1, Vector vector2) {
-        return new Vector(vector1.x()+vector2.x(), vector1.y()+vector2.y(), vector1.z()+vector2.z());
-    }
-    //schaal een vector met scalar
-    public static Vector scale(double scalar, Vector scaled) {
-        return new Vector(scaled.x()*scalar, scaled.y()*scalar, scaled.z()*scalar);
+        this.coordinates[0]= vec.getX();
+        this.coordinates[1]= vec.getY();
+        this.coordinates[2]= vec.getZ();
     }
 
-    //dotproduct
-    public static double dot(Vector vector1, Vector vector2) {
-        return (vector1.x()*vector2.x()+vector1.y()*vector2.y()+vector1.z()*vector2.z());
+    /**
+     * Roteert de vector om de Z-as met de opgegeven hoek.
+     * @param angle De rotatiehoek in radialen
+     */
+    public void rotateZ(double angle) {
+        double cosA = Math.cos(angle);
+        double sinA = Math.sin(angle);
+        double newX = cosA * coordinates[x] - sinA * coordinates[y];
+        double newY = sinA * coordinates[x] + cosA * coordinates[y];
+        coordinates[x] = newX;
+        coordinates[y] = newY;
     }
-    //TODO crossproduct
-    public static Vector cross(Vector vector1, Vector vector2) {
+
+    /**
+     * Roteert de vector om de Y-as met de opgegeven hoek.
+     * @param angle De rotatiehoek in radialen.
+     */
+    public Vector rotateY(double angle) {
+        double cosA = Math.cos(angle);
+        double sinA = Math.sin(angle);
+        double newX = cosA * coordinates[x] + sinA * coordinates[z];
+        double newZ = -sinA * coordinates[x] + cosA * coordinates[z];
+        coordinates[x] = newX;
+        coordinates[z] = newZ;
+
+        return this;
+    }
+
+    /**
+     * Maakt de vector negatief.
+     * @param vec
+     * @return
+     */
+    public static Vector negate(Vector vec) {
+        return new Vector(-vec.getX(),-vec.getY(),-vec.getZ());
+    }
+
+    /**
+     * Telt twee vectoren bij elkaar op.
+     * @param vecA De eerste vector.
+     * @param vecB De tweede vector.
+     * @return Het resultaat van de optelling.
+     */
+    public static Vector add(Vector vecA, Vector vecB) {
+        return new Vector(vecA.getX() + vecB.getX(), vecA.getY() + vecB.getY(), vecA.getZ() + vecB.getZ());
+    }
+
+    /**
+     * Schaalt de opgegeven vector met een scalaire waarde.
+     * @param scalar De scalaire waarde waarmee de vector wordt geschaald.
+     * @param scaled De vector die wordt geschaald.
+     * @return Het geschaalde resultaat.
+     */
+    public static Vector scale(double scalar, Vector scaled) {
+        return new Vector(scaled.getX() * scalar, scaled.getY() * scalar, scaled.getZ() * scalar);
+    }
+
+    /**
+     * Berekent het inwendig product (dotproduct) van twee vectoren.
+     * @param vecA De eerste vector.
+     * @param vecB De tweede vector.
+     * @return Het inwendig product van de twee vectoren.
+     */
+    public static double dot(Vector vecA, Vector vecB) {
+        return (vecA.getX() * vecB.getX() + vecA.getY() * vecB.getY() + vecA.getZ() * vecB.getZ());
+    }
+
+    /**
+     * Berekent het kruisproduct van twee vectoren.
+     * @param vecA De eerste vector.
+     * @param vecB De tweede vector.
+     * @return Het kruisproduct van de twee vectoren.
+     */
+    public static Vector cross(Vector vecA, Vector vecB) {
         return new Vector(
-                vector1.y() * vector2.z() - vector1.z() * vector2.y(),
-                vector1.z() * vector2.x() - vector1.x() * vector2.z(),
-                vector1.x() * vector2.y() - vector1.y() * vector2.x()
+                vecA.getY() * vecB.getZ() - vecA.getZ() * vecB.getY(),
+                vecA.getZ() * vecB.getX() - vecA.getX() * vecB.getZ(),
+                vecA.getX() * vecB.getY() - vecA.getY() * vecB.getX()
         );
     }
 
+    /**
+     * Berekent het kwadraat van de lengte van de vector.
+     * @param vec De vector waarvan het kwadraat van de lengte wordt berekend.
+     * @return Het kwadraat van de lengte van de vector.
+     */
     public static double lengthSquared(Vector vec) {
-        return (vec.x()*vec.x()+ vec.y()* vec.y()+ vec.z()* vec.z());
-    }
-    public static double length(Vector vec) {
-        return Math.sqrt(lengthSquared(vec));
-    }
-    public static Vector unitVector(Vector vec) {
-        return scale((1.0/length(vec)), vec);
-    }
-
-    public static Vector randomVec() {
-        return new Vector(Math.random(), Math.random(), Math.random());
-    }
-    public static Vector randomVec(double min, double max) {
-        return new Vector(
-                min + Math.random() * (max-min),
-                min + Math.random() * (max-min),
-                min + Math.random() * (max-min));
-    }
-    public static Vector randomInUnitSphere() {
-        while (true) {
-            Vector p = randomVec(-1, 1);
-            if (lengthSquared(p) < 1) {
-                return p;
-            }
-        }
-    }
-    public static Vector randomOnUnitSphere() {
-        return unitVector(randomInUnitSphere());
-    }
-    public static Vector RandomUnitVecOnHemisphere(Vector normal) {
-        Vector p = randomOnUnitSphere();
-        if (dot(p, normal) >0.0) {
-            return p;
-        }
-        return inverse(p);
+        return (vec.getX() * vec.getX() + vec.getY() * vec.getY() + vec.getZ() * vec.getZ());
     }
 
     /**
-     * Subtract second vector to first vector.
-     * @param vectorA is the first vector.
-     * @param vectorB is the second vector to subtract.
-     * @return the result of the vector subtraction.
+     * Berekent de lengte van de vector.
+     * @param vec De vector waarvan de lengte wordt berekend.
+     * @return De lengte van de vector.
      */
-    public static Vector subtract(Vector vectorA, Vector vectorB) {
-        double x = vectorA.d[0] - vectorB.d[0];
-        double y = vectorA.d[1] - vectorB.d[1];
-        double z = vectorA.d[2] - vectorB.d[2];
+    public static double length(Vector vec) {
+        return Math.sqrt(lengthSquared(vec));
+    }
+
+    /**
+     * Berekent de eenheidsvector (een vector met lengte 1) van de opgegeven vector.
+     * @param vec De vector waarvan de eenheidsvector wordt berekend.
+     * @return De eenheidsvector van de vector.
+     */
+    public static Vector unitVector(Vector vec) {
+        return scale((1.0 / length(vec)), vec);
+    }
+
+    /**
+     * Genereert een willekeurige vector met waarden tussen 0 en 1.
+     * @return Een willekeurige vector.
+     */
+    public static Vector randomVec() {
+        return new Vector(Math.random(), Math.random(), Math.random());
+    }
+
+    /**
+     * Genereert een willekeurige vector met waarden tussen het opgegeven minimum en maximum.
+     * @param min Het minimum voor de willekeurige vectorwaarden.
+     * @param max Het maximum voor de willekeurige vectorwaarden.
+     * @return Een willekeurige vector binnen het opgegeven bereik.
+     */
+    public static Vector randomVec(double min, double max) {
+        return new Vector(
+                min + Math.random() * (max - min),
+                min + Math.random() * (max - min),
+                min + Math.random() * (max - min));
+    }
+
+    /**
+     * Genereert een willekeurige vector binnen de eenheidssfeer.
+     *
+     * @return Een willekeurige vector binnen de eenheidssfeer.
+     */
+    public static Vector randomInUnitSphere() {
+        Vector vec;
+
+        do {
+            vec = randomVec(-1, 1);
+        } while (lengthSquared(vec) >= 1);
+
+        return unitVector(vec);
+    }
+
+    /**
+     * Genereert een willekeurige eenheidsvector op het halfrond ten opzichte van de opgegeven normaalvector.
+     * @param normal De normaalvector.
+     * @return Een willekeurige eenheidsvector op het halfrond.
+     */
+    public static Vector RandomUnitVecOnHemisphere(Vector normal) {
+        Vector p = randomOnUnitSphere();
+        return (dot(p, normal) > 0.0) ? p : negate(p);
+    }
+
+    /**
+     * Genereert een willekeurige eenheidsvector op de eenheidssfeer.
+     * @return Een willekeurige eenheidsvector op de eenheidssfeer.
+     */
+    public static Vector randomOnUnitSphere() {
+        return unitVector(randomInUnitSphere());
+    }
+
+    /**
+     * Bereken de vector met minimale waarden voor elke as tussen twee vectoren.
+     * @param vectorA de eerste vector
+     * @param vectorB de tweede vector
+     * @return Een vector met de minimale waarden van elke as.
+     */
+    public static Vector min(Vector vectorA, Vector vectorB) {
+        double x = Math.min(vectorA.getX(), vectorB.getX());
+        double y = Math.min(vectorA.getY(), vectorB.getY());
+        double z = Math.min(vectorA.getZ(), vectorB.getZ());
         return new Vector(x, y, z);
     }
 
-    public Vector getNormal(int axis, double v) {
-
-        if (axis == 1) return new Vector(0,v,0);
-        if (axis == 2) return new Vector(0,0,v);
-        return new Vector(v,0,0);
-
-    }
-
-    // Method to find the component-wise minimum between two vectors
-    public static Vector min(Vector vector1, Vector vector2) {
-        double x = Math.min(vector1.x(), vector2.x());
-        double y = Math.min(vector1.y(), vector2.y());
-        double z = Math.min(vector1.z(), vector2.z());
-        return new Vector(x, y, z);
-    }
-
-    // Method to find the component-wise maximum between two vectors
+    /**
+     * Bepaal de vector met maximale waarden voor elke as tussen twee vectoren.
+     * @param vector1 De eerste vector.
+     * @param vector2 De tweede vector.
+     * @return Een nieuwe vector met de maximale waarden van elke as.
+     */
     public static Vector max(Vector vector1, Vector vector2) {
-        double x = Math.max(vector1.x(), vector2.x());
-        double y = Math.max(vector1.y(), vector2.y());
-        double z = Math.max(vector1.z(), vector2.z());
+        double x = Math.max(vector1.getX(), vector2.getX());
+        double y = Math.max(vector1.getY(), vector2.getY());
+        double z = Math.max(vector1.getZ(), vector2.getZ());
         return new Vector(x, y, z);
     }
 }

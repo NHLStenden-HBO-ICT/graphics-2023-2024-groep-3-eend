@@ -1,60 +1,23 @@
 package proeend.misc;
 
-import proeend.hittable.*;
+import proeend.hittable.HittableList;
+import proeend.hittable.Sphere;
+import proeend.hittable.Triangle;
+import proeend.hittable.PolygonMesh;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
-import proeend.material.texture.Texture;
 import proeend.math.Vector;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Beheerd de instellingen van de wereld.
+ */
 public class Utility {
 
     /**
-     * compleet nutteloos
-     */
-    public static void Convert(String arg) {
-        List<String> command= new ArrayList<String>();
-        command.add("python3");
-        command.add("converter.py");
-        command.add(arg);
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        int exitCode;
-        try {
-            Process process = processBuilder.start();
-            exitCode = process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(exitCode);
-    }
-    public static double integralMonteCarlo (double a, double b ) {
-        int N = 1000000;
-        double sum = 0;
-        for (int i = 0; i < N; ++i) {
-            double x = a + (b - a) * Math.random();
-            sum += x;
-        }
-        return b - a * sum / N;
-
-
-    }
-    public static Vector randomCosineDirection() {
-        double r1 = Math.random();
-        double r2 = Math.random();
-
-        double fi = 2*Math.PI*r1;
-        double x = Math.cos(fi)*Math.sqrt(r2);
-        double y = Math.sin(fi)*Math.sqrt(r2);
-        double z = Math.sqrt(1-r2);
-
-        return new Vector(x,y,z);
-    }
-    /**
-     * laad een in de functie gedefineerde wereld in
-     * @param selector je keuze
+     * Maakt de wereld aan.
+     * @param world De scene.
+     * @param lights De lichten binnen de scene.
+     * @param selector De geselecteerde wereld.
      */
     public static void loadWorld(HittableList world, HittableList lights,int selector) {
         world.clear();
@@ -70,7 +33,6 @@ public class Utility {
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
         Dielectric glass = new Dielectric(1.31);
-
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -89,8 +51,6 @@ public class Utility {
         Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
         Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
 
-
-
         switch (selector) {
 
             case 0:
@@ -101,8 +61,6 @@ public class Utility {
                 world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
                 // world.add(vierkant);
                 lights.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
-
-
 
                 break;
             case 1:
@@ -122,9 +80,6 @@ public class Utility {
                 //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
                 //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
 
-
-
-
                 break;
             case 2:
                 world.add(new Triangle(v0,v1,v2, normal));
@@ -140,11 +95,10 @@ public class Utility {
             case 3:
                 faceArray = new Integer[]{3,3,3};
                 vertexIndexArray = new Integer[]{0,1,2,0,2,3,1,4,2};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, normal));
+                world.add(new PolygonMesh(faceArray, vertexIndexArray, vertexArray, normal));
                 world.add(new Sphere(v1, .3, whiteLight));
 
                 lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
-
 
                 break;
             case 4:
@@ -166,7 +120,7 @@ public class Utility {
             case 6: //box
                 faceArray = new Integer[]{3,3,3,3};
                 vertexIndexArray = new Integer[]{5,6,7,6,8,7,8,9,10,7,8,10};
-                world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
+                world.add(new PolygonMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
 
                 lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
 
@@ -186,9 +140,5 @@ public class Utility {
                 System.out.println("foute wereldkeuze");
                 break;
         }
-
     }
-
-
-
 }

@@ -1,14 +1,10 @@
 package proeend.hittable;
 
 import proeend.math.Vector;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Interval;
 import proeend.math.Ray;
-import proeend.hittable.BBNode;
-import proeend.hittable.BoundingBox;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -16,14 +12,12 @@ import java.util.List;
  */
 public class HittableList extends Hittable {
 
-    private List<Hittable> objects = new ArrayList<>();
+    private final List<Hittable> objects = new ArrayList<>();
     private BoundingBox boundingBox;
-
     @Override
     public BoundingBox getBoundingbox() {
         return boundingBox;
     }
-
     public HittableList(){
         this.boundingBox = null;
     }
@@ -51,7 +45,6 @@ public class HittableList extends Hittable {
         }
     }
 
-
     /**
      * Maakt de lijst van hittable objecten leeg.
      */
@@ -63,7 +56,6 @@ public class HittableList extends Hittable {
     /**
      * Bepaalt of een lichtstraal een van de hittable objecten in de lijst treft en
      * vult het HitRecord met de informatie over de dichtstbijzijnde botsing.
-     *
      * @param ray   De lichtstraal die wordt getest op botsingen.
      * @param rayT  Het interval waarin mogelijke botsingen worden gecontroleerd.
      * @param rec   Het HitRecord dat wordt gevuld met informatie over de botsing.
@@ -84,8 +76,13 @@ public class HittableList extends Hittable {
         }
         return hasHitSomething;
     }
-
-
+    /**
+     * Berekent de kansdichtheid functiewaarde (PDF) voor het raken van een object
+     * in de lijst met behulp van de meegegeven oorsprong en richting van een lichtstraal.
+     * @param origin    De oorsprong van de lichtstraal.
+     * @param direction De richting van de lichtstraal.
+     * @return De PDF-waarde voor het raken van een object in de lijst.
+     */
     @Override
     public double pdfValue(Vector origin, Vector direction) {
         for (Hittable object : objects) {
@@ -94,6 +91,11 @@ public class HittableList extends Hittable {
         return 0;
     }
 
+    /**
+     * Genereert een willekeurige richting vector op basis van de objecten in de lijst en de meegegeven oorsprong.
+     * @param origin De oorsprong voor het genereren van de willekeurige richting.
+     * @return Een willekeurige richting gebaseerd op de objecten in de lijst.
+     */
     @Override
     public Vector random(Vector origin) {
         for (Hittable object : objects) {
@@ -101,7 +103,4 @@ public class HittableList extends Hittable {
         }
         return new Vector(1,0,0);
     }
-
-
-
 }

@@ -1,23 +1,32 @@
 package proeend.material;
 
-import proeend.Main;
-import proeend.ScatterRecord;
+import proeend.records.ScatterRecord;
 import proeend.material.pdf.CosPDF;
-import proeend.material.pdf.SpherePDF;
 import proeend.material.texture.SolidColor;
 import proeend.material.texture.Texture;
-import proeend.misc.HitRecord;
+import proeend.records.HitRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
-import proeend.misc.OrthonormalBase;
-import proeend.misc.Utility;
 
+/**
+ * Maakt het Lambertian materiaal aan.
+ */
 public class Lambertian extends Material{
-    private Texture albedo; // ability of light reflection
+    private Texture albedo; // hoeveelheid lichtreflectie
+
+    /**
+     * Maakt een Lambertian materiaal aan.
+     * @param albedo Hoeveelheid weerkaatsing.
+     */
     public Lambertian(Vector albedo) {
         this.albedo = new SolidColor(albedo); {
         }
     }
+
+    /**
+     * Stelt de textuur van het materiaal in.
+     * @param texture De textuur.
+     */
     public Lambertian(Texture texture) {
         this.albedo = texture;
     }
@@ -58,7 +67,7 @@ public class Lambertian extends Material{
     }
     @Override
     public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
-        var cosTheta = Vector.dot(rec.normal, Vector.unitVector(scattered.direction()));
+        var cosTheta = Vector.dot(rec.normal, Vector.unitVector(scattered.getDirection()));
         return cosTheta < 0 ? 0 : cosTheta/Math.PI;
     }
 }

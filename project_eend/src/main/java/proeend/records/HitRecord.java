@@ -1,4 +1,4 @@
-package proeend.misc;
+package proeend.records;
 
 import proeend.material.Material;
 import proeend.math.Ray;
@@ -158,8 +158,8 @@ public class HitRecord {
      * @param outwardNormal De uitgaande normaalvector op het raakpunt van het oppervlak.
      */
     public void setFaceNormal(Ray ray, Vector outwardNormal) {
-        frontFace = Vector.dot(ray.direction, outwardNormal) < 0;
-        normal = frontFace ? outwardNormal : Vector.inverse(outwardNormal);
+        frontFace = Vector.dot(ray.getDirection(), outwardNormal) < 0;
+        normal = frontFace ? outwardNormal : Vector.negate(outwardNormal);
     }
 
     /**
