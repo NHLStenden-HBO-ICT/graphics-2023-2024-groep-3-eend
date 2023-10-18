@@ -21,10 +21,10 @@ public class CosPDF extends PDF {
         double r1 = Math.random();
         double r2 = Math.random();
 
-        double fi = 2*Math.PI*r1;
-        double x = Math.cos(fi)*Math.sqrt(r2);
-        double y = Math.sin(fi)*Math.sqrt(r2);
-        double z = Math.sqrt(1-r2);
+        double fi = 2 * Math.PI * r1;
+        double x = Math.cos(fi) * Math.sqrt(r2);
+        double y = Math.sin(fi) * Math.sqrt(r2);
+        double z = Math.sqrt( 1 - r2);
 
         return new Vector(x,y,z);
     }

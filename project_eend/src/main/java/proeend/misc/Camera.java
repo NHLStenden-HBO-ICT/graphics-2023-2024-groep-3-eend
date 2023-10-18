@@ -565,10 +565,7 @@ public class Camera {
             // Controleer of de ray een object in de wereld raakt
             // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
             if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
-
-                // TODO: In de world.hit functie wordt het materiaal gezet, dit moet even netjes.
-                // TODO: Render afstand in de interval kunnen aanpassen om render te versnellen.
-                // Geen raakpunt, retourneer de achtergrondkleur
+                // Geen raakpunt
                 return background;
             }
 
@@ -593,9 +590,7 @@ public class Camera {
             Ray scattered = new Ray(rec.p, mixPDF.generate());
             double pdfVal = mixPDF.value(scattered.getDirection());
             double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
-            //double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
-            //double pdf = scatteringPDF;
-            //blijkbaar mag je floats(...) wel delen door nul...
+
             Vector scatterColor = Vector.scale(1.0 / pdfVal,
                     Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation), rayColor(scattered, depth - 1, world, lights)));
 
