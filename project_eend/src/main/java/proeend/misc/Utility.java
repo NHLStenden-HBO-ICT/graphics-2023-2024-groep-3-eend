@@ -8,56 +8,8 @@ import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.math.Vector;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Utility {
 
-    /**
-     * compleet nutteloos
-     */
-    public static void Convert(String arg) {
-        List<String> command= new ArrayList<String>();
-        command.add("python3");
-        command.add("converter.py");
-        command.add(arg);
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        int exitCode;
-        try {
-            Process process = processBuilder.start();
-            exitCode = process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(exitCode);
-    }
-    public static double integralMonteCarlo (double a, double b ) {
-        int N = 1000000;
-        double sum = 0;
-        for (int i = 0; i < N; ++i) {
-            double x = a + (b - a) * Math.random();
-            sum += x;
-        }
-        return b - a * sum / N;
-
-
-    }
-    public static Vector randomCosineDirection() {
-        double r1 = Math.random();
-        double r2 = Math.random();
-
-        double fi = 2*Math.PI*r1;
-        double x = Math.cos(fi)*Math.sqrt(r2);
-        double y = Math.sin(fi)*Math.sqrt(r2);
-        double z = Math.sqrt(1-r2);
-
-        return new Vector(x,y,z);
-    }
-    /**
-     * laad een in de functie gedefineerde wereld in
-     * @param selector je keuze
-     */
     public static void loadWorld(HittableList world, HittableList lights,int selector) {
         world.clear();
         lights.clear();

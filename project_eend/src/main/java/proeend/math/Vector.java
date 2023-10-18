@@ -271,23 +271,25 @@ public class Vector {
         return unitVector(randomInUnitSphere());
     }
 
-    public Vector getNormal(int axis, double v) {
-
-        if (axis == 1) return new Vector(0,v,0);
-        if (axis == 2) return new Vector(0,0,v);
-        return new Vector(v,0,0);
-
-    }
-
-    // Method to find the component-wise minimum between two vectors
-    public static Vector min(Vector vector1, Vector vector2) {
-        double x = Math.min(vector1.getX(), vector2.getX());
-        double y = Math.min(vector1.getY(), vector2.getY());
-        double z = Math.min(vector1.getZ(), vector2.getZ());
+    /**
+     * Bereken de vector met minimale waarden voor elke as tussen twee vectoren.
+     * @param vectorA de eerste vector
+     * @param vectorB de tweede vector
+     * @return Een vector met de minimale waarden van elke as.
+     */
+    public static Vector min(Vector vectorA, Vector vectorB) {
+        double x = Math.min(vectorA.getX(), vectorB.getX());
+        double y = Math.min(vectorA.getY(), vectorB.getY());
+        double z = Math.min(vectorA.getZ(), vectorB.getZ());
         return new Vector(x, y, z);
     }
 
-    // Method to find the component-wise maximum between two vectors
+    /**
+     * Bepaal de vector met maximale waarden voor elke as tussen twee vectoren.
+     * @param vector1 De eerste vector.
+     * @param vector2 De tweede vector.
+     * @return Een nieuwe vector met de maximale waarden van elke as.
+     */
     public static Vector max(Vector vector1, Vector vector2) {
         double x = Math.max(vector1.getX(), vector2.getX());
         double y = Math.max(vector1.getY(), vector2.getY());

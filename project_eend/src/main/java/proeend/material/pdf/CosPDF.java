@@ -1,11 +1,10 @@
 package proeend.material.pdf;
 
-import proeend.math.Vector;
 import proeend.math.OrthonormalBase;
-import proeend.misc.Utility;
+import proeend.math.Vector;
 
 public class CosPDF extends PDF {
-    private OrthonormalBase uvw = new OrthonormalBase();
+    private final OrthonormalBase uvw = new OrthonormalBase();
     public CosPDF(Vector w) {uvw.buildFromW(w);}
     @Override
     public double value(Vector direction) {
@@ -15,6 +14,18 @@ public class CosPDF extends PDF {
 
     @Override
     public Vector generate() {
-        return uvw.local(Utility.randomCosineDirection());
+        return uvw.local(randomCosineDirection());
+    }
+
+    public static Vector randomCosineDirection() {
+        double r1 = Math.random();
+        double r2 = Math.random();
+
+        double fi = 2*Math.PI*r1;
+        double x = Math.cos(fi)*Math.sqrt(r2);
+        double y = Math.sin(fi)*Math.sqrt(r2);
+        double z = Math.sqrt(1-r2);
+
+        return new Vector(x,y,z);
     }
 }
