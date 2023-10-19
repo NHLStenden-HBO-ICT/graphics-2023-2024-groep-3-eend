@@ -397,49 +397,6 @@ public class Camera {
     WritableImage writableImage = new WritableImage(imageWidth, imageHeight);// /threads
     PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-    /**
-     * Maakt een afbeelding aan met behulp van meerdere threads.
-     * @param world De scene.
-     * @param lights De lichten binnen de scene.
-     * @return Geeft de afbeelding terug.
-     */
-    public WritableImage multiThreadRender(HittableList world, Hittable lights) {
-        init();
-        int beschikbareProcessors = Runtime.getRuntime().availableProcessors();
-        System.out.println("Aantal beschikbare processors: " + beschikbareProcessors);
-        // Bereken het aantal threads dat je wilt maken (bijv. helft van beschikbare processors)
-        int numberOfThreads = beschikbareProcessors;
-        //int numberOfThreads = 5;
-
-        long startTime = System.currentTimeMillis();
-
-        int[] threadCounter = {0}; // Use an array to store the counter
-
-        Runnable taak = () -> {
-            synchronized (threadCounter) {
-                threadCounter[0]++;
-            }
-            WritableImage image;
-            image = multiTaak(true,world,numberOfThreads,threadCounter[0],lights);
-
-            try {
-                saveImage(image);
-                if(threadCounter[0] == numberOfThreads){
-                    long totalTime = System.currentTimeMillis() - startTime;
-                    System.out.println( "Multithread gerendered in " + totalTime  + "ms" );
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
-
-        for (int i = 0; i < numberOfThreads; i++) {
-            Thread thread = new Thread(taak);
-            thread.start();
-            //launch();
-        }
-        return writableImage;
-    }
 
     /**
      * Geeft meerdere threads tegelijk een taak.
@@ -512,30 +469,6 @@ public class Camera {
         return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
     }
 
-    /**
-     * Geeft een ray terug die door het opgegeven pixel gaat.
-     * @param x De x-coördinaat van het pixel.
-     * @param y De y-coördinaat van het pixel.
-     * @return Een Ray-object dat het pixel vertegenwoordigt.
-     */
-    private Ray getRay(int x, int y) {
-        Vector pixelcenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
-        Vector pixelSample = Vector.add(pixelcenter, pixelSampleSquare());
-
-        Vector rayOrigin = cameraCenter;
-        Vector direction = Vector.add(pixelSample, Vector.negate(rayOrigin));
-        return new Ray(rayOrigin, direction);
-    }
-
-    /**
-     * Genereert een willekeurige pixelverschuiving voor anti-aliasing.
-     * @return Een Vector die de pixelverschuiving vertegenwoordigt.
-     */
-    private Vector pixelSampleSquare() {
-        double px = -.5 + Math.random();
-        double py = -.5 + Math.random();
-        return Vector.add(Vector.scale(px, pixelDeltaU), Vector.scale(py, pixelDeltaV));
-    }
 
     public WritableImage render(Hittable world, Hittable lights) {
         return render(false, world, lights);
