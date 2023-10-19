@@ -24,6 +24,8 @@ import proeend.hittable.ObjectLoader;
 import proeend.hittable.PolygonMesh;
 import proeend.math.Vector;
 import proeend.misc.Utility;
+import proeend.windows.StartScreen;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -215,6 +217,8 @@ public class Main extends Application {
         } catch (IOException e) {
             System.out.println("load failed");
         }
+
+        new StartScreen();
 
         Utility.loadWorld(world, lights, 1);
         uvSphere.ConvertToTriangles();
