@@ -4,7 +4,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import proeend.hittable.Hittable;
-import proeend.hittable.HittableList;
 import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
 import proeend.material.pdf.HittablePDF;
@@ -15,6 +14,7 @@ import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.records.HitRecord;
 import proeend.records.ScatterRecord;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -257,74 +257,6 @@ public class Camera {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        if (save) {
-            try {
-                saveImage(writableImage);
-            } catch (IOException e) {e.printStackTrace();}
-        }
-    }
-
-    /**
-     * render(), maar dan multithreaded en void.
-     */
-    public void multiRender(boolean save, final Hittable world, final Hittable lights) {
-        //TODO maak een werkende taakverdeler
-        //TODO of verdeel per lijn
-        init();
-        block = true;
-        WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-        int totalLines = imageHeight;
-
-        int numberOfThreads = 4;
-        int chunkSize = imageHeight/numberOfThreads;
-        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
-
-        class WorkerThread implements Runnable {
-            private final int start;
-            private final int id;
-            private final int end;
-            public WorkerThread(int start, int end, int id) {
-                this.start = start;
-                this.end = end;
-                this.id = id;
-            }
-            @Override
-            public void run() {
-                for (int y = start; y < end; ++y){
-                    if (save) {
-                        System.out.println(imageHeight-y);
-                    }
-
-                    for (int x = 0; x < imageWidth; ++x) {
-                        Vector colorVec = new Vector();
-                        for (int sy = 0; sy < rootSPP; ++sy) {
-                            for (int sx = 0; sx < rootSPP; ++sx) {
-                                Ray ray = getRay(x,y,sx,sy);
-                                colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
-                            }
-                        }
-                        int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
-                        synchronized (pixelWriter) {
-                            pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
-                        }
-                    }
-                }
-                System.out.println("thread "+id+" finished");
-            }
-        }
-        for (int i = 0; i < numberOfThreads; i++) {
-            int chunkStart = i * chunkSize;
-            int chunkEnd = (1+i) * chunkSize;
-            executor.submit(new WorkerThread(chunkStart, chunkEnd, i));
-        }
-        executor.shutdown();
-        try {
-            executor.awaitTermination(1, TimeUnit.DAYS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        block = false;
         if (save) {
             try {
                 saveImage(writableImage);
