@@ -60,9 +60,9 @@ public class Main extends Application {
             camera.render(true, world, lights);
         };
         Scene scene = new Scene(root, camera.getImageWidth(), camera.getHeight());
-        root.setAlignment(coordX, Pos.TOP_LEFT);
-        root.setAlignment(coordY, Pos.TOP_CENTER);
-        root.setAlignment(coordZ, Pos.TOP_RIGHT);
+        StackPane.setAlignment(coordX, Pos.TOP_LEFT);
+        StackPane.setAlignment(coordY, Pos.TOP_CENTER);
+        StackPane.setAlignment(coordZ, Pos.TOP_RIGHT);
 
         //animatie
         Duration interval = Duration.seconds(frameRate);
