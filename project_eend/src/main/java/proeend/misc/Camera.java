@@ -312,65 +312,8 @@ public class Camera {
         return writableImage;
     }
 
-    /**
-     * Berekend de start pixel en de end pixel.
-     * @param numberOfThreads De hoeveelheid threads.
-     * @param threadCounter Telt de hoeveelheid threats op.
-     * @param imageHeight De hoogte van de afbeelding.
-     * @return Geeft de eerste en de laatste pixel terug.
-     */
-    public int[] calculateStartAndEnd(int numberOfThreads, int threadCounter, int imageHeight) {
-        int startPixel = imageHeight / numberOfThreads * threadCounter - (imageHeight / numberOfThreads);
-        int endPixel = imageHeight / numberOfThreads * (threadCounter + 1) - (imageHeight / numberOfThreads);
-
-        return new int[]{startPixel, endPixel};
-    }
-
-    WritableImage writableImage = new WritableImage(imageWidth, imageHeight);// /threads
-    PixelWriter pixelWriter = writableImage.getPixelWriter();
 
 
-    /**
-     * Geeft meerdere threads tegelijk een taak.
-     * @param save Geeft aan of de afbeelding opgeslagen moet worden of niet.
-     * @param world De scene.
-     * @param threads De hoeveelheid threads.
-     * @param threadCounter Telt de hoeveelheid threats op.
-     * @param lights De lichten binnen de scene.
-     * @return Geeft de afbeelding terug.
-     */
-    public WritableImage multiTaak(boolean save, Hittable world, int threads, int threadCounter, Hittable lights){
-
-    int[] startAndEnd = calculateStartAndEnd(threads, threadCounter, imageHeight);
-    int startPixelY = startAndEnd[0];    // Getters
-
-    int endPixelY = startAndEnd[1];
-
-    for (int y = startPixelY; y < endPixelY; ++y) {
-        System.out.println(Integer.toString(endPixelY - y) + " lines to go op Thread: " + threadCounter);
-
-        for (int x = 0; x < imageWidth; ++x) {
-            Vector colorVec = new Vector();
-
-            //AA, een stuk minder snel, maar wel beter.
-            for (int sy = 0; sy < rootSPP; ++sy) {
-                for (int sx = 0; sx < rootSPP; ++sx) {
-                    Ray ray = getRay(x, y, sx, sy);
-                    colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
-                }
-            }
-            int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
-            try{
-                synchronized (pixelWriter) {
-                    pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
-                }
-            }catch (Exception ex){
-                System.out.println(ex.toString());
-            }
-        }
-    }
-    return writableImage;
-}
 
     /**
      * Haalt de straal die geschoten wordt op.
