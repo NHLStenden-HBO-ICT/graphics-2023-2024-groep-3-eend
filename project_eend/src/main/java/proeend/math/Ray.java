@@ -1,4 +1,3 @@
-
 package proeend.math;
 /**
  * De Ray-klasse vertegenwoordigt een straal in de ruimte, gedefinieerd door een oorsprong (origin) en een richting (direction).

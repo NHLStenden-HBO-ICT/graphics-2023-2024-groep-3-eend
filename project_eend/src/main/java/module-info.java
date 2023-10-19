@@ -11,4 +11,6 @@ module com.example.project_eend {
     opens proeend.misc to javafx.fxml;
     exports proeend.records;
     opens proeend.records to javafx.fxml;
+    exports proeend.math;
+    opens proeend.math to javafx.fxml;
 }
