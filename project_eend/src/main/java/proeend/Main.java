@@ -220,7 +220,7 @@ public class Main extends Application {
 
         new StartScreen();
 
-        Utility.loadWorld(world, lights, 1);
+/*        Utility.loadWorld(world, lights, 1);
         uvSphere.ConvertToTriangles();
         world.add(uvSphere);
 
@@ -248,7 +248,7 @@ public class Main extends Application {
         System.out.println(endTime/1000.0);
         System.out.print("minutes:\t\t");
         System.out.println(minutes);
-        System.out.println("hours:\t\t\t" + hours);
+        System.out.println("hours:\t\t\t" + hours);*/
 
         //launch(args);
     }
