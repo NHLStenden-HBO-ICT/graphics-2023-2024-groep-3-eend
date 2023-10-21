@@ -27,7 +27,7 @@ public class Mirror extends Material{
         scatterRecord.attenuation = albedo;
         scatterRecord.pdf = null;
         scatterRecord.skipPDF = true;
-        Vector reflected = Vector.reflect(Vector.unitVector(rayIn.getDirection()),rec.normal);
+        Vector reflected = Vector.reflect(rayIn.getDirection().toUnitVector(), rec.normal);
         scatterRecord.skipRay = new Ray(rec.p, Vector.add(reflected,Vector.scale(fuzz,Vector.randomOnUnitSphere())));
         return true;
         /*

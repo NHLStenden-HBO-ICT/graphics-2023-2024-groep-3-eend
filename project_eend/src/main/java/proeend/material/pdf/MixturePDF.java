@@ -1,5 +1,6 @@
 package proeend.material.pdf;
 
+import proeend.math.FastRandom;
 import proeend.math.Vector;
 
 /**
@@ -40,7 +41,7 @@ public class MixturePDF implements PDF {
      * @return Een willekeurige richting gegenereerd op basis van de gemengde PDF.
      */
     public Vector generate() {
-        if (Math.random() < 0.5)
+        if (FastRandom.random() < 0.5)
             return pdfs[0].generate();
         else
             return pdfs[1].generate();

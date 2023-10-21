@@ -40,9 +40,9 @@ public class OrthonormalBase {
      * @param w De vector die aangepast wordt.
      */
     public void buildFromW(Vector w) {
-        Vector unitW = Vector.unitVector(w);
+        Vector unitW = w.toUnitVector();
         Vector a = (Math.abs(unitW.getX()) > .9) ? new Vector(0,1,0) : new Vector(1,0,0);
-        Vector v = Vector.unitVector(Vector.cross(unitW,a));
+        Vector v = Vector.cross(unitW,a).toUnitVector();
         Vector u = Vector.cross(unitW,v);
         axis[0] = u;
         axis[1] = v;

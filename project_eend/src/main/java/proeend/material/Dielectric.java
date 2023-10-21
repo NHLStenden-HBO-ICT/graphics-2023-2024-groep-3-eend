@@ -1,5 +1,6 @@
 package proeend.material;
 
+import proeend.math.FastRandom;
 import proeend.records.ScatterRecord;
 import proeend.math.Ray;
 import proeend.math.Vector;
@@ -26,7 +27,7 @@ public class Dielectric extends Material {
         scRecord.skipPDF = true;
         double refractionRatio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;
 
-        Vector unitDirection = Vector.unitVector(rayIn.getDirection());
+        Vector unitDirection = rayIn.getDirection().toUnitVector();
 
         double cosTheta = Math.min(Vector.dot(Vector.negate(unitDirection),rec.getNormal()),1.0);
         double sinTheta = Math.sqrt(1.0-cosTheta*cosTheta);
@@ -34,7 +35,7 @@ public class Dielectric extends Material {
         boolean cannotRefract = refractionRatio * sinTheta > 1.0;
 
         Vector direction;
-        if (cannotRefract || reflectance(cosTheta, refractionRatio) > Math.random())
+        if (cannotRefract || reflectance(cosTheta, refractionRatio) > FastRandom.random())
             direction = Vector.reflect(unitDirection, rec.getNormal());
         else
             direction = refract(unitDirection,rec.normal,refractionRatio);

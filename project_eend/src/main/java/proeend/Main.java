@@ -18,15 +18,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
-import proeend.hittable.ObjectLoader;
-import proeend.hittable.PolygonMesh;
 import proeend.material.Lambertian;
 import proeend.math.Vector;
 import proeend.misc.Camera;
+import proeend.misc.Renderer;
 import proeend.misc.Utility;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class Main extends Application {
 
@@ -54,12 +52,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        Runnable renderTask = () -> {
 
-            System.out.println("starting capture...");
-
-            camera.multiRenderLines(true, world, lights);
-        };
         Scene scene = new Scene(root, camera.getImageWidth(), camera.getHeight());
         StackPane.setAlignment(coordX, Pos.TOP_LEFT);
         StackPane.setAlignment(coordY, Pos.TOP_CENTER);
@@ -68,7 +61,7 @@ public class Main extends Application {
         //animatie
         Duration interval = Duration.seconds(frameRate);
         KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> {
-            update();
+                update();
         });
         Timeline timeline = new Timeline(keyFrame);
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -146,9 +139,7 @@ public class Main extends Application {
                         camera.setSamplesPerPixel(100);
                         camera.setMaxDepth(30);
                         camera.setImageWidth(800);
-                        Thread thread = new Thread(renderTask);
-                       // thread.setDaemon(true);
-                        thread.start();
+                        Renderer.render(camera, true, world, lights);
                         break;
                 }
                 if (event.getCode() == KeyCode.ESCAPE) {
@@ -186,7 +177,7 @@ public class Main extends Application {
      */
     private void update() {
         if (!camera.isLocked() && isCameraRotating)
-            frame.setImage(camera.render(world,lights));
+            frame.setImage(Renderer.render(camera, false, world, lights));
     }
 
     /**
@@ -197,7 +188,7 @@ public class Main extends Application {
 
         Lambertian white = new Lambertian(new Vector(1, .5, .5));
         //Emitter white = new Emitter(new Vector(1,1,1));
-        PolygonMesh duck = null;
+        /*PolygonMesh duck = null;
         PolygonMesh icoSphere = null;
         PolygonMesh uvSphere = null;
 
@@ -216,24 +207,25 @@ public class Main extends Application {
         } catch (IOException e) {
             System.out.println("load failed");
         }
-
-        Utility.loadWorld(world, lights, 1);
-        uvSphere.ConvertToTriangles();
+*/
+        //uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
         camera.setBackground(new Vector(.6,.6,.6));
-        camera.setImageWidth(400);
-        camera.setCameraCenter(camOrigin);
+        camera.setImageWidth(500);
+        //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(2,0,4));
+
+        camera.setSamplesPerPixel(3);
+        camera.setMaxDepth(5);
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
 
+        Utility.loadWorld(world, lights, 1);
         world = new HittableList(new BBNode(world));
-        camera.setSamplesPerPixel(3);
-        camera.setMaxDepth(5);
 
-        var startTime = System.currentTimeMillis();
+        /*var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
         //cam1.render(true, world, lights);
         //cam1.multiRender(true, world, lights);
@@ -245,7 +237,8 @@ public class Main extends Application {
         System.out.println(endTime/1000.0);
         System.out.print("minutes:\t\t");
         System.out.println(minutes);
-        System.out.println("hours:\t\t\t" + hours);
+        System.out.println("hours:\t\t\t" + hours);*/
+        //Renderer.render(camera, true, world, lights);
 
         launch(args);
     }

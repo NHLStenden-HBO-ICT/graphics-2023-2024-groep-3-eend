@@ -47,7 +47,7 @@ public class Triangle extends Hittable{
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         Vector v0v1 = Vector.add(v1, Vector.negate(v0));
         Vector v0v2 = Vector.add(v2, Vector.negate(v0));   //deze twee kloppen
-        Vector unitDir = Vector.unitVector(ray.getDirection());
+        Vector unitDir = ray.getDirection().toUnitVector();
         //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
@@ -81,7 +81,7 @@ public class Triangle extends Hittable{
         rec.setT(t);
         rec.setMaterial(material);
         rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
-        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        Vector normal = Vector.cross(v0v1, v0v2).toUnitVector();
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
@@ -106,7 +106,7 @@ public class Triangle extends Hittable{
     public static boolean MThit(Ray ray, Interval rayT, HitRecord rec, Vector v0, Vector v1, Vector v2, Material material) {
         Vector v0v1 = Vector.add(v1, Vector.negate(v0));
         Vector v0v2 = Vector.add(v2, Vector.negate(v0));   //deze twee kloppen
-        Vector unitDir = Vector.unitVector(ray.getDirection());
+        Vector unitDir = ray.getDirection().toUnitVector();
         //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
@@ -140,7 +140,7 @@ public class Triangle extends Hittable{
         rec.setT(t);
         rec.setMaterial(material);
         rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
-        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        Vector normal = Vector.cross(v0v1, v0v2).toUnitVector();
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 

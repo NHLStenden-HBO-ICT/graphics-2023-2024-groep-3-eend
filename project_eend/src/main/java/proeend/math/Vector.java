@@ -18,22 +18,46 @@ public class Vector {
         return coordinates[z];
     }
 
+    private static final int POOL_SIZE = 200;
+    private static final Vector[] vectorPool = new Vector[POOL_SIZE];
+    private static int poolIndex = 0;
+
     /**
      * Initialiseert een nieuwe vector met standaard coördinaten (0, 0, 0).
      */
-    public Vector() {
-        coordinates = new double[]{0, 0, 0};
+
+    public Vector(){
+        this.coordinates = new double[]{0,0,0};
+    }
+    public Vector(double x, double y, double z) {
+        if (poolIndex < vectorPool.length) {
+            Vector vector = vectorPool[poolIndex];
+            if (vector == null) {
+                this.coordinates = new double[]{x, y, z};
+                vectorPool[poolIndex] = this;
+            } else {
+                vector.set(x, y, z);
+            }
+            poolIndex++;
+        } else {
+            this.coordinates = new double[]{x, y, z};
+        }
     }
 
-    /**
+    private void set(double x, double y, double z){
+        this.coordinates[0]= x;
+        this.coordinates[1]= y;
+        this.coordinates[2]= z;
+    }
+/*    *//**
      * Initialiseert een nieuwe vector met de opgegeven coördinaten.
      * @param x De x-coördinaat.
      * @param y De y-coördinaat.
      * @param z De z-coördinaat.
-     */
+     *//*
     public Vector(double x, double y, double z) {
         coordinates = new double[]{x, y, z};
-    }
+    }*/
 
     /**
      * Vermenigvuldigt twee vectoren.
@@ -131,6 +155,9 @@ public class Vector {
         return new Vector(vecA.getX() + vecB.getX(), vecA.getY() + vecB.getY(), vecA.getZ() + vecB.getZ());
     }
 
+
+
+
     /**
      * Schaalt de opgegeven vector met een scalaire waarde.
      * @param scalar De scalaire waarde waarmee de vector wordt geschaald.
@@ -139,6 +166,13 @@ public class Vector {
      */
     public static Vector scale(double scalar, Vector scaled) {
         return new Vector(scaled.getX() * scalar, scaled.getY() * scalar, scaled.getZ() * scalar);
+    }
+
+    public Vector scale(double scalar) {
+        coordinates[x] *= scalar;
+        coordinates[y] *= scalar;
+        coordinates[z] *= scalar;
+        return this;
     }
 
     /**
@@ -192,12 +226,22 @@ public class Vector {
         return scale((1.0 / length(vec)), vec);
     }
 
+    public Vector toUnitVector() {
+        double length = length(this);
+        if (length != 0) {
+            coordinates[x] /= length;
+            coordinates[y] /= length;
+            coordinates[z] /= length;
+        }
+        return this;
+    }
+
     /**
      * Genereert een willekeurige vector met waarden tussen 0 en 1.
      * @return Een willekeurige vector.
      */
     public static Vector randomVec() {
-        return new Vector(Math.random(), Math.random(), Math.random());
+        return new Vector(FastRandom.random(), FastRandom.random(), FastRandom.random());
     }
 
     /**
@@ -208,9 +252,9 @@ public class Vector {
      */
     public static Vector randomVec(double min, double max) {
         return new Vector(
-                min + Math.random() * (max - min),
-                min + Math.random() * (max - min),
-                min + Math.random() * (max - min));
+                min + FastRandom.random() * (max - min),
+                min + FastRandom.random() * (max - min),
+                min + FastRandom.random() * (max - min));
     }
 
     /**
@@ -225,7 +269,7 @@ public class Vector {
             vec = randomVec(-1, 1);
         } while (lengthSquared(vec) >= 1);
 
-        return unitVector(vec);
+        return vec.toUnitVector();
     }
 
     /**
@@ -243,7 +287,7 @@ public class Vector {
      * @return Een willekeurige eenheidsvector op de eenheidssfeer.
      */
     public static Vector randomOnUnitSphere() {
-        return unitVector(randomInUnitSphere());
+        return randomInUnitSphere().toUnitVector();
     }
 
     /**

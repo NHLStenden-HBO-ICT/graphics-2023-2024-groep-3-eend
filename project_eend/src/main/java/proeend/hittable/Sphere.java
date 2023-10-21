@@ -1,11 +1,8 @@
 package proeend.hittable;
 
+import proeend.math.*;
 import proeend.records.HitRecord;
-import proeend.math.Interval;
-import proeend.math.Ray;
-import proeend.math.Vector;
 import proeend.material.Material;
-import proeend.math.OrthonormalBase;
 
 /**
  * Een sfeerobject dat kan worden geraakt door een lichtstraal in een 3D-scène.
@@ -122,8 +119,8 @@ public class Sphere extends Hittable {
         return uvw.local(randomToSphere(radius, distanceSquared));
     }
     private Vector randomToSphere(double radius, double distanceSquared) {
-        double r1 = Math.random();
-        double r2 = Math.random();
+        double r1 = FastRandom.random();
+        double r2 = FastRandom.random();
         double z = 1 + r2 * (Math.sqrt(1-radius*radius/distanceSquared)-1);
 
         double fi = 2*Math.PI*r1;

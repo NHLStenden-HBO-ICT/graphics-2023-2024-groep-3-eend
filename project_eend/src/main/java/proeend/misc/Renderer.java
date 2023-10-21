@@ -8,79 +8,57 @@ import proeend.material.Normal;
 import proeend.material.pdf.CosPDF;
 import proeend.material.pdf.HittablePDF;
 import proeend.material.pdf.MixturePDF;
-import proeend.math.ColorParser;
-import proeend.math.Interval;
-import proeend.math.Ray;
-import proeend.math.Vector;
+import proeend.math.*;
 import proeend.records.HitRecord;
 import proeend.records.ScatterRecord;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class Renderer {
-    private final int imageWidth;
-    private final int imageHeight;
-    private final int samplesPerPixel;
-
-    public Renderer(int imageWidth, int imageHeight, int samplesPerPixel) {
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
-        this.samplesPerPixel = samplesPerPixel;
-
-    }
-
     public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
         camera.init();
         camera.setLock(true);
-        WritableImage writableImage = new WritableImage(camera.getImageWidth(), camera.getHeight());
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-
-        for (int y = 0; y < camera.getHeight(); ++y) {
-            renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
-        }
-
-        camera.setLock(false);
-
-        return writableImage;
-    }
 
 
-    public void multiRenderLines(Camera camera, boolean save, Hittable world, Hittable lights, int numberOfThreads) {
-        camera.init();
-        camera.setLock(true);
+            ThreadController threadController = new ThreadController(20, camera, world, lights);
+            WritableImage image = threadController.renderAndSave(save);
+            camera.setLock(false);
+            return image;
 
-        WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-
-        int[] activeThreadCount  = {0};
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        ThreadController threadController = new ThreadController();
-
-        int[] line = {0};
-        while (line[0] < imageHeight) {
-
-            if (threadController.canSpawnThread(activeThreadCount, numberOfThreads)) {
-                threadController.spawnWorkerThread(executorService, line, activeThreadCount, camera, world, lights, pixelWriter);
+        /*else {
+            for (int y = 0; y < camera.getHeight(); ++y) {
+                renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
             }
-            threadController.pauseThread();
-        }
-        threadController.shutdownExecutorService(executorService);
+        }*/
 
-        saveImageIfNeeded(save, writableImage);
-        camera.setLock(false);
+     /*   if (renderMultithreaded){
+            int[] line = {0};
+
+            ThreadController threadController = new ThreadController();
+
+            while (line[0] < camera.getHeight()) {
+                if (threadController.canSpawnThread()) {
+                    threadController.spawnWorkerThread(line, camera, world, lights, pixelWriter);
+                    //System.out.println("Lijn: " + line[0]);
+
+                        incrementLine(line, 1);
+
+                }
+                threadController.pauseThread();
+            }
+            threadController.shutdown();
+
+            if(save) {ImageSaver.saveImage(writableImage, camera.getSamplesPerPixel());}
+
+        } else {
+            for (int y = 0; y < camera.getHeight(); ++y) {
+                renderHorizontalLine(camera, renderMultithreaded, world, lights, y, pixelWriter);
+            }
+        }*/
+
+
     }
+    protected static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
 
 
-    private void saveImage(WritableImage writableImage) {
-        try {
-            ImageSaver.saveImage(writableImage, samplesPerPixel);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
         for (int x = 0; x < camera.getImageWidth(); ++x) {
             Vector colorVec = new Vector();
             colorVec = renderPixel(camera, world, lights, y, x, colorVec);
@@ -90,19 +68,17 @@ public class Renderer {
                 pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
             }
         }
-    }
 
-    public static Vector renderPixel(Camera camera, Hittable world, Hittable lights, int y, int x, Vector colorVec) {
+    }
+    private static Vector renderPixel(Camera camera, Hittable world, Hittable lights, int y, int x, Vector color) {
         for (int sy = 0; sy < camera.getRootSPP(); ++sy) {
             for (int sx = 0; sx < camera.getRootSPP(); ++sx) {
                 Ray ray = getRay(camera, x, y, sx, sy);
-                colorVec = Vector.add(colorVec, rayColor(camera, ray, camera.getMaxDepth(), world, lights));
+                color = Vector.add(color, rayColor(camera, ray, camera.getMaxDepth(), world, lights));
             }
         }
-        return colorVec;
+        return color;
     }
-
-
     /**
      * Haalt de straal die geschoten wordt op.
      *
@@ -112,15 +88,14 @@ public class Renderer {
      * @param sy De sample op de y-as, coördinaat.
      * @return Geeft een straal terug.
      */
-    public static Ray getRay(Camera camera, int x, int y, int sx, int sy) {
+    private static Ray getRay(Camera camera, int x, int y, int sx, int sy) {
         Vector pixelCenter = Vector.add(Vector.add(camera.getTopLeftPixel(), Vector.scale(x, camera.getPixelDeltaU())), Vector.scale(y, camera.getPixelDeltaV()));
         Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(camera, sx, sy));
 
         Vector rayOrigin = camera.getCameraCenter();
         Vector direction = Vector.add(pixelSample, Vector.negate(rayOrigin));
-        return new Ray(rayOrigin, Vector.unitVector(direction));
+        return new Ray(rayOrigin, direction.toUnitVector());
     }
-
     /**
      * Schaalt een vector aan de hand van het aantal samples per pixel.
      *
@@ -129,12 +104,10 @@ public class Renderer {
      * @return Geeft een geschaalde vector terug.
      */
     private static Vector pixelSampleSquare(Camera camera, int sx, int sy) {
-        double px = -.5 + 1.0 / camera.getRootSPP() * (sx + Math.random());
-        double py = -.5 + 1.0 / camera.getRootSPP() * (sy + Math.random());
+        double px = -.5 + 1.0 / camera.getRootSPP() * (sx + FastRandom.random());
+        double py = -.5 + 1.0 / camera.getRootSPP() * (sy + FastRandom.random());
         return Vector.add(Vector.scale(px, camera.getPixelDeltaU()), Vector.scale(py, camera.getPixelDeltaV()));
     }
-
-
     /**
      * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
      *
@@ -192,19 +165,9 @@ public class Renderer {
 
         return Vector.add(emissionColor, scatterColor);
     }
-
-
-
-
-
-
-
-
-
-
-    private void saveImageIfNeeded(boolean save, WritableImage writableImage) {
-        if (save) {
-            saveImage(writableImage);
+    private static void incrementLine(int[] line, int count) {
+        synchronized (line) {
+            line[0] += count;
         }
     }
 }
