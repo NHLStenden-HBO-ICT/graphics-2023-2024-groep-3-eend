@@ -1,15 +1,12 @@
 package proeend;
 
-import javafx.scene.control.Label;
-import proeend.hittable.BBNode;
-import proeend.material.Lambertian;
-import proeend.misc.Camera;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -19,11 +16,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
 import proeend.hittable.ObjectLoader;
 import proeend.hittable.PolygonMesh;
+import proeend.material.Lambertian;
 import proeend.math.Vector;
+import proeend.misc.Camera;
 import proeend.misc.Utility;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -36,7 +37,7 @@ public class Main extends Application {
     static double frameRate = 1.0/10.0; //hertz
     static double aspectRatio = 16.0/9.0;
     static Vector camOrigin = new Vector(0,0,2);
-    private double rotationUnit = Math.PI/360;
+    private final double rotationUnit = Math.PI/360;
 
     ImageView frame = new ImageView();
     StackPane root = new StackPane();
@@ -57,7 +58,7 @@ public class Main extends Application {
 
             System.out.println("starting capture...");
 
-            camera.render(true, world, lights);
+            camera.multiRenderLines(true, world, lights);
         };
         Scene scene = new Scene(root, camera.getImageWidth(), camera.getHeight());
         StackPane.setAlignment(coordX, Pos.TOP_LEFT);
@@ -184,8 +185,8 @@ public class Main extends Application {
      * Update de wereld als de camera veranderd.
      */
     private void update() {
-        if (!camera.block && isCameraRotating)
-            frame.setImage(camera.render (world,lights));
+        if (!camera.isLocked() && isCameraRotating)
+            frame.setImage(camera.render(world,lights));
     }
 
     /**

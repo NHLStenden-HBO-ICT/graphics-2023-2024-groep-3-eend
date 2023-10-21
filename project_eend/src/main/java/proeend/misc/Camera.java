@@ -15,17 +15,11 @@ import proeend.math.Vector;
 import proeend.records.HitRecord;
 import proeend.records.ScatterRecord;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 /**
  * Deze klasse vertegenwoordigt een camera voor het renderen van beelden.
  */
@@ -39,8 +33,8 @@ public class Camera {
 
     // De schermbreedte ophalen
     int screenWidth = screenSize.width;
-    public boolean block;
     static int frames = 0;
+    private boolean settingsAreLocked;
     private Vector u, v, w;
     private Vector cameraCenter = new Vector(0, 0, 0);
     private Vector lookat = new Vector(0, 0, -1);
@@ -57,11 +51,21 @@ public class Camera {
     private double viewportWidth = viewportHeight * (double) imageWidth / (double) imageHeight;
     private Vector viewportU = new Vector(viewportWidth, 0, 0);
     private Vector viewportV = new Vector(0, -viewportHeight, 0);
+
+    public Vector getPixelDeltaU() {
+        return pixelDeltaU;
+    }
+
+    public Vector getPixelDeltaV() {
+        return pixelDeltaV;
+    }
+
+
     private Vector pixelDeltaU = Vector.scale((1.0 / imageWidth), viewportU);
     private Vector pixelDeltaV = Vector.scale((1.0 / imageHeight), viewportV);
     private Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(new Vector(0, 0, focalLength))),
             Vector.negate(Vector.scale(1.0 / 2.0, viewportU))), Vector.negate(Vector.scale(1.0 / 2.0, viewportV)));
-    private Vector pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
+    private Vector topLeftPixel = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
     private Vector background = new Vector();
 
     public Vector getCameraCenter() {
@@ -70,6 +74,14 @@ public class Camera {
 
     public void setCameraCenter(Vector cameraCenter) {
         this.cameraCenter = cameraCenter;
+    }
+
+    public boolean isLocked(){
+        return settingsAreLocked;
+    }
+
+    public void setLock(boolean locked) {
+        settingsAreLocked = locked;
     }
 
     public Vector getLookat() {
@@ -139,14 +151,17 @@ public class Camera {
     public Camera() {
     }
 
-    public double getHeight() {
+    public int getHeight() {
         return imageHeight;
+    }
+    public int getRootSPP(){
+        return rootSPP;
     }
 
     /**
      * Initialiseert de camera-instellingen.
      */
-    private void init() {
+    public void init() {
         rootSPP = (int) Math.sqrt(samplesPerPixel);
         focalLength = Vector.length(Vector.add(cameraCenter, Vector.negate(lookat)));
         imageHeight = (int) (imageWidth / aspectRatio);
@@ -163,29 +178,12 @@ public class Camera {
         pixelDeltaV = Vector.scale((1.0 / imageHeight), viewportV);
         viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(Vector.scale(focalLength, w))),
                 Vector.negate(Vector.scale(1.0 / 2.0, viewportU))), Vector.negate(Vector.scale(1.0 / 2.0, viewportV)));
-        pixel00 = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
+        topLeftPixel = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
     }
 
-    /**
-     * Slaat het gegenereerde beeld op als een PNG-bestand.
-     *
-     * @param image Het te opslaan beeld.
-     * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
-     */
-    public void saveImage(WritableImage image) throws IOException {
-        BufferedImage bufferedImage = new BufferedImage((int) image.getWidth(), (int) image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        for (int x = 0; x < (int) image.getWidth(); x++) {
-            for (int y = 0; y < (int) image.getHeight(); y++) {
-                int argb = image.getPixelReader().getArgb(x, y);
-                bufferedImage.setRGB(x, y, argb);
-            }
-        }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
-        LocalDateTime now = LocalDateTime.now();
-        File output = new File("renders/" + dtf.format(now) + "_" + imageWidth + "x" + imageHeight + "_s" + samplesPerPixel + ".png");
-        ImageIO.write(bufferedImage, "png", output);
-        System.out.println("opgeslagen");
-    }
+
+
+
 
     /**
      * Hetzelfde als (multi)render, maar dan wordt voor elke lijn een thread aangemaakt, met maximaal standaard 5 threads.
@@ -193,7 +191,8 @@ public class Camera {
      */
     public void multiRenderLines(boolean save, final Hittable world, final Hittable lights) {
         init();
-        block = true;
+        setLock(true);
+
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
@@ -204,6 +203,7 @@ public class Camera {
         class WorkerThread implements Runnable {
             private final int line;
 
+
             public WorkerThread(int line) {
                 this.line = line;
             }
@@ -212,22 +212,10 @@ public class Camera {
             public void run() {
                 int y = line;
 
-                if (save) {
-                    System.out.println(imageHeight - y + " lines left");
-                }
-                for (int x = 0; x < imageWidth; ++x) {
-                    Vector colorVec = new Vector();
-                    for (int sy = 0; sy < rootSPP; ++sy) {
-                        for (int sx = 0; sx < rootSPP; ++sx) {
-                            Ray ray = getRay(x, y, sx, sy);
-                            colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
-                        }
-                    }
-                    int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
-                    synchronized (pixelWriter) {
-                        pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
-                    }
-                }
+                System.out.println(imageHeight - y + " lines left");
+
+                renderHorizontalLine(save, world, lights, y, pixelWriter);
+
                 synchronized (activethreads) {
                     activethreads[0]--;
                 }
@@ -252,7 +240,6 @@ public class Camera {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            //////////////////////////////////////////////////////////////////////////////////////////
         }
         executorService.shutdown();
         try {
@@ -262,62 +249,73 @@ public class Camera {
         }
         if (save) {
             try {
-                saveImage(writableImage);
+                ImageSaver.saveImage(writableImage, samplesPerPixel);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    public WritableImage render(Hittable world, Hittable lights) {
+        return render(false, world, lights);
+    }
+
     /**
      * Rendert plaatje met voorwaarden vanuit het camera object.
      *
-     * @param save  Bepaald of het plaatje moet worden opgeslagen.
+     * @param saveImage  Bepaald of het plaatje moet worden opgeslagen.
      * @param world De wereld die gerenderd wordt.
      * @return Een WritableImage, voor een ImageView in de UI of om opgeslagen te worden.
      */
-    public WritableImage render(boolean save, Hittable world, Hittable lights) {
-
-        long startTime = System.currentTimeMillis();
-
+    public WritableImage render(boolean saveImage, Hittable world, Hittable lights) {
         init();
-        block = true;
+        setLock(true);
 
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         for (int y = 0; y < imageHeight; ++y) {
-            if (save)
-                System.out.println(Integer.toString(imageHeight - y) + " lines to go");
 
-            for (int x = 0; x < imageWidth; ++x) {
-                Vector colorVec = new Vector();
-
-                //nieuwe AA, een stuk minder snell, maar wel beter
-                for (int sy = 0; sy < rootSPP; ++sy) {
-                    for (int sx = 0; sx < rootSPP; ++sx) {
-                        Ray ray = getRay(x, y, sx, sy);
-                        colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
-                    }
-                }
-
-                int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
-                pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
-            }
+            renderHorizontalLine(saveImage, world, lights, y, pixelWriter);
         }
+
         System.out.println("frame " + frames);
         frames++;
-        block = false;
-        if (save) {
+        setLock(false);
+
+        if (saveImage) {
             try {
-                saveImage(writableImage);
-                long totalTime = System.currentTimeMillis() - startTime;
-                System.out.println("Single thread gerendered in " + totalTime + "ms");
+                ImageSaver.saveImage(writableImage, samplesPerPixel);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         return writableImage;
+    }
+
+    private void renderHorizontalLine(boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
+        for (int x = 0; x < imageWidth; ++x) {
+            Vector colorVec = new Vector();
+
+
+            colorVec = renderPixel(world, lights, y, x, colorVec);
+
+            int[] colors = ColorParser.toColor(samplesPerPixel, save, colorVec);
+            synchronized (pixelWriter) {
+                pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+            }
+        }
+    }
+
+    private Vector renderPixel(Hittable world, Hittable lights, int y, int x, Vector colorVec) {
+        for (int sy = 0; sy < rootSPP; ++sy) {
+            for (int sx = 0; sx < rootSPP; ++sx) {
+                Ray ray = getRay(x, y, sx, sy);
+                colorVec = Vector.add(colorVec, rayColor(ray, maxDepth, world, lights));
+            }
+        }
+        return colorVec;
     }
 
 
@@ -331,7 +329,7 @@ public class Camera {
      * @return Geeft een straal terug.
      */
     private Ray getRay(int x, int y, int sx, int sy) {
-        Vector pixelCenter = Vector.add(Vector.add(pixel00, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
+        Vector pixelCenter = Vector.add(Vector.add(topLeftPixel, Vector.scale(x, pixelDeltaU)), Vector.scale(y, pixelDeltaV));
         Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(sx, sy));
 
         Vector rayOrigin = cameraCenter;
@@ -353,10 +351,6 @@ public class Camera {
     }
 
 
-    public WritableImage render(Hittable world, Hittable lights) {
-        return render(false, world, lights);
-    }
-
     /**
      * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
      *
@@ -372,7 +366,6 @@ public class Camera {
 
         // Controleer of het maximumaantal reflecties is bereikt
         if (depth <= 0) {
-            //System.out.println("hit");
             return new Vector(0, 0, 0);
         }
         // Maak een HitRecord om gegevens over het getroffen object op te slaan
@@ -412,5 +405,9 @@ public class Camera {
                 Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation), rayColor(scattered, depth - 1, world, lights)));
 
         return Vector.add(emissionColor, scatterColor);
+    }
+
+    public Vector getTopLeftPixel() {
+        return topLeftPixel;
     }
 }

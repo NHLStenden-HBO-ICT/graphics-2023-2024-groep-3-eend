@@ -7,6 +7,8 @@ module com.example.project_eend {
 
     exports proeend;
     opens proeend to javafx.fxml;
+    exports proeend.hittable;
+    opens proeend.hittable to javafx.fxml;
     exports proeend.misc;
     opens proeend.misc to javafx.fxml;
     exports proeend.records;

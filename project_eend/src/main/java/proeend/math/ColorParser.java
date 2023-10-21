@@ -37,7 +37,8 @@ public class ColorParser {
      * @param gamma Geeft aan of de gamma gebruikt moet worden of niet.
      * @return De met gamma gecorrigeerde coördinaten.
      */
-    private static double[] gammaCorrectCoordinates(double[] input, boolean gamma) {
+    private static double[]
+    gammaCorrectCoordinates(double[] input, boolean gamma) {
         double[] corrected = new double[3];
         for (int i = 0; i < 3; i++) {
             corrected[i] = gamma ? Math.sqrt(input[i]) : input[i];

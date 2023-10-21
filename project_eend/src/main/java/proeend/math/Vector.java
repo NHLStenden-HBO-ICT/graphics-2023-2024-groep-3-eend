@@ -6,6 +6,18 @@ public class Vector {
     // constanten x, y en z geven de x, y en z coördinaten aan bij het opvragen ervan.
     private final int x = 0, y = 1, z = 2;
 
+    public double getX() {
+        return coordinates[x];
+    }
+
+    public double getY() {
+        return coordinates[y];
+    }
+
+    public double getZ() {
+        return coordinates[z];
+    }
+
     /**
      * Initialiseert een nieuwe vector met standaard coördinaten (0, 0, 0).
      */
@@ -41,18 +53,6 @@ public class Vector {
      */
     public static Vector reflect(Vector vec, Vector normal) {
         return add(vec, negate(scale(2.0*dot(vec,normal),normal)));
-    }
-
-    public double getX() {
-        return coordinates[x];
-    }
-
-    public double getY() {
-        return coordinates[y];
-    }
-
-    public double getZ() {
-        return coordinates[z];
     }
 
     /**
