@@ -67,11 +67,11 @@ public class Utility {
                 lights.add(light0);
             }
             case 1 -> {
-                world.add(new Sphere(new Vector(2, 0, -.55), .5, yellowLambertian, "b"));
-                world.add(new Sphere(new Vector(1.5, 0, 1.55), .5, salt, "b"));
-                world.add(new Sphere(new Vector(0, -103.5, -.55), 100, greyLambertian, "c"));
-                world.add(new Sphere(new Vector(1, 2, -.55), .5, whiteLight, "d"));
-                lights.add(new Sphere(new Vector(1, 2, -.55), .5, whiteLight, "e"));
+                world.add(new Sphere(new Vector(2, 0, -.55), .5, yellowLambertian));
+                world.add(new Sphere(new Vector(1.5, 0, 1.55), .5, salt));
+                world.add(new Sphere(new Vector(0, -103.5, -.55), 100, greyLambertian));
+                world.add(new Sphere(new Vector(1, 2, -.55), .5, whiteLight));
+                lights.add(new Sphere(new Vector(1, 2, -.55), .5, whiteLight));
             }
             case 2 -> {
                 world.add(new Triangle(v0, v1, v2, normal));

@@ -12,21 +12,8 @@ public class Sphere extends Hittable {
     private final double radius;
     private final Vector center;
     private final BoundingBox boundingBox;
-    public String name;
 
     private final Material material;
-    /**
-     * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
-     *
-     * @param center   Het middelpunt van de sfeer.
-     * @param radius   De straal van de sfeer.
-     * @param material Het materiaal van de sfeer.
-     * @param name De naam van de bol voor identificatie van de sfeer.
-     */
-    public Sphere(Vector center, double radius, Material material, String name) {
-        this(center, radius, material);
-        this.name = name;
-    }
 
     /**
      * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
