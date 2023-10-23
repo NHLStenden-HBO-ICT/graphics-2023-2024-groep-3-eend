@@ -7,7 +7,6 @@ import proeend.math.Vector;
  */
 public class Camera {
 
-    private boolean settingsAreLocked;
     private boolean cameraIsMoving = false;
     private boolean hasMovedSinceLastFrame = false;
     private Vector cameraCenter = new Vector(0, 0, 0);
@@ -60,14 +59,6 @@ public class Camera {
 
     public void setCameraCenter(Vector cameraCenter) {
         this.cameraCenter = cameraCenter;
-    }
-
-    public boolean isLocked() {
-        return settingsAreLocked;
-    }
-
-    public void setLock(boolean locked) {
-        settingsAreLocked = locked;
     }
 
     public Vector getLookat() {

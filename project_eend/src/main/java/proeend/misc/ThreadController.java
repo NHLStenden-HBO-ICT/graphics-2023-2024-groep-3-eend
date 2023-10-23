@@ -11,16 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadController {
     private long startTime;
-    private long endTime;
-    private int[] activeThreadCount  = {0};
-    int numberOfThreads = 12;
+    final int numberOfThreads;
     private final ExecutorService executorService;
-    private int blockSize;
+    private final int blockSize;
     private final Camera camera;
     private final Hittable world;
     private final Hittable lights;
     private final WritableImage writableImage;
     private final PixelWriter pixelWriter;
+
 
     public ThreadController(int blockSize, Camera camera, Hittable world, Hittable lights) {
         int maxNumberOfThreads = Runtime.getRuntime().availableProcessors(); // Aantal beschikbare CPU-cores;
@@ -58,7 +57,7 @@ public class ThreadController {
 
         if(save) {
             ImageSaver.saveImage(writableImage, camera.getSamplesPerPixel());
-            endTime = System.nanoTime();
+            long endTime = System.nanoTime();
 
             long elapsedTime = endTime - startTime;
             long seconds = TimeUnit.NANOSECONDS.toSeconds(elapsedTime);
@@ -75,11 +74,15 @@ public class ThreadController {
         executorService.shutdown();
         try {
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                System.err.println("Thread execution did not complete in time.");
+                logError("Thread execution did not complete in time.");
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logError("Thread execution was interrupted: " + e.getMessage());
         }
+    }
+
+    private void logError(String message) {
+        System.err.println("Error: " + message);
     }
 
 }

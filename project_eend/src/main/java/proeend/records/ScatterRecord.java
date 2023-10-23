@@ -6,6 +6,11 @@ import proeend.material.pdf.PDF;
 
 public class ScatterRecord {
 
+    public Vector attenuation;
+    public PDF pdf;
+    public boolean skipPDF;
+    public Ray skipRay;
+
     /**
      * Houd de informatie over de verstrooide rays bij.
      */
@@ -13,9 +18,4 @@ public class ScatterRecord {
         attenuation = new Vector();
         skipRay = new Ray(new Vector(), new Vector());
     }
-    
-    public Vector attenuation;
-    public PDF pdf;
-    public boolean skipPDF;
-    public Ray skipRay;
 }

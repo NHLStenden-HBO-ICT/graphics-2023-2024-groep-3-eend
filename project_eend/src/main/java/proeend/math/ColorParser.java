@@ -13,8 +13,7 @@ public class ColorParser {
         double[] gammaCorrectedCoordinates = gammaCorrectCoordinates(scaledCoordinates, gamma);
         double[] clampedCoordinates = clampCoordinates(gammaCorrectedCoordinates);
 
-        int[] color = convertToRGB(clampedCoordinates);
-        return color;
+        return convertToRGB(clampedCoordinates);
     }
     /**
      * Corrigeerd de coördinaten met behulp van gamma.

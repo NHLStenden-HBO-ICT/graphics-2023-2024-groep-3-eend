@@ -14,7 +14,6 @@ public class ImageSaver {
      * Slaat het gegenereerde beeld op als een PNG-bestand.
      *
      * @param image Het te opslaan beeld.
-     * @throws IOException Als er een fout optreedt bij het opslaan van het beeld.
      */
     public static void saveImage(WritableImage image, int samplesPerPixel)  {
 

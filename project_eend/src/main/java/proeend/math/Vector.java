@@ -49,15 +49,6 @@ public class Vector {
         this.coordinates[1]= y;
         this.coordinates[2]= z;
     }
-/*    *//**
-     * Initialiseert een nieuwe vector met de opgegeven coördinaten.
-     * @param x De x-coördinaat.
-     * @param y De y-coördinaat.
-     * @param z De z-coördinaat.
-     *//*
-    public Vector(double x, double y, double z) {
-        coordinates = new double[]{x, y, z};
-    }*/
 
     /**
      * Vermenigvuldigt twee vectoren.
@@ -92,10 +83,6 @@ public class Vector {
 
     public double[] getCoordinates(){
         return coordinates;
-    }
-
-    public void copy(Vector copy) {
-        this.coordinates = copy.coordinates;
     }
 
     public Vector rotateX(double angle) {

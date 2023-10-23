@@ -18,27 +18,23 @@ import proeend.hittable.HittableList;
 import proeend.math.Vector;
 import proeend.misc.*;
 
-import java.io.IOException;
-
 public class Main extends Application {
 
-    private static final double INITIAL_FRAME_RATE = 0.1; // Hertz
-    private static final double ASPECT_RATIO = 16.0 / 9.0;
-    private static Camera camera = new Camera();
+    private static final double INITIAL_FRAME_RATE = 0.1;
+    private static final Camera camera = new Camera();
     private static HittableList world = new HittableList();
-    private static HittableList lights = new HittableList();
+    private static final HittableList lights = new HittableList();
 
-    ImageView frame = new ImageView();
-    StackPane stackPane = new StackPane();
+    final ImageView frame = new ImageView();
+    final StackPane stackPane = new StackPane();
     WritableImage previousImage;
 
     /**
      * Start het programma en configureert de besturingselementen.
      * @param stage Het venster waarin het programma zich afspeelt.
-     * @throws IOException Als er een fout optreedt bij het lezen of schrijven van gegevens.
      */
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         setupUI(stage);
         setupAnimation();
         EventHandler eventHandler = new EventHandler();
@@ -117,7 +113,7 @@ public class Main extends Application {
         //uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
-        camera.setBackground(new Vector(2,2,2));
+        camera.setBackground(new Vector(.5,.3,.2));
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(0,0,2));

@@ -15,11 +15,8 @@ import proeend.records.ScatterRecord;
 public class Renderer {
     public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
         camera.init();
-        camera.setLock(true);
             ThreadController threadController = new ThreadController(20, camera, world, lights);
-            WritableImage image = threadController.renderAndSave(save);
-            camera.setLock(false);
-            return image;
+        return threadController.renderAndSave(save);
     }
     public static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
         for (int x = 0; x < camera.getImageWidth(); ++x) {

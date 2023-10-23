@@ -10,7 +10,7 @@ import proeend.math.Vector;
  * op basis van een gewogen keuze tussen de twee onderliggende PDF's.
  */
 public class MixturePDF implements PDF {
-    private PDF[] pdfs = new PDF[2];
+    private final PDF[] pdfs = new PDF[2];
 
     /**
      * Initialiseert een nieuwe MixturePDF met twee onderliggende PDF's.

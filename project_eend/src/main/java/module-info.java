@@ -1,12 +1,15 @@
 module com.example.project_eend {
     requires javafx.controls;
-    requires javafx.fxml;
-
-    requires org.kordamp.bootstrapfx.core;
     requires java.desktop;
 
     exports proeend;
     opens proeend to javafx.fxml;
+    exports proeend.material.texture;
+    opens proeend.material.texture to javafx.fxml;
+    exports proeend.material.pdf;
+    opens proeend.material.pdf to javafx.fxml;
+    exports proeend.material;
+    opens proeend.material to javafx.fxml;
     exports proeend.hittable;
     opens proeend.hittable to javafx.fxml;
     exports proeend.misc;

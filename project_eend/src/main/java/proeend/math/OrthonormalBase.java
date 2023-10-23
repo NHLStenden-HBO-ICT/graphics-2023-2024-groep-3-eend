@@ -4,25 +4,13 @@ package proeend.math;
  * Maakt een Vector vanaf een genormaliseerde basis.
  */
 public class OrthonormalBase {
-    public OrthonormalBase(){};
-    private Vector[] axis = new Vector[3];
-    public Vector atIndex(int index) {
-        return axis[index];
-    }
+    public OrthonormalBase(){}
+
+    private final Vector[] axis = new Vector[3];
+
     public Vector u() {return axis[0];}
     public Vector v() {return axis[1];}
     public Vector w() {return axis[2];}
-
-    /**
-     * Zet een vector om naar een vector met een genormaliseerde basis.
-     * @param a x-as waarde.
-     * @param b y-as waarde.
-     * @param c z-as waarde.
-     * @return Aangepaste vector.
-     */
-    public Vector local(double a, double b, double c) {
-        return u().scale(a).add(v().scale(b)).add(w().scale(c));
-    }
 
     /**
      * Zet een vector om naar een vector met een genormaliseerde basis.

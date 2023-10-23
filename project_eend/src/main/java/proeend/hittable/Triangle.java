@@ -70,12 +70,6 @@ public class Triangle extends Hittable{
         if (t < 0)
             return false;
 
-        //if (rec.t < 0) {return false;}
-        //rec.t = Vector.dot(v0v2, qvec);
-        //ray.direction = unitDir;
-        //rec.p = ray.at(rec.t);
-
-        //rec.normal = Vector.cross(v0v1,v0v2);
         rec.setU(u);
         rec.setV(v);
         rec.setT(t);
@@ -85,9 +79,6 @@ public class Triangle extends Hittable{
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
-        //rec.setFaceNormal(ray,rec.normal);
-        //System.out.println(v+u);
-        //rec.normal = pvec;
         return true;
     }
 
@@ -129,12 +120,6 @@ public class Triangle extends Hittable{
         if (t < 0)
             return false;
 
-        //if (rec.t < 0) {return false;}
-        //rec.t = Vector.dot(v0v2, qvec);
-        //ray.direction = unitDir;
-        //rec.p = ray.at(rec.t);
-
-        //rec.normal = Vector.cross(v0v1,v0v2);
         rec.setU(u);
         rec.setV(v);
         rec.setT(t);
@@ -144,9 +129,6 @@ public class Triangle extends Hittable{
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
-        //rec.setFaceNormal(ray,rec.normal);
-        //System.out.println(v+u);
-        //rec.normal = pvec;
         return true;
     }
 }
