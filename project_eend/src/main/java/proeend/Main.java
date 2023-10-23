@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
-import proeend.material.Lambertian;
 import proeend.math.Vector;
 import proeend.misc.*;
 
@@ -43,8 +42,9 @@ public class Main extends Application {
         setupUI(stage);
         setupAnimation();
         EventHandler eventHandler = new EventHandler();
-        previousImage = Renderer.render(camera, false, world, lights);
+        updateFrame();
         frame.setImage(previousImage);
+        updateFrame();
         eventHandler.setupEventHandlers(stage.getScene(), camera, world, lights);
         stage.setTitle("RayTracer");
         stage.show();
@@ -60,29 +60,26 @@ public class Main extends Application {
     private void setupAnimation() {
         StackPane.setAlignment(frame, Pos.CENTER);
         Duration interval = Duration.seconds(INITIAL_FRAME_RATE);
-        KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> update());
+        KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> updateFrame());
         Timeline timeline = new Timeline(keyFrame);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
-    private void update() {
-        if (!camera.isMoving()) {
-            camera.setSamplesPerPixel(3);
-            camera.setMaxDepth(10);
-        }
+    private void updateFrame() {
 
         WritableImage newImage = Renderer.render(camera, false, world, lights);
 
-        camera.setSamplesPerPixel(1); // Return to normal settings when the camera moves
+        if(previousImage == null){
+            previousImage = newImage;
+            return;
+        }
 
         if (!camera.isMoving() && !camera.hasMovedSinceLastFrame()) {
             // Blend the previous image with the new image
-            newImage = ImageBlender.blendImages(previousImage, newImage); // Experiment with brightness factor
+            newImage = ImageBlender.blendImages(previousImage, newImage);
         }
-
         previousImage = newImage;
-
         frame.setImage(newImage);
         camera.setHasMovedSinceLastFrame(false);
     }
@@ -95,7 +92,7 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
-        Lambertian white = new Lambertian(new Vector(1, .5, .5));
+        //Lambertian white = new Lambertian(new Vector(1, .5, .5));
         //Emitter white = new Emitter(new Vector(1,1,1));
         /*PolygonMesh duck = null;
         PolygonMesh icoSphere = null;
@@ -120,10 +117,10 @@ public class Main extends Application {
         //uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
-        camera.setBackground(new Vector(1,1,1));
+        camera.setBackground(new Vector(2,2,2));
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
-        camera.setCameraCenter(new Vector(0,0,4));
+        camera.setCameraCenter(new Vector(0,0,2));
 
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(3);

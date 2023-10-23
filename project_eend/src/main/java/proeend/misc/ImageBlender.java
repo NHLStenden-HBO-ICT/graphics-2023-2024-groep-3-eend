@@ -20,10 +20,13 @@ public class ImageBlender {
                 Color color1 = reader1.getColor(x, y);
                 Color color2 = reader2.getColor(x, y);
 
-                // Calculate the blended color without any additional factors
-                double blendedRed = interpolate(color1.getRed(), color2.getRed());
-                double blendedGreen = interpolate(color1.getGreen(), color2.getGreen());
-                double blendedBlue = interpolate(color1.getBlue(), color2.getBlue());
+                double alpha = .1;
+
+                // Linear interpolation blending
+                double blendedRed = interpolate(color1.getRed(), color2.getRed(), alpha);
+                double blendedGreen = interpolate(color1.getGreen(), color2.getGreen(), alpha);
+                double blendedBlue = interpolate(color1.getBlue(), color2.getBlue(), alpha);
+
 
                 writer.setColor(x, y, new Color(blendedRed, blendedGreen, blendedBlue, 1.0));
             }
@@ -32,7 +35,7 @@ public class ImageBlender {
         return resultImage;
     }
 
-    private static double interpolate(double a, double b) {
-        return (a + b) / 2.0; // Simple average blending
+    private static double interpolate(double a, double b, double alpha) {
+        return a * (1.0 - alpha) + b * alpha;
     }
 }

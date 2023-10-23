@@ -62,10 +62,7 @@ public class EventHandler {
              */
             @Override
             public void handle(KeyEvent event) {
-                if(!camera.isMoving()){
-                    camera.setSamplesPerPixel(10);
-                    camera.setMaxDepth(50);
-                }
+
                 if (event.isShiftDown()) {
                     shiftMult = 10;
                 } else shiftMult = 1;
@@ -94,44 +91,44 @@ public class EventHandler {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
                         coordZ.setText(Double.toString(Double.parseDouble(coordZ.getText()) - 0.04 * shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0, 0, -0.04 * shiftMult)));
+                        camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, 0, -0.04 * shiftMult)));
                         camera.setLookat(camera.getLookat().rotateY(-ROTATION_UNIT * shiftMult));
                         break;
                     case LEFT:
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
                         coordX.setText(Double.toString(Double.parseDouble(coordX.getText()) - 0.02 * shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(-0.02 * shiftMult, 0, 0)));
+                        camera.setCameraCenter(camera.getCameraCenter().add(new Vector(-0.02 * shiftMult, 0, 0)));
                         break;
                     case RIGHT:
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
                         coordX.setText(Double.toString(Double.parseDouble(coordX.getText()) + 0.02 * shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0.02 * shiftMult, 0, 0)));
+                        camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0.02 * shiftMult, 0, 0)));
                         break;
                     case DOWN:
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
                         coordZ.setText(Double.toString(Double.parseDouble(coordZ.getText()) + 0.04 * shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0, 0, 0.04 * shiftMult)));
-                        camera.setLookat(Vector.add(camera.getLookat(), new Vector(0, 0, +0.04 * shiftMult)));
+                        camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, 0, 0.04 * shiftMult)));
+                        camera.setLookat(camera.getLookat().add(new Vector(0, 0, +0.04 * shiftMult)));
                         break;
                     case SPACE:
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
                         coordY.setText(Double.toString(Double.parseDouble(coordY.getText()) + 0.1 * shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0, .1 * shiftMult, 0)));
+                        camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, .1 * shiftMult, 0)));
                         break;
                     case Z:
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
                         coordY.setText(Double.toString(Double.parseDouble(coordY.getText()) - 0.1 * shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), (new Vector(0, -.1 * shiftMult, 0))));
+                        camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, -.1 * shiftMult, 0)));
                         break;
                     case C:
-                        camera.setSamplesPerPixel(200);
+                        camera.setSamplesPerPixel(50);
                         camera.setMaxDepth(10);
-                        camera.setImageWidth(800);
+                        camera.setImageWidth(400);
                         Renderer.render(camera, true, world, lights);
                         break;
                 }

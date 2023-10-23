@@ -21,17 +21,19 @@ public class Utility {
         lights.clear();
         Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
         Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
-        Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.1,0.9));
-        Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
+        Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.4,0.7));
+        Mirror redMirror = new Mirror(new Vector(1,.5,.5), 1);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
         Normal normal = new Normal();
         CheckerTexture checkerTexture = new CheckerTexture(10, new Vector(.6,.1,.7), new Vector());
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
+        Emitter blueLight = new Emitter(new Vector(.3,.8,.9));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
         Dielectric ice = new Dielectric(1.31);
         Dielectric salt = new Dielectric(1.54);
+
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -53,14 +55,25 @@ public class Utility {
         switch (selector) {
 
             case 0:
-                world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
+              /*  world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
                 world.add(new Sphere(new Vector(0,-100.5,-1), 100, blueLambertian));
                 world.add(new Sphere(new Vector(0,0,0.6),1,ice));
                 world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
 
-                Hittable light = new Sphere(new Vector(1,0,0),.5,whiteLight);
+                Hittable light = new Sphere(new Vector(1,0,0),.5,blueLight);
                 world.add(light);
-                lights.add(light);
+                lights.add(light);*/
+
+                // Voeg willekeurige objecten toe aan de wereld
+                world.add(new Sphere(new Vector(0, 0, -1), 0.5, redMirror));
+                world.add(new Sphere(new Vector(0, -100.5, -1), 100, blueLambertian));
+                world.add(new Sphere(new Vector(0, 0, 0.5), .9, ice));
+                world.add(new Sphere(new Vector(-1, 0, -1), 0.5, greyLambertian));
+
+                // Voeg een willekeurig lichtobject toe
+                Hittable light0 = new Sphere(new Vector(1, 0, 0), 0.5, blueLight);
+                world.add(light0);
+                lights.add(light0);
 
                 break;
             case 1:

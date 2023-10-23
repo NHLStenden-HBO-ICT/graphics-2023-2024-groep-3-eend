@@ -159,7 +159,7 @@ public class HitRecord {
      */
     public void setFaceNormal(Ray ray, Vector outwardNormal) {
         frontFace = Vector.dot(ray.getDirection(), outwardNormal) < 0;
-        normal = frontFace ? outwardNormal : Vector.negate(outwardNormal);
+        normal = frontFace ? outwardNormal : outwardNormal.invert();
     }
 
     /**

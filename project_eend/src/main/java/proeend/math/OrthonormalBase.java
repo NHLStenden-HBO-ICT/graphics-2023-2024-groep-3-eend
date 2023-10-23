@@ -21,8 +21,7 @@ public class OrthonormalBase {
      * @return Aangepaste vector.
      */
     public Vector local(double a, double b, double c) {
-        return Vector.add(Vector.add(Vector.scale(a, u()),
-                Vector.scale(b, v())), Vector.scale(c, w()));
+        return u().scale(a).add(v().scale(b)).add(w().scale(c));
     }
 
     /**
@@ -31,9 +30,9 @@ public class OrthonormalBase {
      * @return Aangepaste vector.
      */
     public Vector local(Vector a) {
-        return Vector.add(Vector.add(Vector.scale(a.getX(), u()),
-                Vector.scale(a.getY(), v())), Vector.scale(a.getZ(), w()));
+        return u().scale(a.getX()).add(v().scale(a.getY())).add(w().scale(a.getZ()));
     }
+
 
     /**
      * Maakt de genormaliseerde basis aan de hand van de meegegeven vector.

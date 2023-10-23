@@ -76,7 +76,7 @@ public class Vector {
      * @return Het gereflecteerde vector.
      */
     public static Vector reflect(Vector vec, Vector normal) {
-        return add(vec, negate(scale(2.0*dot(vec,normal),normal)));
+        return vec.add(normal.scale(2.0*dot(vec,normal)).invert());
     }
 
     /**
@@ -98,88 +98,44 @@ public class Vector {
         this.coordinates = copy.coordinates;
     }
 
-    /**
-     * Berekent de inverse.
-     */
-    public void invert(){
-        Vector vec = scale(-1, this);
-        this.coordinates[0]= vec.getX();
-        this.coordinates[1]= vec.getY();
-        this.coordinates[2]= vec.getZ();
+    public Vector rotateX(double angle) {
+        return rotate(angle, 1, 2);
     }
 
-    /**
-     * Roteert de vector om de Z-as met de opgegeven hoek.
-     * @param angle De rotatiehoek in radialen
-     */
-    public void rotateZ(double angle) {
-        double cosA = Math.cos(angle);
-        double sinA = Math.sin(angle);
-        double newX = cosA * coordinates[x] - sinA * coordinates[y];
-        double newY = sinA * coordinates[x] + cosA * coordinates[y];
-        coordinates[x] = newX;
-        coordinates[y] = newY;
+    public Vector rotateZ(double angle) {
+        return rotate(angle, 0, 1);
     }
 
-    /**
-     * Roteert de vector om de Y-as met de opgegeven hoek.
-     * @param angle De rotatiehoek in radialen.
-     */
     public Vector rotateY(double angle) {
+        return rotate(angle, 0, 2);
+    }
+
+    private Vector rotate(double angle, int axis1, int axis2) {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
-        double newX = cosA * coordinates[x] + sinA * coordinates[z];
-        double newZ = -sinA * coordinates[x] + cosA * coordinates[z];
-        coordinates[x] = newX;
-        coordinates[z] = newZ;
+        double axis1Value = coordinates[axis1];
+        double axis2Value = coordinates[axis2];
+
+        coordinates[axis1] = cosA * axis1Value - sinA * axis2Value;
+        coordinates[axis2] = sinA * axis1Value + cosA * axis2Value;
 
         return this;
     }
 
-    /**
-     * Maakt de vector negatief.
-     * @param vec
-     * @return
-     */
-    public static Vector negate(Vector vec) {
-        return new Vector(-vec.getX(),-vec.getY(),-vec.getZ());
+    public Vector invert(){
+        return new Vector(-this.getX(),-this.getY(),-this.getZ());
     }
 
-    /**
-     * Telt twee vectoren bij elkaar op.
-     * @param vecA De eerste vector.
-     * @param vecB De tweede vector.
-     * @return Het resultaat van de optelling.
-     */
-    public static Vector add(Vector vecA, Vector vecB) {
-        return new Vector(vecA.getX() + vecB.getX(), vecA.getY() + vecB.getY(), vecA.getZ() + vecB.getZ());
+    public Vector add(Vector vec) {
+        return new Vector(this.getX() + vec.getX(), this.getY() + vec.getY(), this.getZ() + vec.getZ());
     }
-
-    public Vector subtract(Vector vectorToSubtract){
-        coordinates[x] -= vectorToSubtract.coordinates[x];
-        coordinates[y] -= vectorToSubtract.coordinates[y];
-        coordinates[z] -= vectorToSubtract.coordinates[x];
-        return this;
-    }
-
-
-
-
     /**
      * Schaalt de opgegeven vector met een scalaire waarde.
      * @param scalar De scalaire waarde waarmee de vector wordt geschaald.
-     * @param scaled De vector die wordt geschaald.
      * @return Het geschaalde resultaat.
      */
-    public static Vector scale(double scalar, Vector scaled) {
-        return new Vector(scaled.getX() * scalar, scaled.getY() * scalar, scaled.getZ() * scalar);
-    }
-
     public Vector scale(double scalar) {
-        coordinates[x] *= scalar;
-        coordinates[y] *= scalar;
-        coordinates[z] *= scalar;
-        return this;
+        return new Vector(this.getX() * scalar, this.getY() * scalar, this.getZ() * scalar);
     }
 
     /**
@@ -212,7 +168,7 @@ public class Vector {
      * @return Het kwadraat van de lengte van de vector.
      */
     public static double lengthSquared(Vector vec) {
-        return (vec.getX() * vec.getX() + vec.getY() * vec.getY() + vec.getZ() * vec.getZ());
+        return dot(vec, vec);
     }
 
     /**
@@ -221,7 +177,7 @@ public class Vector {
      * @return De lengte van de vector.
      */
     public static double length(Vector vec) {
-        return Math.sqrt(lengthSquared(vec));
+        return Math.sqrt(dot(vec, vec));
     }
 
     /**
@@ -230,7 +186,7 @@ public class Vector {
      * @return De eenheidsvector van de vector.
      */
     public static Vector unitVector(Vector vec) {
-        return scale((1.0 / length(vec)), vec);
+        return vec.scale((1.0 / length(vec)));
     }
 
     public Vector toUnitVector() {
@@ -286,7 +242,7 @@ public class Vector {
      */
     public static Vector RandomUnitVecOnHemisphere(Vector normal) {
         Vector p = randomOnUnitSphere();
-        return (dot(p, normal) > 0.0) ? p : negate(p);
+        return (dot(p, normal) > 0.0) ? p : p.invert();
     }
 
     /**

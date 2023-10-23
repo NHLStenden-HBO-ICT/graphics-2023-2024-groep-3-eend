@@ -24,10 +24,7 @@ public class Sphere extends Hittable {
      * @param name De naam van de bol voor identificatie van de sfeer.
      */
     public Sphere(Vector center, double radius, Material material, String name) {
-        this.center = center;
-        this.radius = radius;
-        this.material = material;
-        boundingBox = new BoundingBox(center, radius);
+        this(center, radius, material);
         this.name = name;
     }
 
@@ -63,7 +60,7 @@ public class Sphere extends Hittable {
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
 
 
-        Vector OC = Vector.add(ray.origin(), Vector.negate(center));
+        Vector OC = ray.origin().add(center.invert());
         double a = Vector.lengthSquared(ray.getDirection());
         double halfb = Vector.dot(OC, ray.getDirection());
         double c = Vector.lengthSquared(OC) - radius * radius;
@@ -83,7 +80,7 @@ public class Sphere extends Hittable {
         rec.setT(root);
         rec.setP(ray.at(rec.getT()));
         rec.setMaterial(material);
-        Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.negate(center)));
+        Vector outwardNormal = (rec.getP().add(center.invert()).scale((1.0 / radius)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;
     }
@@ -101,7 +98,7 @@ public class Sphere extends Hittable {
         if (!hit(new Ray(origin,direction),new Interval(0.001, Double.POSITIVE_INFINITY), hitRecord)) {
             return 0;
         }
-        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(Vector.add(center, Vector.negate(origin))));
+        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(center.add(origin.invert())));
         double solidAngle = 2*Math.PI*(1-cosThetaMax);
 
         return 1.0/solidAngle;
@@ -112,7 +109,7 @@ public class Sphere extends Hittable {
      */
     @Override
     public Vector random(Vector origin) {
-        Vector direction = Vector.add(center, Vector.negate(origin));
+        Vector direction = center.add(origin.invert());
         double distanceSquared = Vector.lengthSquared(direction);
         OrthonormalBase uvw = new OrthonormalBase();
         uvw.buildFromW(direction);

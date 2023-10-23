@@ -35,7 +35,7 @@ public class Renderer {
         for (int sy = 0; sy < camera.getRootSPP(); ++sy) {
             for (int sx = 0; sx < camera.getRootSPP(); ++sx) {
                 Ray ray = getRay(camera, x, y, sx, sy);
-                color = Vector.add(color, rayColor(camera, ray, camera.getMaxDepth(), world, lights));
+                color = color.add(rayColor(camera, ray, camera.getMaxDepth(), world, lights));
             }
         }
         return color;
@@ -50,10 +50,12 @@ public class Renderer {
      * @return Geeft een straal terug.
      */
     private static Ray getRay(Camera camera, int x, int y, int sx, int sy) {
-        Vector pixelCenter = Vector.add(Vector.add(camera.getTopLeftPixel(), Vector.scale(x, camera.getPixelDeltaU())), Vector.scale(y, camera.getPixelDeltaV()));
-        Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(camera, sx, sy));
+        Vector pixelCenter = camera.getTopLeftPixel()
+                .add(camera.getPixelDeltaU().scale(x))
+                .add((camera.getPixelDeltaV().scale(y)));
+        Vector pixelSample = pixelCenter.add(pixelSampleSquare(camera, sx, sy));
         Vector rayOrigin = camera.getCameraCenter();
-        Vector direction = Vector.add(pixelSample, Vector.negate(rayOrigin));
+        Vector direction = pixelSample.add(rayOrigin.invert());
         return new Ray(rayOrigin, direction.toUnitVector());
     }
     /**
@@ -63,11 +65,18 @@ public class Renderer {
      * @param sy De sample op de y-as, coördinaat.
      * @return Geeft een geschaalde vector terug.
      */
+
     private static Vector pixelSampleSquare(Camera camera, int sx, int sy) {
-        double px = -.5 + 1.0 / camera.getRootSPP() * (sx + FastRandom.random());
-        double py = -.5 + 1.0 / camera.getRootSPP() * (sy + FastRandom.random());
-        return Vector.add(Vector.scale(px, camera.getPixelDeltaU()), Vector.scale(py, camera.getPixelDeltaV()));
+        double offset = -0.5 + 1.0 / camera.getRootSPP();
+        double px = offset * (sx + FastRandom.random());
+        double py = offset * (sy + FastRandom.random());
+
+        Vector deltaU = camera.getPixelDeltaU().scale(px);
+        Vector deltaV = camera.getPixelDeltaV().scale(py);
+
+        return deltaU.add(deltaV);
     }
+
     /**
      * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
      *
@@ -100,8 +109,7 @@ public class Renderer {
         Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
         if (!rec.material.scatter(r, rec, scatterRecord)) {
             if (rec.material instanceof Normal) {
-                return Vector.scale(.5, new Vector(rec.normal.getX() + 1,
-                        rec.normal.getY() + 1, rec.normal.getZ() + 1));
+                return new Vector(rec.normal.getX() + 1, rec.normal.getY() + 1, rec.normal.getZ() + 1).scale(0.5);
             }
 
             return emissionColor;
@@ -120,9 +128,8 @@ public class Renderer {
         double pdfVal = mixPDF.value(scattered.getDirection());
         double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
 
-        Vector scatterColor = Vector.scale(1.0 / pdfVal,
-                Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation), rayColor(camera, scattered, depth - 1, world, lights)));
+        Vector scatterColor = Vector.multiply(scatterRecord.attenuation.scale(scatteringPDF), rayColor(camera, scattered, depth - 1, world, lights)).scale(1.0 / pdfVal);
 
-        return Vector.add(emissionColor, scatterColor);
+        return emissionColor.add(scatterColor);
     }
 }

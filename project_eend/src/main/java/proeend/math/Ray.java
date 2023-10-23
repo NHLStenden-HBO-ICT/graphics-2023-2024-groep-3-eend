@@ -35,7 +35,7 @@ public class Ray {
      * @return De vector die de straal bereikt op de opgegeven waarde van t.
      */
     public Vector at(double t) {
-        return Vector.add(origin, Vector.scale(t, direction));
+        return origin.add(direction.scale(t));
     }
 
     /**

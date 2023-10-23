@@ -28,7 +28,7 @@ public class Mirror extends Material{
         scatterRecord.pdf = null;
         scatterRecord.skipPDF = true;
         Vector reflected = Vector.reflect(rayIn.getDirection().toUnitVector(), rec.normal);
-        scatterRecord.skipRay = new Ray(rec.p, Vector.add(reflected,Vector.scale(fuzz,Vector.randomOnUnitSphere())));
+        scatterRecord.skipRay = new Ray(rec.p, reflected.add(Vector.randomOnUnitSphere().scale(fuzz)));
         return true;
         /*
         Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);

@@ -66,18 +66,11 @@ public class PolygonMesh extends Hittable {
 
         for (Integer face: faceArray){
             if (face == 3){
-                newFaceList.add(3);
-                newVertexIndexList.add(vertexIndexArray[i]);
-                newVertexIndexList.add(vertexIndexArray[i+1]);
-                newVertexIndexList.add(vertexIndexArray[i+2]);
+                addFirstThreeFaces(newFaceList, newVertexIndexList, i);
                 i += 3;
             } else if (face == 4){
                 newFaceList.add(3);
-                newFaceList.add(3);
-                newVertexIndexList.add(vertexIndexArray[i]);
-                newVertexIndexList.add(vertexIndexArray[i+1]);
-                newVertexIndexList.add(vertexIndexArray[i+2]);
-
+                addFirstThreeFaces(newFaceList, newVertexIndexList, i);
                 newVertexIndexList.add(vertexIndexArray[i]);
                 newVertexIndexList.add(vertexIndexArray[i+2]);
                 newVertexIndexList.add(vertexIndexArray[i+3]);
@@ -89,6 +82,14 @@ public class PolygonMesh extends Hittable {
         this.vertexIndexArray = newVertexIndexList.toArray(new Integer[0]);
         System.out.println("Converted to triangles");
     }
+
+    private void addFirstThreeFaces(List<Integer> newFaceList, List<Integer> newVertexIndexList, int i) {
+        newFaceList.add(3);
+        newVertexIndexList.add(vertexIndexArray[i]);
+        newVertexIndexList.add(vertexIndexArray[i +1]);
+        newVertexIndexList.add(vertexIndexArray[i +2]);
+    }
+
     /**
      * Haalt de bounding box van de mesh op.
      * @return De bounding box van de mesh of null als er geen vertices zijn.

@@ -9,28 +9,13 @@ public class ColorParser {
      * @return RGB integer array, waarden tussen 0 en 255
      */
     public static int[] toColor(int samplesPerPixel, boolean gamma, Vector vector) {
-        double[] scaledCoordinates = scaleCoordinates((1.0 / samplesPerPixel), vector);
+        double[] scaledCoordinates = vector.scale(1.0 / samplesPerPixel).getCoordinates();
         double[] gammaCorrectedCoordinates = gammaCorrectCoordinates(scaledCoordinates, gamma);
         double[] clampedCoordinates = clampCoordinates(gammaCorrectedCoordinates);
 
         int[] color = convertToRGB(clampedCoordinates);
         return color;
     }
-
-    /**
-     * Schaalt de coördinaten vector.
-     * @param scale De schaal waarmee de vector aangepast moet worden.
-     * @param vector De coördinaten.
-     * @return Geeft de geschaalde coördinaten terug.
-     */
-    private static double[] scaleCoordinates(double scale, Vector vector) {
-        double[] scaled = new double[3];
-        for (int i = 0; i < 3; i++) {
-            scaled[i] = vector.getCoordinates()[i] * scale;
-        }
-        return scaled;
-    }
-
     /**
      * Corrigeerd de coördinaten met behulp van gamma.
      * @param input De invoer van de geschaalde coördinaten.

@@ -20,15 +20,13 @@ public class Camera {
     private final double aspectRatio = 16.0 / 9.0;
     private int imageWidth = 800;
     private int imageHeight = (int) (imageWidth / aspectRatio);
-    private double focalLength = 1.0;
     private double viewportHeight;
     private double viewportWidth = viewportHeight * (double) imageWidth / (double) imageHeight;
     private Vector viewportU = new Vector(viewportWidth, 0, 0);
     private Vector viewportV = new Vector(0, -viewportHeight, 0);
-    private Vector pixelDeltaU = Vector.scale((1.0 / imageWidth), viewportU);
-    private Vector pixelDeltaV = Vector.scale((1.0 / imageHeight), viewportV);
-    private Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(new Vector(0, 0, focalLength))), Vector.negate(Vector.scale(1.0 / 2.0, viewportU))), Vector.negate(Vector.scale(1.0 / 2.0, viewportV)));
-    private Vector topLeftPixel = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
+    private Vector pixelDeltaU = viewportU.scale(1.0 / imageWidth);
+    private Vector pixelDeltaV = viewportV.scale(1.0 / imageHeight);
+    private Vector topLeftPixel;
     private Vector background = new Vector();
 
     public void setCameraMoving(boolean cameraIsMoving) {
@@ -141,21 +139,24 @@ public class Camera {
     public void init() {
         Vector u, v, w;
         rootSPP = (int) Math.sqrt(samplesPerPixel);
-        focalLength = Vector.length(Vector.add(cameraCenter, Vector.negate(lookat)));
+        double focalLength = Vector.length(cameraCenter.add(lookat.invert()));
         imageHeight = (int) (imageWidth / aspectRatio);
         imageHeight = Math.max(1, imageHeight);
         double h = Math.tan(verticalFOV / 2);
-        w = Vector.add(cameraCenter, Vector.negate(lookat)).toUnitVector();
+        w = cameraCenter.add(lookat.invert()).toUnitVector();
         u = Vector.cross(up, w).toUnitVector();
         v = Vector.cross(w, u);
         viewportHeight = 2 * h * focalLength;
         viewportWidth = viewportHeight * (double) imageWidth / (double) imageHeight;
-        viewportU = Vector.scale(viewportWidth, u);
-        viewportV = Vector.scale(viewportHeight, Vector.negate(v));
-        pixelDeltaU = Vector.scale((1.0 / imageWidth), viewportU);
-        pixelDeltaV = Vector.scale((1.0 / imageHeight), viewportV);
-        viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(Vector.scale(focalLength, w))), Vector.negate(Vector.scale(1.0 / 2.0, viewportU))), Vector.negate(Vector.scale(1.0 / 2.0, viewportV)));
-        topLeftPixel = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
+        viewportU = u.scale(viewportWidth);
+        viewportV = v.invert().scale(viewportHeight);
+        pixelDeltaU = viewportU.scale(1.0 / imageWidth);
+        pixelDeltaV = viewportV.scale(1.0 / imageHeight);
+        Vector viewportUpperleft = cameraCenter
+                .add(w.scale(focalLength).invert())
+                .add(viewportU.scale(0.5).invert())
+                .add(viewportV.scale(0.5).invert());
+        topLeftPixel = viewportUpperleft.add(pixelDeltaU.add(pixelDeltaV).scale(1.0 / 2.0));
     }
 
 
