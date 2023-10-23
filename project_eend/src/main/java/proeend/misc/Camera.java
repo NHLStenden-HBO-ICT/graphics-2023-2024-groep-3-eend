@@ -8,6 +8,8 @@ import proeend.math.Vector;
 public class Camera {
 
     private boolean settingsAreLocked;
+    private boolean cameraIsMoving = false;
+    private boolean hasMovedSinceLastFrame = false;
     private Vector cameraCenter = new Vector(0, 0, 0);
     private Vector lookat = new Vector(0, 0, -1);
     private Vector up = new Vector(0, 1, 0);
@@ -28,6 +30,22 @@ public class Camera {
     private Vector viewportUpperleft = Vector.add(Vector.add(Vector.add(cameraCenter, Vector.negate(new Vector(0, 0, focalLength))), Vector.negate(Vector.scale(1.0 / 2.0, viewportU))), Vector.negate(Vector.scale(1.0 / 2.0, viewportV)));
     private Vector topLeftPixel = Vector.add(viewportUpperleft, Vector.scale(1.0 / 2.0, Vector.add(pixelDeltaU, pixelDeltaV)));
     private Vector background = new Vector();
+
+    public void setCameraMoving(boolean cameraIsMoving) {
+        this.cameraIsMoving = cameraIsMoving;
+    }
+
+    public void setHasMovedSinceLastFrame(boolean hasMoved) {
+        this.hasMovedSinceLastFrame = hasMoved;
+    }
+
+    public boolean hasMovedSinceLastFrame(){
+        return hasMovedSinceLastFrame;
+    }
+
+    public boolean isMoving(){
+        return cameraIsMoving;
+    }
 
     public Vector getPixelDeltaU() {
         return pixelDeltaU;
@@ -118,7 +136,7 @@ public class Camera {
     }
 
     /**
-     * Initialiseert de camera-instellingen.
+     * Initialiseert de camera-instellingen, omdat deze door key-events kunnen zijn aangepast.
      */
     public void init() {
         Vector u, v, w;

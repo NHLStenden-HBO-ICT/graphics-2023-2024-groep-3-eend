@@ -7,8 +7,11 @@ import proeend.hittable.Hittable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadController {
+    private long startTime;
+    private long endTime;
     private int[] activeThreadCount  = {0};
     int numberOfThreads = 12;
     private final ExecutorService executorService;
@@ -32,56 +35,51 @@ public class ThreadController {
     }
 
     public WritableImage renderAndSave(boolean save) {
-        int startLine = 0;
-        int endLine = blockSize;
-        if(save){ blockSize = 2;}
+        if(save){
+            startTime = System.nanoTime();
+        }
 
-        for (int i = 0; i < numberOfThreads; i++) {
-            if (i == numberOfThreads - 1) {
-                endLine = camera.getHeight();
-            }
-            RenderTask task = new RenderTask(camera, world, lights, startLine, endLine, save, pixelWriter);
-            executorService.submit(task);
+        AtomicInteger completedLines = new AtomicInteger(0); // Voortgang bijhouden
 
-            startLine = endLine;
-            endLine += blockSize;
+        for (int i = 0; i < camera.getHeight(); i += blockSize) {
+            final int lineStart = i;
+            final int lineEnd = Math.min(i + blockSize, camera.getHeight());
+
+            executorService.submit(() -> {
+                RenderTask task = new RenderTask(camera, world, lights, lineStart, lineEnd, save, pixelWriter, completedLines, () -> {
+                    double progress = (completedLines.get() / (double) camera.getHeight()) * 100.0;
+                    System.out.printf("Progress: %.2f%%\r", progress);
+                });
+                task.run();
+            });
         }
 
         shutdown();
 
-        if(save) {ImageSaver.saveImage(writableImage, camera.getSamplesPerPixel());}
+        if(save) {
+            ImageSaver.saveImage(writableImage, camera.getSamplesPerPixel());
+            endTime = System.nanoTime();
+
+            long elapsedTime = endTime - startTime;
+            long seconds = TimeUnit.NANOSECONDS.toSeconds(elapsedTime);
+            long millis = TimeUnit.NANOSECONDS.toMillis(elapsedTime) - TimeUnit.SECONDS.toMillis(seconds);
+
+            System.out.println("Rendering completed in " + seconds + " seconds and " + millis + " milliseconds.");
+        }
+
 
         return writableImage;
-    }
-
-    public void pauseThread() {
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void shutdown() {
         executorService.shutdown();
         try {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                System.err.println("Thread execution did not complete in time.");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-
-  /*  public boolean canSpawnThread() {
-        return activeThreadCount[0] < numberOfThreads;
-    }
-
-    public void spawnWorkerThread(int[] line, Camera camera, Hittable world, Hittable lights, PixelWriter pixelWriter) {
-        synchronized (activeThreadCount) {
-            activeThreadCount[0]++;
-        }
-        executorService.submit(new RenderTask(activeThreadCount, camera, world, lights, line[0], false, 0, pixelWriter));
-    }*/
-
-
 
 }

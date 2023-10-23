@@ -3,7 +3,9 @@ package proeend.misc;
 import javafx.scene.image.PixelWriter;
 import proeend.hittable.Hittable;
 
-public class RenderTask extends Renderer implements Runnable  {
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class RenderTask implements Runnable  {
     private final Hittable world;
     private final Hittable lights;
     private final int startLine;
@@ -11,8 +13,10 @@ public class RenderTask extends Renderer implements Runnable  {
     private final boolean save;
     private final PixelWriter pixelWriter;
     private final Camera camera;
+    private final AtomicInteger completedLines;
+    private final Runnable updateProgress;
 
-    public RenderTask(Camera camera, Hittable world, Hittable lights, int startLine, int endLine, boolean save, PixelWriter pixelWriter) {
+    public RenderTask(Camera camera, Hittable world, Hittable lights, int startLine, int endLine, boolean save, PixelWriter pixelWriter, AtomicInteger completedLines, Runnable updateProgress) {
         this.world = world;
         this.lights = lights;
         this.startLine = startLine;
@@ -20,19 +24,17 @@ public class RenderTask extends Renderer implements Runnable  {
         this.save = save;
         this.pixelWriter = pixelWriter;
         this.camera = camera;
+        this.completedLines = completedLines;
+        this.updateProgress = updateProgress;
     }
 
     @Override
     public void run() {
         for (int y = startLine; y < endLine; y++) {
-            renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
-        }
-            //decrementActiveThreads(activeThreadCount);
-    }
-
-    public void decrementActiveThreads(int[] activethreads) {
-        synchronized (activethreads) {
-            activethreads[0]--;
-        }
+            Renderer.renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
+            completedLines.incrementAndGet();
+            if (save && updateProgress != null) {
+                updateProgress.run(); // Voortgang bijwerken
+            }}
     }
 }

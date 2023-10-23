@@ -1,9 +1,6 @@
 package proeend.misc;
 
-import proeend.hittable.HittableList;
-import proeend.hittable.Sphere;
-import proeend.hittable.Triangle;
-import proeend.hittable.PolygonMesh;
+import proeend.hittable.*;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.math.Vector;
@@ -24,6 +21,7 @@ public class Utility {
         lights.clear();
         Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
         Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
+        Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.1,0.9));
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
@@ -32,7 +30,8 @@ public class Utility {
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
-        Dielectric glass = new Dielectric(1.31);
+        Dielectric ice = new Dielectric(1.31);
+        Dielectric salt = new Dielectric(1.54);
 
         Vector v0 = new Vector(-1,-1,-2);
         Vector v1 = new Vector(1,-1,-2);
@@ -55,30 +54,21 @@ public class Utility {
 
             case 0:
                 world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
-                world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
-                world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
+                world.add(new Sphere(new Vector(0,-100.5,-1), 100, blueLambertian));
+                world.add(new Sphere(new Vector(0,0,0.6),1,ice));
                 world.add(new Sphere(new Vector(-1,0,-1),.5,greyLambertian));
-                world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
-                // world.add(vierkant);
-                lights.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
+
+                Hittable light = new Sphere(new Vector(1,0,0),.5,whiteLight);
+                world.add(light);
+                lights.add(light);
 
                 break;
             case 1:
-                //world.add(new Sphere(new Vector(0,0,-.7),.5,perfectMirror, "a"));
                 world.add(new Sphere(new Vector(2,0,-.55),.5,yellowLambertian,"b"));
+                world.add(new Sphere(new Vector(1.5,0,1.55),.5,salt,"b"));
                 world.add(new Sphere(new Vector(0,-103.5,-.55), 100, greyLambertian, "c"));
-                //world.add(new Sphere(new Vector(0,0,.7),.5,normal));
                 world.add(new Sphere(new Vector(1,2,-.55),.5,whiteLight, "d"));
                 lights.add(new Sphere(new Vector(1,2,-.55),.5,whiteLight, "e"));
-                //world.add(new Sphere(new Vector(0,0,0.5),.2,glass, "f"));
-               // lights.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
-                //lights.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
-             /*   world.add(new Sphere(new Vector(1,2,-.55),100,whiteLight));
-                lights.add(new Sphere(new Vector(-1,2,3),10 ,whiteLight));
-                world.add(new Sphere(new Vector(-1,2,3),10 ,whiteLight));
-*/
-                //world.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
-                //lights.add(new Triangle(v3,v4,new Vector(0,3,-1),whiteLight));
 
                 break;
             case 2:

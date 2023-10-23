@@ -16,59 +16,20 @@ public class Renderer {
     public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
         camera.init();
         camera.setLock(true);
-
-
             ThreadController threadController = new ThreadController(20, camera, world, lights);
             WritableImage image = threadController.renderAndSave(save);
             camera.setLock(false);
             return image;
-
-        /*else {
-            for (int y = 0; y < camera.getHeight(); ++y) {
-                renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
-            }
-        }*/
-
-     /*   if (renderMultithreaded){
-            int[] line = {0};
-
-            ThreadController threadController = new ThreadController();
-
-            while (line[0] < camera.getHeight()) {
-                if (threadController.canSpawnThread()) {
-                    threadController.spawnWorkerThread(line, camera, world, lights, pixelWriter);
-                    //System.out.println("Lijn: " + line[0]);
-
-                        incrementLine(line, 1);
-
-                }
-                threadController.pauseThread();
-            }
-            threadController.shutdown();
-
-            if(save) {ImageSaver.saveImage(writableImage, camera.getSamplesPerPixel());}
-
-        } else {
-            for (int y = 0; y < camera.getHeight(); ++y) {
-                renderHorizontalLine(camera, renderMultithreaded, world, lights, y, pixelWriter);
-            }
-        }*/
-
-
     }
-    protected static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
-
-
+    public static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
         for (int x = 0; x < camera.getImageWidth(); ++x) {
             Vector colorVec = new Vector();
             colorVec = renderPixel(camera, world, lights, y, x, colorVec);
-
             int[] colors = ColorParser.toColor(camera.getSamplesPerPixel(), save, colorVec);
             synchronized (pixelWriter) {
                 pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
             }
         }
-
     }
     private static Vector renderPixel(Camera camera, Hittable world, Hittable lights, int y, int x, Vector color) {
         for (int sy = 0; sy < camera.getRootSPP(); ++sy) {
@@ -91,7 +52,6 @@ public class Renderer {
     private static Ray getRay(Camera camera, int x, int y, int sx, int sy) {
         Vector pixelCenter = Vector.add(Vector.add(camera.getTopLeftPixel(), Vector.scale(x, camera.getPixelDeltaU())), Vector.scale(y, camera.getPixelDeltaV()));
         Vector pixelSample = Vector.add(pixelCenter, pixelSampleSquare(camera, sx, sy));
-
         Vector rayOrigin = camera.getCameraCenter();
         Vector direction = Vector.add(pixelSample, Vector.negate(rayOrigin));
         return new Ray(rayOrigin, direction.toUnitVector());
@@ -164,10 +124,5 @@ public class Renderer {
                 Vector.multiply(Vector.scale(scatteringPDF, scatterRecord.attenuation), rayColor(camera, scattered, depth - 1, world, lights)));
 
         return Vector.add(emissionColor, scatterColor);
-    }
-    private static void incrementLine(int[] line, int count) {
-        synchronized (line) {
-            line[0] += count;
-        }
     }
 }

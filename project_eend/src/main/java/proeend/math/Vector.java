@@ -155,6 +155,13 @@ public class Vector {
         return new Vector(vecA.getX() + vecB.getX(), vecA.getY() + vecB.getY(), vecA.getZ() + vecB.getZ());
     }
 
+    public Vector subtract(Vector vectorToSubtract){
+        coordinates[x] -= vectorToSubtract.coordinates[x];
+        coordinates[y] -= vectorToSubtract.coordinates[y];
+        coordinates[z] -= vectorToSubtract.coordinates[x];
+        return this;
+    }
+
 
 
 

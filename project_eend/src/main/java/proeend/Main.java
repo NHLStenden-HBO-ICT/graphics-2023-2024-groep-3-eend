@@ -3,13 +3,10 @@ package proeend;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
@@ -20,29 +17,21 @@ import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
 import proeend.material.Lambertian;
 import proeend.math.Vector;
-import proeend.misc.Camera;
-import proeend.misc.Renderer;
-import proeend.misc.Utility;
+import proeend.misc.*;
 
 import java.io.IOException;
 
 public class Main extends Application {
 
-    static HittableList world = new HittableList();
-    static HittableList lights = new HittableList();
-    static Camera camera = new Camera();
-    private boolean isCameraRotating = true;
-    static double frameRate = 1.0/10.0; //hertz
-    static double aspectRatio = 16.0/9.0;
-    static Vector camOrigin = new Vector(0,0,2);
-    private final double rotationUnit = Math.PI/360;
+    private static final double INITIAL_FRAME_RATE = 0.1; // Hertz
+    private static final double ASPECT_RATIO = 16.0 / 9.0;
+    private static Camera camera = new Camera();
+    private static HittableList world = new HittableList();
+    private static HittableList lights = new HittableList();
 
     ImageView frame = new ImageView();
-    StackPane root = new StackPane();
-
-    Label coordX = new Label(Double.toString(camOrigin.getX()));
-    Label coordY = new Label(Double.toString(camOrigin.getY()));
-    Label coordZ = new Label(Double.toString(camOrigin.getZ()));
+    StackPane stackPane = new StackPane();
+    WritableImage previousImage;
 
     /**
      * Start het programma en configureert de besturingselementen.
@@ -51,134 +40,54 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        setupUI(stage);
+        setupAnimation();
+        EventHandler eventHandler = new EventHandler();
+        previousImage = Renderer.render(camera, false, world, lights);
+        frame.setImage(previousImage);
+        eventHandler.setupEventHandlers(stage.getScene(), camera, world, lights);
+        stage.setTitle("RayTracer");
+        stage.show();
+    }
+    private void setupUI(Stage stage) {
+        Scene scene = new Scene(stackPane, camera.getImageWidth(), camera.getHeight());
+        stackPane.getChildren().add(frame);
+        StackPane.setAlignment(frame, Pos.CENTER);
+        stackPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+        stage.setScene(scene);
+    }
 
-
-        Scene scene = new Scene(root, camera.getImageWidth(), camera.getHeight());
-        StackPane.setAlignment(coordX, Pos.TOP_LEFT);
-        StackPane.setAlignment(coordY, Pos.TOP_CENTER);
-        StackPane.setAlignment(coordZ, Pos.TOP_RIGHT);
-
-        //animatie
-        Duration interval = Duration.seconds(frameRate);
-        KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> {
-                update();
-        });
+    private void setupAnimation() {
+        StackPane.setAlignment(frame, Pos.CENTER);
+        Duration interval = Duration.seconds(INITIAL_FRAME_RATE);
+        KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> update());
         Timeline timeline = new Timeline(keyFrame);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-
-        StackPane.setAlignment(frame, Pos.CENTER);
-        root.setBackground(new Background(new BackgroundFill(Color.BLACK,null, null)));
-        root.getChildren().add(frame);
-        root.getChildren().add(coordX);
-        root.getChildren().add(coordY);
-        root.getChildren().add(coordZ);
-
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            int shiftMult = 1;
-
-            /**
-             * Zorgt ervoor dat het programma reageert als er een toets wordt ingedrukt.
-             * @param event Geeft aan wat er gebeurt.
-             */
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.isShiftDown()) {shiftMult=10;}
-                else shiftMult =1;
-                switch (event.getCode()) {
-                    case EQUALS:
-                        isCameraRotating = true;
-                        camera.updateVerticalFOV(rotationUnit * shiftMult);
-                        break;
-                    case MINUS:
-                        isCameraRotating = true;
-                        camera.updateVerticalFOV(-rotationUnit * shiftMult);
-                        break;
-                    case Q:
-                        isCameraRotating = true;
-                        camera.setLookat(camera.getLookat().rotateY(-rotationUnit * shiftMult));
-                        break;
-                    case E:
-                        isCameraRotating = true;
-                        camera.setLookat(camera.getLookat().rotateY(rotationUnit * shiftMult));
-                        break;
-                    case UP:
-                        isCameraRotating = true;
-                        coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())-0.04*shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0,0,-0.04*shiftMult)));
-                        camera.setLookat(camera.getLookat().rotateY(-rotationUnit * shiftMult));
-                        break;
-                    case LEFT:
-                        isCameraRotating = true;
-                        //camOrigin = new Vector(camOrigin.x()-0.02,camOrigin.y(),camOrigin.z());
-                        coordX.setText(Double.toString( Double.parseDouble(coordX.getText())-0.02*shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(-0.02*shiftMult,0,0)));
-                        break;
-                    case RIGHT:
-                        isCameraRotating = true;
-                        coordX.setText(Double.toString( Double.parseDouble(coordX.getText())+0.02*shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0.02*shiftMult,0,0)));
-                        break;
-                    case DOWN:
-                        isCameraRotating = true;
-                        coordZ.setText(Double.toString( Double.parseDouble(coordZ.getText())+0.04*shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0,0,0.04*shiftMult)));
-                        camera.setLookat(Vector.add(camera.getLookat(), new Vector(0,0,+0.04*shiftMult)));
-                        break;
-                    case SPACE:
-                        isCameraRotating = true;
-                        coordY.setText(Double.toString( Double.parseDouble(coordY.getText())+0.1*shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), new Vector(0,.1*shiftMult,0)));
-                        break;
-                    case Z:
-                        isCameraRotating = true;
-                        coordY.setText(Double.toString( Double.parseDouble(coordY.getText())-0.1*shiftMult));
-                        camera.setCameraCenter(Vector.add(camera.getCameraCenter(), (new Vector(0,-.1*shiftMult,0))));
-                        break;
-                    case C:
-                        camera.setSamplesPerPixel(100);
-                        camera.setMaxDepth(30);
-                        camera.setImageWidth(800);
-                        Renderer.render(camera, true, world, lights);
-                        break;
-                }
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    System.out.println("Escape key pressed");
-                }
-            }
-        });
-
-        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case Q:
-                    case E:
-                    case Z:
-                    case UP:
-                    case LEFT:
-                    case RIGHT:
-                    case DOWN:
-                    case SPACE:
-                        isCameraRotating = false;
-                        break;
-                    // Behandeld de casus zoals hiervoor
-                }
-            }});
-
-        stage.setTitle("Project Eend");
-        stage.setScene(scene);
-        stage.show();
     }
 
-    /**
-     * Update de wereld als de camera veranderd.
-     */
     private void update() {
-        if (!camera.isLocked() && isCameraRotating)
-            frame.setImage(Renderer.render(camera, false, world, lights));
+        if (!camera.isMoving()) {
+            camera.setSamplesPerPixel(3);
+            camera.setMaxDepth(10);
+        }
+
+        WritableImage newImage = Renderer.render(camera, false, world, lights);
+
+        camera.setSamplesPerPixel(1); // Return to normal settings when the camera moves
+
+        if (!camera.isMoving() && !camera.hasMovedSinceLastFrame()) {
+            // Blend the previous image with the new image
+            newImage = ImageBlender.blendImages(previousImage, newImage); // Experiment with brightness factor
+        }
+
+        previousImage = newImage;
+
+        frame.setImage(newImage);
+        camera.setHasMovedSinceLastFrame(false);
     }
+
+
 
     /**
      * Initialiseert het programma.
@@ -211,18 +120,18 @@ public class Main extends Application {
         //uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
-        camera.setBackground(new Vector(.6,.6,.6));
-        camera.setImageWidth(500);
+        camera.setBackground(new Vector(1,1,1));
+        camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
-        camera.setCameraCenter(new Vector(2,0,4));
+        camera.setCameraCenter(new Vector(0,0,4));
 
-        camera.setSamplesPerPixel(3);
-        camera.setMaxDepth(5);
+        camera.setSamplesPerPixel(1);
+        camera.setMaxDepth(3);
 
         //cam1.cameraCenter = new Vector(-.5,20,40);
         //cam1.lookat = new Vector(0,20,39);
 
-        Utility.loadWorld(world, lights, 1);
+        Utility.loadWorld(world, lights, 0);
         world = new HittableList(new BBNode(world));
 
         /*var startTime = System.currentTimeMillis();
