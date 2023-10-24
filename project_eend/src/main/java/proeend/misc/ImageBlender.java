@@ -7,8 +7,8 @@ import javafx.scene.paint.Color;
 
 public class ImageBlender {
     public static WritableImage blendImages(WritableImage image1, WritableImage image2) {
-        int height = (int) Math.floor(image1.getHeight());
-        int width = (int) Math.floor(image1.getWidth());
+        int height = (int) Math.floor(image2.getHeight());
+        int width = (int) Math.floor(image2.getWidth());
 
         PixelReader reader1 = image1.getPixelReader();
         PixelReader reader2 = image2.getPixelReader();

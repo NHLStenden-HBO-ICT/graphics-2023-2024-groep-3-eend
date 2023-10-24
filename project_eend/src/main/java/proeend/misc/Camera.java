@@ -16,7 +16,7 @@ public class Camera {
     private int samplesPerPixel = 1;
     private int rootSPP = (int) Math.sqrt(samplesPerPixel);
     private int maxDepth = 50;
-    private final double aspectRatio = 16.0 / 9.0;
+    private double aspectRatio = 16.0 / 9.0;
     private int imageWidth = 800;
     private int imageHeight = (int) (imageWidth / aspectRatio);
     private double viewportHeight;
@@ -105,6 +105,10 @@ public class Camera {
         return background;
     }
 
+    public void setAspectRatio(double aspectRatio){
+        this.aspectRatio = aspectRatio;
+    }
+
     public void setBackground(Vector background) {
         this.background = background;
     }
@@ -151,4 +155,7 @@ public class Camera {
     }
 
 
+    public double getAspectRatio() {
+        return aspectRatio;
+    }
 }

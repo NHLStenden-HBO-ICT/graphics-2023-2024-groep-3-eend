@@ -3,6 +3,8 @@ package proeend;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -42,6 +44,33 @@ public class Main extends Application {
         eventHandler.setupEventHandlers(stage.getScene(), camera, world, lights);
         stage.setTitle("RayTracer");
         stage.show();
+
+        stage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
+                double newHeight = newWidth.doubleValue() * (1.0 / camera.getAspectRatio());
+
+                frame.setFitWidth(newWidth.doubleValue());
+                frame.setFitHeight(newHeight);
+                camera.setAspectRatio(newWidth.intValue() / stage.getHeight());
+                camera.setHasMovedSinceLastFrame(true);
+            }
+        });
+
+        stage.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldHeight, Number newHeight) {
+                double newWidth = stage.getWidth();
+
+                frame.setFitWidth(newWidth);
+                frame.setFitHeight(newHeight.doubleValue());
+                camera.setAspectRatio(newWidth / newHeight.intValue());
+                camera.setHasMovedSinceLastFrame(true);
+            }
+        });
+
+
+
     }
     private void setupUI(Stage stage) {
         Scene scene = new Scene(stackPane, camera.getImageWidth(), camera.getHeight());
@@ -49,6 +78,7 @@ public class Main extends Application {
         StackPane.setAlignment(frame, Pos.CENTER);
         stackPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
         stage.setScene(scene);
+
     }
 
     private void setupAnimation() {

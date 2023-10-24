@@ -9,10 +9,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * De `ThreadController` klasse beheert multi-threading voor de renderings processen.
+ */
 public class ThreadController {
     private long startTime;
     final int numberOfThreads;
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
     private final int blockSize;
     private final Camera camera;
     private final Hittable world;
@@ -20,6 +23,14 @@ public class ThreadController {
     private final WritableImage writableImage;
     private final PixelWriter pixelWriter;
 
+    /**
+     * Initialiseert een nieuw `ThreadController` object.
+     *
+     * @param blockSize  De grootte van het blok voor multi-threading.
+     * @param camera     De camera-instellingen voor de rendering.
+     * @param world      Het 3D-wereld object dat moet worden weergegeven.
+     * @param lights     Het object dat lichtbronnen definieert.
+     */
 
     public ThreadController(int blockSize, Camera camera, Hittable world, Hittable lights) {
         int maxNumberOfThreads = Runtime.getRuntime().availableProcessors(); // Aantal beschikbare CPU-cores;
@@ -33,9 +44,16 @@ public class ThreadController {
         this.executorService = Executors.newFixedThreadPool(numberOfThreads);
     }
 
+    /**
+     * Start het render proces en slaat de afbeelding op als dat nodig is.
+     *
+     * @param save  Geeft aan of de afbeelding moet worden opgeslagen.
+     * @return Een `WritableImage` die de gerenderde afbeelding bevat.
+     */
     public WritableImage renderAndSave(boolean save) {
         if(save){
             startTime = System.nanoTime();
+            executorService = Executors.newFixedThreadPool(numberOfThreads - 4);
         }
 
         AtomicInteger completedLines = new AtomicInteger(0); // Voortgang bijhouden
@@ -64,12 +82,16 @@ public class ThreadController {
             long millis = TimeUnit.NANOSECONDS.toMillis(elapsedTime) - TimeUnit.SECONDS.toMillis(seconds);
 
             System.out.println("Rendering completed in " + seconds + " seconds and " + millis + " milliseconds.");
+            camera.setSamplesPerPixel(1);
         }
 
 
         return writableImage;
     }
 
+    /**
+     * Sluit de executor service af en wacht tot alle threads zijn voltooid.
+     */
     public void shutdown() {
         executorService.shutdown();
         try {
