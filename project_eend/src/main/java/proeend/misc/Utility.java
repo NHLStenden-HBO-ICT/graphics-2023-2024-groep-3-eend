@@ -54,7 +54,6 @@ public class Utility {
 
         switch (selector) {
             case 0 -> {
-
                 // Voeg willekeurige objecten toe aan de wereld
                 world.add(new Sphere(new Vector(0, 0, -1), 0.5, redMirror));
                 world.add(new Sphere(new Vector(0, -100.5, -1), 100, blueLambertian));

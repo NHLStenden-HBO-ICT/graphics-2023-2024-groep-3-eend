@@ -35,12 +35,10 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        updateFrame();
         setupUI(stage);
         setupAnimation();
         EventHandler eventHandler = new EventHandler();
-        updateFrame();
-        frame.setImage(previousImage);
-        updateFrame();
         eventHandler.setupEventHandlers(stage.getScene(), camera, world, lights);
         stage.setTitle("RayTracer");
         stage.show();
@@ -113,7 +111,7 @@ public class Main extends Application {
         //uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
-        camera.setBackground(new Vector(.5,.3,.2));
+        camera.setBackground(new Vector(.5,.5,.5));
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(0,0,2));

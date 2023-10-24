@@ -32,9 +32,11 @@ public class RenderTask implements Runnable  {
     public void run() {
         for (int y = startLine; y < endLine; y++) {
             Renderer.renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
-            completedLines.incrementAndGet();
+            int lines = completedLines.incrementAndGet();
             if (save && updateProgress != null) {
-                updateProgress.run(); // Voortgang bijwerken
+                if (lines % 5 == 0) { // Update progress every 5 lines
+                    updateProgress.run();
+                }
             }}
     }
 }

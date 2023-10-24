@@ -15,16 +15,24 @@ import proeend.records.ScatterRecord;
 public class Renderer {
     public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
         camera.init();
-            ThreadController threadController = new ThreadController(20, camera, world, lights);
+        ThreadController threadController = new ThreadController(1, camera, world, lights);
         return threadController.renderAndSave(save);
     }
     public static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
-        for (int x = 0; x < camera.getImageWidth(); ++x) {
+        int imageWidth = camera.getImageWidth();
+        Vector[] lineBuffer = new Vector[imageWidth];
+
+        for (int x = 0; x < imageWidth; ++x) {
             Vector colorVec = new Vector();
             colorVec = renderPixel(camera, world, lights, y, x, colorVec);
-            int[] colors = ColorParser.toColor(camera.getSamplesPerPixel(), save, colorVec);
-            synchronized (pixelWriter) {
-                pixelWriter.setColor(x, y, Color.rgb(colors[0], colors[1], colors[2]));
+            lineBuffer[x] = colorVec;
+        }
+
+        synchronized (pixelWriter) {
+            for (int x = 0; x < imageWidth; ++x) {
+                Vector colorVec = lineBuffer[x];
+                Color color = ColorParser.toColor(camera.getSamplesPerPixel(), save, colorVec);
+                pixelWriter.setColor(x, y, color);
             }
         }
     }
@@ -89,7 +97,7 @@ public class Renderer {
 
         // Controleer of het maximumaantal reflecties is bereikt
         if (depth <= 0) {
-            return new Vector(0, 0, 0);
+            return new Vector();
         }
         // Maak een HitRecord om gegevens over het getroffen object op te slaan
         HitRecord rec = new HitRecord();

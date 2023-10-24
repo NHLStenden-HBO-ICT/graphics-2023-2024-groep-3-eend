@@ -23,7 +23,7 @@ public class ThreadController {
 
     public ThreadController(int blockSize, Camera camera, Hittable world, Hittable lights) {
         int maxNumberOfThreads = Runtime.getRuntime().availableProcessors(); // Aantal beschikbare CPU-cores;
-        this.numberOfThreads = Math.max((camera.getHeight() / blockSize), maxNumberOfThreads);
+        this.numberOfThreads = maxNumberOfThreads;
         this.blockSize = blockSize;
         this.camera = camera;
         this.world = world;
@@ -47,7 +47,7 @@ public class ThreadController {
             executorService.submit(() -> {
                 RenderTask task = new RenderTask(camera, world, lights, lineStart, lineEnd, save, pixelWriter, completedLines, () -> {
                     double progress = (completedLines.get() / (double) camera.getHeight()) * 100.0;
-                    System.out.printf("Progress: %.2f%%\r", progress);
+                    System.out.printf("Render progress: %.2f%%\r", progress);
                 });
                 task.run();
             });
