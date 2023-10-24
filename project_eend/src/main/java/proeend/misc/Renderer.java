@@ -72,9 +72,8 @@ public class Renderer {
      */
 
     private static Vector pixelSampleSquare(Camera camera, int sx, int sy) {
-        double offset = -0.5 + 1.0 / camera.getRootSPP();
-        double px = offset * (sx + FastRandom.random());
-        double py = offset * (sy + FastRandom.random());
+        double px = -.5 + 1.0 / camera.getRootSPP() * (sx + FastRandom.random());
+        double py = -.5 + 1.0 / camera.getRootSPP() * (sy + FastRandom.random());
 
         Vector deltaU = camera.getPixelDeltaU().scale(px);
         Vector deltaV = camera.getPixelDeltaV().scale(py);
