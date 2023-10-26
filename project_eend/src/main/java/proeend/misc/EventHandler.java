@@ -1,21 +1,28 @@
 package proeend.misc;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import proeend.hittable.Hittable;
 import proeend.math.Vector;
-import javafx.scene.control.Label;
 
-
+/**
+ * Deze klasse beheert gebeurtenissen voor interactie met de gebruiker, zoals toetsenbord input en venster aanpassingen.
+ */
 public class EventHandler {
 
     private static final Vector INITIAL_CAMERA_POSITION = new Vector(0, 0, 2);
+    private static final double ROTATION_UNIT = Math.PI / 360;
     private final Label coordX;
     private final Label coordY;
     private final Label coordZ;
+    public static boolean ExitProgram;
 
     public EventHandler() {
         coordX = new Label(Double.toString(INITIAL_CAMERA_POSITION.getX()));
@@ -24,32 +31,50 @@ public class EventHandler {
         setLabels();
     }
 
+    /**
+     * Stelt de labels in de juiste positie in voor de camera coördinaten.
+     */
     private void setLabels() {
+        //Todo: Labels verwijderen of zichtbaar maken.
+        // Stel je zou stackPane megeven vanuit main, krijg je een error.
+        // Maar zoals nu static property aanpassen is ook niet good practise en werkt ook niet.
+
         StackPane.setAlignment(coordX, Pos.TOP_LEFT);
         StackPane.setAlignment(coordY, Pos.TOP_CENTER);
         StackPane.setAlignment(coordZ, Pos.TOP_RIGHT);
     }
 
-    public void setupEventHandlers(Scene scene, Camera camera, Hittable world, Hittable lights) {
-        double ROTATION_UNIT = Math.PI / 360;
+    /**
+     * Stelt event handlers in voor het toetsenbord en venstergrootte.
+     *
+     * @param stage  Het JavaFX-venster
+     * @param frame  Het afbeeldingsframe
+     * @param camera De camera met instellingen
+     * @param world  Het 3D-wereldobject met verschillende objecten
+     * @param lights De lichtbronnen in de wereld
+     */
+    public void setupEventHandlers(Stage stage, ImageView frame, Camera camera, Hittable world, Hittable lights) {
+        setKeyReleasedEventHandler(stage, camera);
+        setKeyPressedEventHandler(stage, camera, world, lights);
+        setResizeListeners(stage, frame, camera);
+    }
 
-        scene.setOnKeyReleased(event -> {
-            switch (event.getCode()) {
-                case EQUALS, MINUS, Q, E, UP, LEFT, RIGHT, DOWN, SPACE, Z -> {
-                    camera.setCameraMoving(false);
-                    camera.setHasMovedSinceLastFrame(true);
-                }
-            }
-        });
 
-
+    /**
+     * Stelt de key released event handler in.
+     *
+     * @param stage  Het JavaFX-venster
+     * @param camera De camera
+     */
+    private void setKeyPressedEventHandler(Stage stage, Camera camera, Hittable world, Hittable lights) {
+        Scene scene = stage.getScene();
         scene.setOnKeyPressed(new javafx.event.EventHandler<>() {
             int shiftMult = 1;
 
+
             /**
-             * Zorgt ervoor dat het programma reageert als er een toets wordt ingedrukt.
-             *
-             * @param event Geeft aan wat er gebeurt.
+             * Behandelt toetsindrukken en past de camera aan op basis van de toetsen.
+             * @param event Het toetsenbord event.
              */
             @Override
             public void handle(KeyEvent event) {
@@ -122,11 +147,52 @@ public class EventHandler {
                         camera.setImageWidth(400);
                         Renderer.render(camera, true, world, lights);
                     }
+                    case ESCAPE -> {
+                        ExitProgram = true;
+                        Platform.exit();
+                    }
                 }
+            }
+        });
 
+    }
 
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    System.out.println("Escape key pressed");
+    /**
+     * Stelt resize listeners in voor het aanpassen van het afbeeldingsframe bij wijzigingen in venstergrootte.
+     *
+     * @param stage  Het JavaFX-venster
+     * @param frame  Het afbeeldingsframe
+     * @param camera De camera
+     */
+    private void setResizeListeners(Stage stage, ImageView frame, Camera camera) {
+        ChangeListener<Number> resizeListener = (observableValue, oldValue, newValue) -> {
+            double newWidth = stage.getWidth();
+            double newHeight = (newValue.doubleValue() == stage.widthProperty().doubleValue()) ? newWidth * (1.0 / camera.getAspectRatio()) : stage.getHeight();
+            frame.setFitWidth(newWidth);
+            frame.setFitHeight(newHeight);
+            camera.setAspectRatio(newWidth / newHeight);
+            camera.setHasMovedSinceLastFrame(true);
+        };
+
+        stage.widthProperty().addListener(resizeListener);
+        stage.heightProperty().addListener(resizeListener);
+    }
+
+    /**
+     * Stelt de key released event handler in voor het regelen van camera- en bewegingsstatus.
+     *
+     * @param stage  Het JavaFX-venster
+     * @param camera De camera
+     */
+    private void setKeyReleasedEventHandler(Stage stage, Camera camera) {
+        // Methode om key released event handler in te stellen
+        Scene scene = stage.getScene();
+
+        scene.setOnKeyReleased(event -> {
+            switch (event.getCode()) {
+                case EQUALS, MINUS, Q, E, UP, LEFT, RIGHT, DOWN, SPACE, Z -> {
+                    camera.setCameraMoving(false);
+                    camera.setHasMovedSinceLastFrame(true);
                 }
             }
         });

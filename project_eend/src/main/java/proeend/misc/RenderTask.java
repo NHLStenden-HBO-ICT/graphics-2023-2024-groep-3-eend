@@ -30,6 +30,9 @@ public class RenderTask implements Runnable  {
 
     @Override
     public void run() {
+        if(EventHandler.ExitProgram){
+            return;
+        }
         for (int y = startLine; y < endLine; y++) {
             Renderer.renderHorizontalLine(camera, save, world, lights, y, pixelWriter);
             int lines = completedLines.incrementAndGet();

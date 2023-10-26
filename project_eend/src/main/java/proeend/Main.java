@@ -3,8 +3,6 @@ package proeend;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -41,33 +39,10 @@ public class Main extends Application {
         setupUI(stage);
         setupAnimation();
         EventHandler eventHandler = new EventHandler();
-        eventHandler.setupEventHandlers(stage.getScene(), camera, world, lights);
+        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
         stage.setTitle("RayTracer");
         stage.show();
 
-        stage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
-                double newHeight = newWidth.doubleValue() * (1.0 / camera.getAspectRatio());
-
-                frame.setFitWidth(newWidth.doubleValue());
-                frame.setFitHeight(newHeight);
-                camera.setAspectRatio(newWidth.intValue() / stage.getHeight());
-                camera.setHasMovedSinceLastFrame(true);
-            }
-        });
-
-        stage.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldHeight, Number newHeight) {
-                double newWidth = stage.getWidth();
-
-                frame.setFitWidth(newWidth);
-                frame.setFitHeight(newHeight.doubleValue());
-                camera.setAspectRatio(newWidth / newHeight.intValue());
-                camera.setHasMovedSinceLastFrame(true);
-            }
-        });
 
 
 
@@ -78,7 +53,6 @@ public class Main extends Application {
         StackPane.setAlignment(frame, Pos.CENTER);
         stackPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
         stage.setScene(scene);
-
     }
 
     private void setupAnimation() {
@@ -101,7 +75,7 @@ public class Main extends Application {
 
         if (!camera.isMoving() && !camera.hasMovedSinceLastFrame()) {
             // Blend the previous image with the new image
-            newImage = ImageBlender.blendImages(previousImage, newImage);
+            newImage = ImageBlender.blendImages(previousImage, newImage, .035, 3);
         }
         previousImage = newImage;
         frame.setImage(newImage);
@@ -141,7 +115,7 @@ public class Main extends Application {
         //uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 
-        camera.setBackground(new Vector(.5,.5,.5));
+        camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(0,0,2));

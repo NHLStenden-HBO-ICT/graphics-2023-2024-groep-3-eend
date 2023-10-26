@@ -1,5 +1,6 @@
 package proeend.misc;
 
+import javafx.scene.paint.Color;
 import proeend.math.Vector;
 
 /**
@@ -109,8 +110,8 @@ public class Camera {
         this.aspectRatio = aspectRatio;
     }
 
-    public void setBackground(Vector background) {
-        this.background = background;
+    public void setBackground(Color bg) {
+        this.background = new Vector(bg.getRed(), bg.getGreen(), bg.getBlue());
     }
 
     public Camera() {
@@ -126,6 +127,10 @@ public class Camera {
 
     public Vector getTopLeftPixel() {
         return topLeftPixel;
+    }
+
+    public double getAspectRatio() {
+        return aspectRatio;
     }
 
     /**
@@ -152,10 +157,5 @@ public class Camera {
                 .add(viewportU.scale(0.5).invert())
                 .add(viewportV.scale(0.5).invert());
         topLeftPixel = viewportUpperleft.add(pixelDeltaU.add(pixelDeltaV).scale(1.0 / 2.0));
-    }
-
-
-    public double getAspectRatio() {
-        return aspectRatio;
     }
 }
