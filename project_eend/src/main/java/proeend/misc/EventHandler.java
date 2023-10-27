@@ -185,9 +185,7 @@ public class EventHandler {
      * @param camera De camera
      */
     private void setKeyReleasedEventHandler(Stage stage, Camera camera) {
-        // Methode om key released event handler in te stellen
         Scene scene = stage.getScene();
-
         scene.setOnKeyReleased(event -> {
             switch (event.getCode()) {
                 case EQUALS, MINUS, Q, E, UP, LEFT, RIGHT, DOWN, SPACE, Z -> {

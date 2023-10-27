@@ -8,9 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 /**
- * De `ThreadController` klasse beheert multi-threading voor de renderings processen.
+ * De `ThreadController` klasse beheert multi-threading voor het rendering proces.
  */
 public class ThreadController {
     private long startTime;
@@ -24,17 +23,16 @@ public class ThreadController {
     private final PixelWriter pixelWriter;
 
     /**
-     * Initialiseert een nieuw `ThreadController` object.
+     * Initialiseert een nieuw ThreadController object.
      *
      * @param blockSize  De grootte van het blok voor multi-threading.
      * @param camera     De camera-instellingen voor de rendering.
-     * @param world      Het 3D-wereld object dat moet worden weergegeven.
+     * @param world      Het 3D-wereldobject dat moet worden weergegeven.
      * @param lights     Het object dat lichtbronnen definieert.
      */
 
     public ThreadController(int blockSize, Camera camera, Hittable world, Hittable lights) {
-        int maxNumberOfThreads = Runtime.getRuntime().availableProcessors(); // Aantal beschikbare CPU-cores;
-        this.numberOfThreads = maxNumberOfThreads;
+        this.numberOfThreads = Runtime.getRuntime().availableProcessors();
         this.blockSize = blockSize;
         this.camera = camera;
         this.world = world;

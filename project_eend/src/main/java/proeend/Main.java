@@ -18,6 +18,9 @@ import proeend.hittable.HittableList;
 import proeend.math.Vector;
 import proeend.misc.*;
 
+/**
+ * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
+ */
 public class Main extends Application {
 
     private static final double INITIAL_FRAME_RATE = 0.1;
@@ -31,22 +34,22 @@ public class Main extends Application {
 
     /**
      * Start het programma en configureert de besturingselementen.
-     * @param stage Het venster waarin het programma zich afspeelt.
+     *
+     * @param stage Het venster waarin het programma wordt weergegeven.
      */
     @Override
     public void start(Stage stage) {
         updateFrame();
         setupUI(stage);
-        setupAnimation();
-        EventHandler eventHandler = new EventHandler();
-        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
+        setupAnimation(stage);
         stage.setTitle("RayTracer");
         stage.show();
-
-
-
-
     }
+    /**
+     * Configureert de gebruikersinterface voor het hoofdvenster van het programma.
+     *
+     * @param stage Het JavaFX-venster voor de gebruikersinterface.
+     */
     private void setupUI(Stage stage) {
         Scene scene = new Scene(stackPane, camera.getImageWidth(), camera.getHeight());
         stackPane.getChildren().add(frame);
@@ -55,7 +58,12 @@ public class Main extends Application {
         stage.setScene(scene);
     }
 
-    private void setupAnimation() {
+    /**
+     * Configureert de animatie voor het bijwerken van het frame.
+     */
+    private void setupAnimation(Stage stage) {
+        EventHandler eventHandler = new EventHandler();
+        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
         StackPane.setAlignment(frame, Pos.CENTER);
         Duration interval = Duration.seconds(INITIAL_FRAME_RATE);
         KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> updateFrame());
@@ -64,6 +72,9 @@ public class Main extends Application {
         timeline.play();
     }
 
+    /**
+     * Update het weergegeven frame met de nieuwste gerenderde afbeelding.
+     */
     private void updateFrame() {
 
         WritableImage newImage = Renderer.render(camera, false, world, lights);
@@ -85,8 +96,9 @@ public class Main extends Application {
 
 
     /**
-     * Initialiseert het programma.
-     * @param args Argumenten die aan het programma meegegeven kunnen worden.
+     * Initialiseert het programma en start de JavaFX-toepassing.
+     *
+     * @param args Argumenten die aan het programma kunnen worden meegegeven.
      */
     public static void main(String[] args) {
 

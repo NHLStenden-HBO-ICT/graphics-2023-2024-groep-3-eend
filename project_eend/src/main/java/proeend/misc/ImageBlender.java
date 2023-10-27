@@ -5,31 +5,44 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-public class ImageBlender {
-    public static WritableImage blendImages(WritableImage averageImage, WritableImage newRenderedImage, double alpha, double threshold) {
-        int width = (int) Math.floor(averageImage.getWidth());
-        int height = (int) Math.floor(averageImage.getHeight());
 
-        PixelReader averageImagePixelReader = averageImage.getPixelReader();
-        PixelReader newRenderedImagePixelReader = newRenderedImage.getPixelReader();
+/**
+ * Deze klasse bevat methoden voor het mengen van twee afbeeldingen op basis van opgegeven mengparameters.
+ */
+public class ImageBlender {
+    /**
+     * Mengt twee afbeeldingen op basis van opgegeven parameters.
+     *
+     * @param baseImage De basisafbeelding waaraan de overlay-afbeelding wordt toegevoegd.
+     * @param overlayImage De afbeelding die aan de basisafbeelding wordt toegevoegd.
+     * @param blendFactor De meng factor die de intensiteit van de overlay bepaalt.
+     * @param similarityThreshold De drempelwaarde voor het bepalen van kleur gelijkenis.
+     * @return De resulterende gemengde afbeelding.
+     */
+    public static WritableImage blendImages(WritableImage baseImage, WritableImage overlayImage, double blendFactor, double similarityThreshold) {
+        int width = (int) Math.floor(baseImage.getWidth());
+        int height = (int) Math.floor(baseImage.getHeight());
+
+        PixelReader averageImagePixelReader = baseImage.getPixelReader();
+        PixelReader overlayImagePixelReader = overlayImage.getPixelReader();
         WritableImage resultImage = new WritableImage(width, height);
-        PixelWriter writer = resultImage.getPixelWriter();
+        PixelWriter resultImagePixelWriter  = resultImage.getPixelWriter();
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                Color averageColor = averageImagePixelReader.getColor(x, y);
-                Color newColor = newRenderedImagePixelReader.getColor(x, y);
+                Color baseColor = averageImagePixelReader.getColor(x, y);
+                Color overlayColor = overlayImagePixelReader.getColor(x, y);
 
-                // Check if the colors are similar based on a threshold
-                if (shouldBlur(averageColor, newColor, threshold)) {
-                    double blendedRed = interpolate(averageColor.getRed(), newColor.getRed(), alpha);
-                    double blendedGreen = interpolate(averageColor.getGreen(), newColor.getGreen(), alpha);
-                    double blendedBlue = interpolate(averageColor.getBlue(), newColor.getBlue(), alpha);
+                // Check if the colors are similar based on a similarityThreshold
+                if (shouldBlur(baseColor, overlayColor, similarityThreshold)) {
+                    double blendedRed = interpolate(baseColor.getRed(), overlayColor.getRed(), blendFactor);
+                    double blendedGreen = interpolate(baseColor.getGreen(), overlayColor.getGreen(), blendFactor);
+                    double blendedBlue = interpolate(baseColor.getBlue(), overlayColor.getBlue(), blendFactor);
 
-                    writer.setColor(x, y, new Color(blendedRed, blendedGreen, blendedBlue, 1.0));
+                    resultImagePixelWriter.setColor(x, y, new Color(blendedRed, blendedGreen, blendedBlue, 1.0));
                 } else {
                     // Pixels with different colors are not blurred
-                    writer.setColor(x, y, newColor);
+                    resultImagePixelWriter .setColor(x, y, overlayColor);
                 }
             }
         }
@@ -37,19 +50,26 @@ public class ImageBlender {
         return resultImage;
     }
 
+    /**
+     * Controleert of twee kleuren vergelijkbaar zijn op basis van een drempelwaarde.
+     * @param averageColor De kleur uit de basisafbeelding.
+     * @param newColor De kleur uit de overlay-afbeelding.
+     * @param threshold De drempelwaarde voor het bepalen van de overeenkomst.
+     * @return True als de kleuren vergelijkbaar zijn, anders False.
+     */
     private static boolean shouldBlur(Color averageColor, Color newColor, double threshold) {
-        // Add custom conditions to determine which colors to blur
-        // Example: Blur if the red component of the new color is above a certain threshold
         return Math.abs(averageColor.getRed() - newColor.getRed()) < threshold;
     }
-    private static boolean colorSimilar(Color color1, Color color2, double threshold) {
-        double redDiff = Math.abs(color1.getRed() - color2.getRed());
-        double greenDiff = Math.abs(color1.getGreen() - color2.getGreen());
-        double blueDiff = Math.abs(color1.getBlue() - color2.getBlue());
 
-        return redDiff < threshold && greenDiff < threshold && blueDiff < threshold;
-    }
-
+    /**
+     * Interpoleert tussen twee (kleur)
+     * waarden met behulp van een mengfactor.
+     *
+     * @param a De eerste waarde om te interpoleren.
+     * @param b De tweede waarde om te interpoleren.
+     * @param alpha De mengfactor.
+     * @return De geïnterpoleerde waarde.
+     */
     private static double interpolate(double a, double b, double alpha) {
         return a * (1.0 - alpha) + b * alpha;
     }

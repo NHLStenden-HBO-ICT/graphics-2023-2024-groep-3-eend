@@ -11,13 +11,34 @@ import proeend.material.pdf.MixturePDF;
 import proeend.math.*;
 import proeend.records.HitRecord;
 import proeend.records.ScatterRecord;
-
+/**
+ * Deze klasse is verantwoordelijk voor het renderen van scènes en het genereren van afbeeldingen.
+ */
 public class Renderer {
+    /**
+     * Render een scène met behulp van een camera en retourneert een afbeelding.
+     *
+     * @param camera De camera die wordt gebruikt om de scène te bekijken.
+     * @param save Geeft aan of de afbeelding moet worden opgeslagen.
+     * @param world Het 3D-wereldobject dat moet worden weergegeven.
+     * @param lights De lichtbronnen in de scène.
+     * @return Een WritableImage dat de weergave van de scène bevat.
+     */
     public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
         camera.init();
         ThreadController threadController = new ThreadController(1, camera, world, lights);
         return threadController.renderAndSave(save);
     }
+    /**
+     * Render een horizontale lijn van pixels in de afbeelding.
+     *
+     * @param camera De camera die wordt gebruikt om de scène te bekijken.
+     * @param save Geeft aan of de afbeelding moet worden opgeslagen als bestand.
+     * @param world De lijst met objecten die moet worden weergegeven.
+     * @param lights De lijst met lichtbronnen in de scène.
+     * @param y De y-coördinaat van de lijn om te renderen.
+     * @param pixelWriter De PixelWriter voor het schrijven van pixelgegevens.
+     */
     public static void renderHorizontalLine(Camera camera, boolean save, Hittable world, Hittable lights, int y, PixelWriter pixelWriter) {
         int imageWidth = camera.getImageWidth();
         Vector[] lineBuffer = new Vector[imageWidth];
@@ -36,6 +57,17 @@ public class Renderer {
             }
         }
     }
+    /**
+     * Render een pixel en bereken de kleur door middel van meerdere samples per pixel.
+     *
+     * @param camera De camera die wordt gebruikt voor het renderen.
+     * @param world De lijst met objecten die moet worden weergegeven.
+     * @param lights De lichtbronnen in de scène.
+     * @param y De y-coördinaat van de pixel.
+     * @param x De x-coördinaat van de pixel.
+     * @param color De huidige kleur van de pixel.
+     * @return Een Vector die de uiteindelijke kleur van de pixel vertegenwoordigt.
+     */
     private static Vector renderPixel(Camera camera, Hittable world, Hittable lights, int y, int x, Vector color) {
         for (int sy = 0; sy < camera.getRootSPP(); ++sy) {
             for (int sx = 0; sx < camera.getRootSPP(); ++sx) {
@@ -84,12 +116,14 @@ public class Renderer {
     /**
      * Berekent de kleur van een ray in de scene met een maximaal aantal reflecties.
      *
-     * @param r     De ray om te traceren.
+     * @param camera De camera die wordt gebruikt om de scène te bekijken.
+     * @param ray     De ray om te traceren.
      * @param depth Het maximum aantal reflecties.
-     * @param world Het 3D-wereldobject dat moet worden weergegeven.
+     * @param world De lijst met objecten die moet worden weergegeven.
+     * @param lights De lichtbronnen in de scène.
      * @return Een Vector die de kleur van de ray vertegenwoordigt.
      */
-    private static Vector rayColor(Camera camera, Ray r, int depth, Hittable world, Hittable lights) {
+    private static Vector rayColor(Camera camera, Ray ray, int depth, Hittable world, Hittable lights) {
         if (world == null) {
             return Vector.randomVec();
         }
@@ -100,18 +134,16 @@ public class Renderer {
         }
         // Maak een HitRecord om gegevens over het getroffen object op te slaan
         HitRecord rec = new HitRecord();
-        // r.direction = Vector.unitVector(r.direction);
 
         // Controleer of de ray een object in de wereld raakt
         // Materiaal wordt onder water ook ingesteld in de hit methode van een object zoals sphere.
-        if (!world.hit(r, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
-            // Geen raakpunt
+        if (!world.hit(ray, new Interval(0.00000001, Double.POSITIVE_INFINITY), rec)) {
             return camera.getBackground();
         }
 
         ScatterRecord scatterRecord = new ScatterRecord();
-        Vector emissionColor = rec.material.emit(r, rec, rec.u, rec.v, rec.p);
-        if (!rec.material.scatter(r, rec, scatterRecord)) {
+        Vector emissionColor = rec.material.emit(ray, rec, rec.u, rec.v, rec.p);
+        if (!rec.material.scatter(ray, rec, scatterRecord)) {
             if (rec.material instanceof Normal) {
                 return new Vector(rec.normal.getX() + 1, rec.normal.getY() + 1, rec.normal.getZ() + 1).scale(0.5);
             }
@@ -130,7 +162,7 @@ public class Renderer {
 
         Ray scattered = new Ray(rec.p, mixPDF.generate());
         double pdfVal = mixPDF.value(scattered.getDirection());
-        double scatteringPDF = rec.material.scatteringPDF(r, rec, scattered);
+        double scatteringPDF = rec.material.scatteringPDF(ray, rec, scattered);
 
         Vector scatterColor = Vector.multiply(scatterRecord.attenuation.scale(scatteringPDF), rayColor(camera, scattered, depth - 1, world, lights)).scale(1.0 / pdfVal);
 
