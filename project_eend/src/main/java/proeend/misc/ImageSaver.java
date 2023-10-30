@@ -1,6 +1,7 @@
 package proeend.misc;
 
 import javafx.scene.image.WritableImage;
+import proeend.Main;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,6 +39,6 @@ public class ImageSaver {
             throw new RuntimeException(e);
         }
 
-        System.out.println("Image saved in " + filename);
+        Main.startScreen.setInfoLabel("Image saved in " + filename);
     }
 }

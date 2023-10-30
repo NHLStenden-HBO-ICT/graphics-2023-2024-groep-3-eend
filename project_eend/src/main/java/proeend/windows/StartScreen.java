@@ -8,6 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class StartScreen extends JFrame {
+    private JLabel infoLabel;
+    private JButton badeend;
+
     public StartScreen() {
 
         setTitle("Project Eend");
@@ -16,11 +19,24 @@ public class StartScreen extends JFrame {
         panel.setBackground(new Color(180, 245,250));
 
         panel.add(title());
-        panel.add(createButton("Badeend scene renderen"));
+
+        ButtonHandler buttonHandler = new ButtonHandler(this);
+
+        badeend = createButton("Badeend scene renderen");
+        badeend.setActionCommand("Badeend");
+        badeend.addActionListener(buttonHandler);
+        panel.add(badeend);
+
         for (int i = 0; i < 8; i++) {
-            panel.add(createButton("Case " + i + " live bekijken"));
-            //TODO: Action Handlers toevoegen.
+            JButton button = createButton("Case " + i + " live bekijken");
+            button.setActionCommand("Button" + i);
+            button.addActionListener(buttonHandler);
+            panel.add(button);
         }
+
+        infoLabel = print();
+        panel.add(infoLabel);
+
 
         add(panel);
         setSize(700, 700);
@@ -48,6 +64,20 @@ public class StartScreen extends JFrame {
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setFocusPainted(false);
         return button;
+    }
+
+
+    private JLabel print(){
+        JLabel infoLabel = new JLabel();
+        infoLabel.setFont(new Font("Segoe UI", Font.ITALIC, 20));
+        infoLabel.setForeground(Color.BLUE);
+        infoLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return infoLabel;
+    }
+
+    public void setInfoLabel(String info){
+        infoLabel.setText(info);
     }
 };
 

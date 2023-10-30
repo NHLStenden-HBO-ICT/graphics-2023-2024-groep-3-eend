@@ -15,8 +15,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
+import proeend.hittable.ObjectLoader;
+import proeend.hittable.PolygonMesh;
 import proeend.math.Vector;
+import proeend.material.*;
 import proeend.misc.*;
+import proeend.windows.StartScreen;
+
+import java.io.IOException;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -31,6 +37,9 @@ public class Main extends Application {
     final ImageView frame = new ImageView();
     final StackPane stackPane = new StackPane();
     WritableImage previousImage;
+    public static StartScreen startScreen = new StartScreen();
+    public static int caseSelector;
+
 
     /**
      * Start het programma en configureert de besturingselementen.
@@ -39,11 +48,19 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        if(!stackPane.getChildren().contains(frame)){
+           startScreen.setInfoLabel("Loading...");
+        }
+
         updateFrame();
         setupUI(stage);
         setupAnimation(stage);
         stage.setTitle("RayTracer");
         stage.show();
+
+        if(stackPane.getChildren().contains(frame)){
+            startScreen.setInfoLabel("");
+        }
     }
     /**
      * Configureert de gebruikersinterface voor het hoofdvenster van het programma.
@@ -51,8 +68,10 @@ public class Main extends Application {
      * @param stage Het JavaFX-venster voor de gebruikersinterface.
      */
     private void setupUI(Stage stage) {
+
         Scene scene = new Scene(stackPane, camera.getImageWidth(), camera.getHeight());
         stackPane.getChildren().add(frame);
+
         StackPane.setAlignment(frame, Pos.CENTER);
         stackPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
         stage.setScene(scene);
@@ -102,66 +121,56 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
-        //Lambertian white = new Lambertian(new Vector(1, .5, .5));
-        //Emitter white = new Emitter(new Vector(1,1,1));
-        /*PolygonMesh duck = null;
+            camera.setBackground(Color.LIGHTPINK);
+            camera.setImageWidth(400);
+            //camera.setCameraCenter(camOrigin);
+            camera.setCameraCenter(new Vector(0, 0, 2));
+
+            camera.setSamplesPerPixel(1);
+            camera.setMaxDepth(3);
+
+            //camera.setCameraCenter(new Vector(-.5,20,40));
+            //camera.setLookat(new Vector(0,20,39));
+    }
+
+    public static void renderDuck(){
+
+        Lambertian white = new Lambertian(new Vector(1, .5, .5));
+        Emitter white2 = new Emitter(new Vector(1,1,1));
+        PolygonMesh duck = null;
         PolygonMesh icoSphere = null;
         PolygonMesh uvSphere = null;
 
         try {
             duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
         } catch (IOException e) {
-            System.out.println("load failed");
+            Main.startScreen.setInfoLabel("load failed");
         }
         try {
             icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
         } catch (IOException e) {
-            System.out.println("load failed");
+            Main.startScreen.setInfoLabel("load failed");
         }
         try {
             uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
         } catch (IOException e) {
-            System.out.println("load failed");
-        } */
+            Main.startScreen.setInfoLabel("load failed");
+        }
 
-    /*    Utility.loadWorld(world, lights, 1);
+        Utility.loadWorld(world, lights, caseSelector);
 
-       uvSphere.ConvertToTriangles();
-        world.add(uvSphere);*/
+        uvSphere.ConvertToTriangles();
+        world.add(uvSphere);
+        launch();
+    }
 
-
-        camera.setBackground(Color.LIGHTPINK);
-        camera.setImageWidth(400);
-        //camera.setCameraCenter(camOrigin);
-        camera.setCameraCenter(new Vector(0,0,2));
-
-        camera.setSamplesPerPixel(1);
-        camera.setMaxDepth(3);
-
-        //camera.setCameraCenter(new Vector(-.5,20,40));
-        //camera.setLookat(new Vector(0,20,39));
-
-        Utility.loadWorld(world, lights, 0);
+    public static void caseButtonClicked(){
+        Utility.loadWorld(world, lights, caseSelector);
         world = new HittableList(new BBNode(world));
 
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
-
-        /*var startTime = System.currentTimeMillis();
-        System.out.println(LocalDateTime.now());
-        //cam1.render(true, world, lights);
-        //cam1.multiRender(true, world, lights);
-        camera.multiRenderLines(true, world, lights);
-        var endTime = System.currentTimeMillis() - startTime;
-        var minutes = endTime/60_000.0;
-        var hours = minutes/60.0;
-        System.out.print("seconds:\t\t");
-        System.out.println(endTime/1000.0);
-        System.out.print("minutes:\t\t");
-        System.out.println(minutes);
-        System.out.println("hours:\t\t\t" + hours);*/
-        //Renderer.render(camera, true, world, lights);
-
-        launch(args);
+        launch();
     }
+
 }
