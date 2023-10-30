@@ -39,7 +39,7 @@ public class ThreadController {
         this.lights = lights;
         writableImage = new WritableImage(camera.getImageWidth(), camera.getHeight());
         pixelWriter = writableImage.getPixelWriter();
-        this.executorService = Executors.newFixedThreadPool(numberOfThreads);
+        this.executorService = Executors.newFixedThreadPool(numberOfThreads - 4);
     }
 
     /**
@@ -51,7 +51,6 @@ public class ThreadController {
     public WritableImage renderAndSave(boolean save) {
         if(save){
             startTime = System.nanoTime();
-            executorService = Executors.newFixedThreadPool(numberOfThreads - 4);
         }
 
         AtomicInteger completedLines = new AtomicInteger(0); // Voortgang bijhouden
