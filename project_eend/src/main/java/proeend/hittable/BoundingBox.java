@@ -13,15 +13,7 @@ public class BoundingBox {
      * @param b Een vector die het andere extreem van de bounding box vertegenwoordigt.
      */
     public BoundingBox(Vector a, Vector b) {
-        double minX = Math.min(a.getX(), b.getX());
-        double minY = Math.min(a.getY(), b.getY());
-        double minZ = Math.min(a.getZ(), b.getZ());
-
-        double maxX = Math.max(a.getX(), b.getX());
-        double maxY = Math.max(a.getY(), b.getY());
-        double maxZ = Math.max(a.getZ(), b.getZ());
-
-        initializeBoundingBox(new Vector(minX, minY, minZ), new Vector(maxX, maxY, maxZ));
+        initializeBoundingBox(Vector.min(a,b), Vector.max(a,b));
     }
 
 
@@ -96,12 +88,16 @@ public class BoundingBox {
      */
     public BoundingBox pad() {
         double delta = 0.0001;
-        Interval new_x = (x.getSize() >= delta) ? x : x.expand(delta);
-        Interval new_y = (y.getSize() >= delta) ? y : y.expand(delta);
-        Interval new_z = (z.getSize() >= delta) ? z : z.expand(delta);
+        Interval[] intervals = {x, y, z};
 
-        return new BoundingBox(new_x, new_y, new_z);
+        for (int i = 0; i < intervals.length; i++) {
+            Interval current = intervals[i];
+            intervals[i] = (current.getSize() >= delta) ? current : current.expand(delta);
+        }
+
+        return new BoundingBox(intervals[0], intervals[1], intervals[2]);
     }
+
 
     /**
      * Controleert of een lichtstraal de bounding box raakt.

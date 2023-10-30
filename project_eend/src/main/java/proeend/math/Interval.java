@@ -5,8 +5,8 @@
 package proeend.math;
 
 public class Interval {
-    private double min = 0;
-    private double max = 0;
+    private double min;
+    private double max;
     public Interval() {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
@@ -33,15 +33,6 @@ public class Interval {
     public Interval(double min, double max) {
         this.min = min;
         this.max = max;
-    }
-
-    /**
-     * Controleert of het interval het opgegeven getal bevat.
-     * @param x Het te controleren getal.
-     * @return true als het interval het getal bevat, anders false.
-     */
-    public boolean contains(double x) {
-        return min <= x && x <= max;
     }
 
     /**
@@ -84,12 +75,6 @@ public class Interval {
     }
 
     public double getSize(){return max - min;}
-
-    /** Een leeg interval dat alle reële getallen uitsluit. */
-    static Interval empty = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-
-    /** Een interval dat alle reële getallen bevat. */
-    static Interval universe = new Interval( Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /**
      * Voegt twee intervallen samen.

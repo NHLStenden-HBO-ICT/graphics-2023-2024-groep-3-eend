@@ -1,74 +1,62 @@
 package proeend.math;
 
+import javafx.scene.paint.Color;
+
 public class ColorParser {
 
     /**
-     * Zet een Vector om naar een array van kleur integers.
+     * Zet een Vector om naar een Color object.
      * @param samplesPerPixel De hoeveelheid steekproeven per pixel.
-     * @param gamma Geeft aan of wel of niet de kleur gamma-gecorrigeerd moet worden
-     * @return RGB integer array, waarden tussen 0 en 255
+     * @param gamma Geeft aan of wel of niet de kleur gamma-gecorrigeerd moet worden.
+     * @param vector De Vector die moet worden omgezet naar een Color object.
+     * @return Een Color object dat de kleur vertegenwoordigt.
      */
-    public static int[] toColor(int samplesPerPixel, boolean gamma, Vector vector) {
-        double[] scaledCoordinates = scaleCoordinates((1.0 / samplesPerPixel), vector);
-        double[] gammaCorrectedCoordinates = gammaCorrectCoordinates(scaledCoordinates, gamma);
-        double[] clampedCoordinates = clampCoordinates(gammaCorrectedCoordinates);
+    public static Color toColor(int samplesPerPixel, boolean gamma, Vector vector) {
+        Vector scaledColor = vector.scale(1.0 / samplesPerPixel);
+        Vector gammaCorrectedColor = gammaCorrectCoordinates(scaledColor, gamma);
+        Vector clampedColor = clampCoordinates(gammaCorrectedColor);
 
-        int[] color = convertToRGB(clampedCoordinates);
-        return color;
+        return convertToRGB(clampedColor);
     }
 
     /**
-     * Schaalt de coördinaten vector.
-     * @param scale De schaal waarmee de vector aangepast moet worden.
-     * @param vector De coördinaten.
-     * @return Geeft de geschaalde coördinaten terug.
-     */
-    private static double[] scaleCoordinates(double scale, Vector vector) {
-        double[] scaled = new double[3];
-        for (int i = 0; i < 3; i++) {
-            scaled[i] = vector.getCoordinates()[i] * scale;
-        }
-        return scaled;
-    }
-
-    /**
-     * Corrigeerd de coördinaten met behulp van gamma.
-     * @param input De invoer van de geschaalde coördinaten.
+     * Corrigeert de coördinaten met behulp van gamma.
+     * @param color De kleur die gecorrigeerd moet worden.
      * @param gamma Geeft aan of de gamma gebruikt moet worden of niet.
-     * @return De met gamma gecorrigeerde coördinaten.
+     * @return De met gamma gecorrigeerde kleur.
      */
-    private static double[] gammaCorrectCoordinates(double[] input, boolean gamma) {
-        double[] corrected = new double[3];
-        for (int i = 0; i < 3; i++) {
-            corrected[i] = gamma ? Math.sqrt(input[i]) : input[i];
-        }
-        return corrected;
+    private static Vector gammaCorrectCoordinates(Vector color, boolean gamma) {
+        double r = gamma ? Math.sqrt(color.getX()) : color.getX();
+        double g = gamma ? Math.sqrt(color.getY()) : color.getY();
+        double b = gamma ? Math.sqrt(color.getZ()) : color.getZ();
+        return new Vector(r, g, b);
     }
 
     /**
-     * Zorgt ervoor dat de coördinaten binnen de grenzen zijn.
-     * @param input De geschaalde, met gamma gecorrigeerde coördinaten.
-     * @return De begrensde coördinaten.
+     * Zorgt ervoor dat de kleurcomponenten binnen de grenzen zijn.
+     * @param color De kleurcomponenten die moeten worden begrensd.
+     * @return De begrensde kleurcomponenten.
      */
-    private static double[] clampCoordinates(double[] input) {
-        double[] clamped = new double[3];
-        Interval intensity = new Interval(0, .9999999);
-        for (int i = 0; i < 3; i++) {
-            clamped[i] = intensity.clamp(input[i]);
-        }
-        return clamped;
+    private static Vector clampCoordinates(Vector color) {
+        double r = clamp(color.getX());
+        double g = clamp(color.getY());
+        double b = clamp(color.getZ());
+        return new Vector(r, g, b);
+    }
+
+    private static double clamp(double x) {
+        return Math.min(1.0, Math.max(0.0, x));
     }
 
     /**
-     * Zet de uiteindelijke coördinaten om naar RGB.
-     * @param input De geschaalde, met gamma gecorrigeerde, begrensde coördinaten.
-     * @return De kleur.
+     * Zet de uiteindelijke kleur om naar een Color object.
+     * @param color De kleur die geconverteerd moet worden naar een RGB Color.
+     * @return Een Color object dat de kleur vertegenwoordigt.
      */
-    private static int[] convertToRGB(double[] input) {
-        int[] color = new int[3];
-        for (int i = 0; i < 3; i++) {
-            color[i] = (int) (input[i] * 255.99999);
-        }
-        return color;
+    private static Color convertToRGB(Vector color) {
+        double r = color.getX();
+        double g = color.getY();
+        double b = color.getZ();
+        return Color.color(r, g, b);
     }
 }

@@ -9,8 +9,8 @@ import proeend.records.ScatterRecord;
  * Spiegelend materiaal.
  */
 public class Mirror extends Material{
-    private Vector albedo;
-    private double fuzz;
+    private final Vector albedo;
+    private final double fuzz;
 
     /**
      * Maakt een spiegel aan.
@@ -27,20 +27,9 @@ public class Mirror extends Material{
         scatterRecord.attenuation = albedo;
         scatterRecord.pdf = null;
         scatterRecord.skipPDF = true;
-        Vector reflected = Vector.reflect(Vector.unitVector(rayIn.getDirection()),rec.normal);
-        scatterRecord.skipRay = new Ray(rec.p, Vector.add(reflected,Vector.scale(fuzz,Vector.randomOnUnitSphere())));
+        Vector reflected = Vector.reflect(rayIn.getDirection().toUnitVector(), rec.normal);
+        scatterRecord.skipRay = new Ray(rec.p, reflected.add(Vector.randomOnUnitSphere().scale(fuzz)));
         return true;
-        /*
-        Vector reflected = Vector.reflect(Vector.unitVector(rayIn.direction()),rec.normal);
-        Vector direction = Vector.add(reflected, Vector.scale(fuzz, Vector.randomOnUnitSphere()));
-        scattered.origin = rec.p;
-        scattered.direction = direction;
-        attenuation.copy(albedo);
-         */
         //wat er eerst stond
-        //Global.scattered = new Ray(rec.p,
-        //        Vector.add(reflected, Vector.scale(fuzz, Vector.randomUnitVec())));
-        //Global.attenuation = albedo;
-        //return (Vector.dot(scattered.direction(), rec.normal) > 0);
     }
 }
