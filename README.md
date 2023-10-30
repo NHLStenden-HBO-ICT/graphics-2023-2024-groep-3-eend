@@ -8,13 +8,16 @@ afkaatst en dan de gemiddelde kleur neemt van de totaal gevonden kleuren. bevat:
 
 ## Triangle & Mesh
 
-## Real Time GUI met Capturemogelijkheid
+## Real Time GUI met Capture mogelijkheid
 
-## CPU Acceleratie
+## Multithreading
 
-## AABB
+## [BVH met AABB 🔗](project_eend/src/main/java/proeend/hittable/BBNode.java)
+Een bounding volume hierarchy met axis aligned bounding boxes. 
+Zorgt ervoor dat elk object een box krijgt die in een boomstructuur geplaatst wordt. 
+In plaats van bij elke ray alle objecten langs te gaan wordt nu alleen de boom doorgelopen.
 
-## Light en Objectsampling
+## Light en Object-sampling
 
 
 

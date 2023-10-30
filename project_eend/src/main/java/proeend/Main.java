@@ -123,9 +123,11 @@ public class Main extends Application {
         } catch (IOException e) {
             System.out.println("load failed");
         }
-*/
-        //uvSphere.ConvertToTriangles();
-        //world.add(uvSphere);
+
+        Utility.loadWorld(world, lights, 1);
+        uvSphere.ConvertToTriangles();
+        world.add(uvSphere);
+
 
         camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
@@ -135,17 +137,20 @@ public class Main extends Application {
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(3);
 
-        //cam1.cameraCenter = new Vector(-.5,20,40);
-        //cam1.lookat = new Vector(0,20,39);
+        //camera.setCameraCenter(new Vector(-.5,20,40));
+        //camera.setLookat(new Vector(0,20,39));
 
         Utility.loadWorld(world, lights, 0);
         world = new HittableList(new BBNode(world));
+
+        camera.setSamplesPerPixel(1);
+        camera.setMaxDepth(5);
 
         /*var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
         //cam1.render(true, world, lights);
         //cam1.multiRender(true, world, lights);
-        //cam1.multiRenderLines(true, world, lights);
+        camera.multiRenderLines(true, world, lights);
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;
         var hours = minutes/60.0;
@@ -156,6 +161,6 @@ public class Main extends Application {
         System.out.println("hours:\t\t\t" + hours);*/
         //Renderer.render(camera, true, world, lights);
 
-        launch(args);
+        //launch(args);
     }
 }
