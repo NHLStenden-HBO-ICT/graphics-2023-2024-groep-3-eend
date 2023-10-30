@@ -12,7 +12,7 @@ import proeend.math.Vector;
  * Maakt het Lambertian materiaal aan.
  */
 public class Lambertian extends Material{
-    private Texture albedo; // hoeveelheid lichtreflectie
+    private final Texture albedo; // hoeveelheid lichtreflectie
 
     /**
      * Maakt een Lambertian materiaal aan.
@@ -39,16 +39,6 @@ public class Lambertian extends Material{
         scatterRecord.skipPDF = false;
 
 
-        /*
-        OrthonormalBase uvw = new OrthonormalBase();
-        uvw.buildFromW(rec.normal);
-        Vector scatterDirection = uvw.local(Utility.randomCosineDirection());
-        scattered.origin = rec.p;
-        scattered.direction = Vector.unitVector(scatterDirection);
-        attenuation.copy(albedo.value(rec.u, rec.v,rec.p));
-        rec.pdf = Vector.dot(uvw.w(), scattered.direction())/Math.PI;
-         */
-
         /* oude scatter zonder pdf
         Vector scatterDirection = Vector.add(rec.normal, Vector.randomUnitVec());
         scattered.origin = rec.p;
@@ -67,7 +57,7 @@ public class Lambertian extends Material{
     }
     @Override
     public double scatteringPDF (Ray rayIn, HitRecord rec, Ray scattered) {
-        var cosTheta = Vector.dot(rec.normal, Vector.unitVector(scattered.getDirection()));
+        var cosTheta = Vector.dot(rec.normal, scattered.getDirection().toUnitVector());
         return cosTheta < 0 ? 0 : cosTheta/Math.PI;
     }
 }

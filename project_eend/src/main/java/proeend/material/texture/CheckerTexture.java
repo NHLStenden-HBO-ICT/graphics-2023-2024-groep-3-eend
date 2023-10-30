@@ -3,9 +3,9 @@ package proeend.material.texture;
 import proeend.math.Vector;
 
 public class CheckerTexture extends Texture{
-    private double scale;
-    private Texture even;
-    private Texture odd;
+    private final double scale;
+    private final Texture even;
+    private final Texture odd;
 
     /**
      * Constructor voor CheckerTexture met opgegeven schaal, even textuur en oneven textuur.
