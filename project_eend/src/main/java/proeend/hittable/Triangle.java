@@ -45,9 +45,9 @@ public class Triangle extends Hittable{
      */
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
-        Vector v0v1 = Vector.add(v1, Vector.negate(v0));
-        Vector v0v2 = Vector.add(v2, Vector.negate(v0));   //deze twee kloppen
-        Vector unitDir = Vector.unitVector(ray.getDirection());
+        Vector v0v1 = v1.add(v0.invert());
+        Vector v0v2 = v2.add(v0.invert());   //deze twee kloppen
+        Vector unitDir = ray.getDirection().toUnitVector();
         //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
@@ -58,7 +58,7 @@ public class Triangle extends Hittable{
         //System.out.println(det);
         double invDet = 1/det;
 
-        Vector tvec = Vector.add(ray.origin(), Vector.negate(v0));
+        Vector tvec = ray.origin().add(v0.invert());
         double u = Vector.dot(tvec,pvec)*invDet;
         if (u < 0 || u > 1) return false;
 
@@ -70,24 +70,15 @@ public class Triangle extends Hittable{
         if (t < 0)
             return false;
 
-        //if (rec.t < 0) {return false;}
-        //rec.t = Vector.dot(v0v2, qvec);
-        //ray.direction = unitDir;
-        //rec.p = ray.at(rec.t);
-
-        //rec.normal = Vector.cross(v0v1,v0v2);
         rec.setU(u);
         rec.setV(v);
         rec.setT(t);
         rec.setMaterial(material);
-        rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
-        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        rec.setP(ray.origin().add(unitDir.scale(rec.getT())));
+        Vector normal = Vector.cross(v0v1, v0v2).toUnitVector();
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
-        //rec.setFaceNormal(ray,rec.normal);
-        //System.out.println(v+u);
-        //rec.normal = pvec;
         return true;
     }
 
@@ -104,9 +95,9 @@ public class Triangle extends Hittable{
      * @return of ie raakt of niet
      */
     public static boolean MThit(Ray ray, Interval rayT, HitRecord rec, Vector v0, Vector v1, Vector v2, Material material) {
-        Vector v0v1 = Vector.add(v1, Vector.negate(v0));
-        Vector v0v2 = Vector.add(v2, Vector.negate(v0));   //deze twee kloppen
-        Vector unitDir = Vector.unitVector(ray.getDirection());
+        Vector v0v1 = v1.add(v0.invert());
+        Vector v0v2 = v2.add(v0.invert());
+        Vector unitDir = ray.getDirection().toUnitVector();
         //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
@@ -117,7 +108,7 @@ public class Triangle extends Hittable{
         //System.out.println(det);
         double invDet = 1/det;
 
-        Vector tvec = Vector.add(ray.origin(), Vector.negate(v0));
+        Vector tvec = ray.origin().add(v0.invert());
         double u = Vector.dot(tvec,pvec)*invDet;
         if (u < 0 || u > 1) return false;
 
@@ -129,24 +120,15 @@ public class Triangle extends Hittable{
         if (t < 0)
             return false;
 
-        //if (rec.t < 0) {return false;}
-        //rec.t = Vector.dot(v0v2, qvec);
-        //ray.direction = unitDir;
-        //rec.p = ray.at(rec.t);
-
-        //rec.normal = Vector.cross(v0v1,v0v2);
         rec.setU(u);
         rec.setV(v);
         rec.setT(t);
         rec.setMaterial(material);
-        rec.setP(Vector.add(ray.origin(), Vector.scale(rec.getT(), unitDir)));
-        Vector normal = Vector.unitVector(Vector.cross(v0v1, v0v2));
+        rec.setP(ray.origin().add(unitDir.scale(rec.getT())));
+        Vector normal = Vector.cross(v0v1, v0v2).toUnitVector();
         rec.setNormal(normal);
         rec.setFaceNormal(ray, rec.normal);
 
-        //rec.setFaceNormal(ray,rec.normal);
-        //System.out.println(v+u);
-        //rec.normal = pvec;
         return true;
     }
 }

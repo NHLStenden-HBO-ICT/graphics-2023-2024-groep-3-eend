@@ -1,5 +1,6 @@
 package proeend.material.pdf;
 
+import proeend.math.FastRandom;
 import proeend.math.OrthonormalBase;
 import proeend.math.Vector;
 
@@ -29,8 +30,8 @@ public class CosPDF implements PDF {
      * @return Een willekeurige richting gegenereerd volgens de cosinus van de invalshoek.
      */
     public static Vector randomCosineDirection() {
-        double r1 = Math.random();
-        double r2 = Math.random();
+        double r1 = FastRandom.random();
+        double r2 = FastRandom.random();
 
         double fi = 2 * Math.PI * r1;
         double x = Math.cos(fi) * Math.sqrt(r2);

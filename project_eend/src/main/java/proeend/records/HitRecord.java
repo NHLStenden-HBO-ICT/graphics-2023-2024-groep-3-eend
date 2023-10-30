@@ -12,17 +12,16 @@ public class HitRecord {
     public Vector normal;
     public double t;
     public boolean frontFace;
-    //voor driehoeken en textures
+
+    // Voor driehoeken en textures
     public double u,v,w = 0.0;
     public double pdf = 1;
     public Material material;
-    //outwardNormal moet eenheidsvector zijn
 
     /**
      * Constructor voor een HitRecord-object.
      */
     public HitRecord() {
-        // Initialiseer alle velden
     }
 
     /**
@@ -159,7 +158,7 @@ public class HitRecord {
      */
     public void setFaceNormal(Ray ray, Vector outwardNormal) {
         frontFace = Vector.dot(ray.getDirection(), outwardNormal) < 0;
-        normal = frontFace ? outwardNormal : Vector.negate(outwardNormal);
+        normal = frontFace ? outwardNormal : outwardNormal.invert();
     }
 
     /**

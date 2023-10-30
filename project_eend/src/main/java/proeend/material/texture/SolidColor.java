@@ -7,7 +7,7 @@ package proeend.material.texture;
 import proeend.math.Vector;
 
 public class SolidColor extends Texture {
-    private Vector color;
+    private final Vector color;
 
     /**
      * Constructor voor SolidColor met opgegeven RGB-kleurwaarden.

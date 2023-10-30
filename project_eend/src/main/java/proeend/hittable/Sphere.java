@@ -1,11 +1,8 @@
 package proeend.hittable;
 
+import proeend.math.*;
 import proeend.records.HitRecord;
-import proeend.math.Interval;
-import proeend.math.Ray;
-import proeend.math.Vector;
 import proeend.material.Material;
-import proeend.math.OrthonormalBase;
 
 /**
  * Een sfeerobject dat kan worden geraakt door een lichtstraal in een 3D-scène.
@@ -15,24 +12,8 @@ public class Sphere extends Hittable {
     private final double radius;
     private final Vector center;
     private final BoundingBox boundingBox;
-    public String name;
 
     private final Material material;
-    /**
-     * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
-     *
-     * @param center   Het middelpunt van de sfeer.
-     * @param radius   De straal van de sfeer.
-     * @param material Het materiaal van de sfeer.
-     * @param name De naam van de bol voor identificatie van de sfeer.
-     */
-    public Sphere(Vector center, double radius, Material material, String name) {
-        this.center = center;
-        this.radius = radius;
-        this.material = material;
-        boundingBox = new BoundingBox(center, radius);
-        this.name = name;
-    }
 
     /**
      * Creëer een nieuwe sfeer met het opgegeven middelpunt, straal en materiaal.
@@ -66,7 +47,7 @@ public class Sphere extends Hittable {
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
 
 
-        Vector OC = Vector.add(ray.origin(), Vector.negate(center));
+        Vector OC = ray.origin().add(center.invert());
         double a = Vector.lengthSquared(ray.getDirection());
         double halfb = Vector.dot(OC, ray.getDirection());
         double c = Vector.lengthSquared(OC) - radius * radius;
@@ -86,7 +67,7 @@ public class Sphere extends Hittable {
         rec.setT(root);
         rec.setP(ray.at(rec.getT()));
         rec.setMaterial(material);
-        Vector outwardNormal = Vector.scale((1.0 / radius), Vector.add(rec.getP(), Vector.negate(center)));
+        Vector outwardNormal = (rec.getP().add(center.invert()).scale((1.0 / radius)));
         rec.setFaceNormal(ray, outwardNormal);
         return true;
     }
@@ -104,7 +85,7 @@ public class Sphere extends Hittable {
         if (!hit(new Ray(origin,direction),new Interval(0.001, Double.POSITIVE_INFINITY), hitRecord)) {
             return 0;
         }
-        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(Vector.add(center, Vector.negate(origin))));
+        double cosThetaMax = Math.sqrt(1-radius*radius/Vector.lengthSquared(center.add(origin.invert())));
         double solidAngle = 2*Math.PI*(1-cosThetaMax);
 
         return 1.0/solidAngle;
@@ -115,15 +96,15 @@ public class Sphere extends Hittable {
      */
     @Override
     public Vector random(Vector origin) {
-        Vector direction = Vector.add(center, Vector.negate(origin));
+        Vector direction = center.add(origin.invert());
         double distanceSquared = Vector.lengthSquared(direction);
         OrthonormalBase uvw = new OrthonormalBase();
         uvw.buildFromW(direction);
         return uvw.local(randomToSphere(radius, distanceSquared));
     }
     private Vector randomToSphere(double radius, double distanceSquared) {
-        double r1 = Math.random();
-        double r2 = Math.random();
+        double r1 = FastRandom.random();
+        double r2 = FastRandom.random();
         double z = 1 + r2 * (Math.sqrt(1-radius*radius/distanceSquared)-1);
 
         double fi = 2*Math.PI*r1;

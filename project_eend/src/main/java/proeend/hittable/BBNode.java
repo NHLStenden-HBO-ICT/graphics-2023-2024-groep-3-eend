@@ -36,7 +36,7 @@ public class BBNode extends Hittable{
      */
     public BBNode(List<Hittable> objects, int start, int end) {
         // Genereer een willekeurig getal tussen 0-2, dus 0, 1 of 2
-        int axis = (int)(3 * Math.random());
+        int axis = (int)(3 * FastRandom.random());
 
         // Comparator met lambda expressie wordt gebruikt om twee objecten te vergelijken.
         Comparator<Hittable> comparator = (a, b) -> compareAxis(a, b, axis);
