@@ -122,11 +122,12 @@ public class Main extends Application {
             uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
         } catch (IOException e) {
             System.out.println("load failed");
-        }
+        } */
 
-        Utility.loadWorld(world, lights, 1);
-        uvSphere.ConvertToTriangles();
-        world.add(uvSphere);
+    /*    Utility.loadWorld(world, lights, 1);
+
+       uvSphere.ConvertToTriangles();
+        world.add(uvSphere);*/
 
 
         camera.setBackground(Color.LIGHTPINK);
@@ -161,6 +162,6 @@ public class Main extends Application {
         System.out.println("hours:\t\t\t" + hours);*/
         //Renderer.render(camera, true, world, lights);
 
-        //launch(args);
+        launch(args);
     }
 }
