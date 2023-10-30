@@ -1,11 +1,12 @@
 package proeend.material.texture;
 
+import proeend.material.Material;
 import proeend.math.Vector;
 
 /**
  * Bepaald de textuur van een object.
  */
-public abstract class Texture {
+public abstract class Texture extends Material {
 
     /**
      * Maakt de kleur.

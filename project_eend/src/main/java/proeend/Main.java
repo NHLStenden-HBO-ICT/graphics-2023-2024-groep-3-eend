@@ -216,7 +216,7 @@ public class Main extends Application {
             System.out.println("load failed");
         }
 
-        Utility.loadWorld(world, lights, 1);
+        Utility.loadWorld(world, lights, 0);
         uvSphere.ConvertToTriangles();
         //world.add(uvSphere);
 

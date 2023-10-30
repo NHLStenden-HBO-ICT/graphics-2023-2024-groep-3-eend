@@ -268,8 +268,7 @@ public class Camera {
      * render(), maar dan multithreaded en void.
      */
     public void multiRender(boolean save, final Hittable world, final Hittable lights) {
-        //TODO maak een werkende taakverdeler
-        //TODO of verdeel per lijn
+
         init();
         block = true;
         WritableImage writableImage = new WritableImage(imageWidth, imageHeight);

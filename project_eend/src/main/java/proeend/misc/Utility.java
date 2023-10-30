@@ -7,6 +7,8 @@ import proeend.hittable.PolygonMesh;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.math.Vector;
+import proeend.material.texture.Image;
+import proeend.material.texture.Image_Texture;
 
 /**
  * Beheerd de instellingen van de wereld.
@@ -25,10 +27,13 @@ public class Utility {
         Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
         Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), .3);
+
+        Image earth = new Image("project_eend/ModelTextureImages/1.jpg");
+
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
         Normal normal = new Normal();
-        CheckerTexture checkerTexture = new CheckerTexture(10, new Vector(.6,.1,.7), new Vector());
+        CheckerTexture checkerTexture = new CheckerTexture(0.02, new Vector(.6,.1,.7), new Vector(1,0,0));
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
@@ -134,6 +139,19 @@ public class Utility {
                 world.add(new Sphere(new Vector(0,0,-1),1,normal));
 
                 lights.add(new Sphere(new Vector(1,2,-.55),500,whiteLambertian));
+
+                break;
+            case 8: //Textures test
+                //world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
+                //world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
+                //world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
+
+                world.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
+
+                lights.add(new Sphere(new Vector(1.5,0,3),2,whiteLight));
+
+                //Texture test
+                world.add(new Sphere(new Vector(0,0,-1), 1, earth));
 
                 break;
             default:
