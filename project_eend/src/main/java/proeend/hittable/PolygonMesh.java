@@ -71,7 +71,7 @@ public class PolygonMesh extends Hittable {
                 newVertexIndexList.add(vertexIndexArray[i+1]);
                 newVertexIndexList.add(vertexIndexArray[i+2]);
                 i += 3;
-            } else if (face == 4){
+            } if (face == 4){
                 newFaceList.add(3);
                 newFaceList.add(3);
                 newVertexIndexList.add(vertexIndexArray[i]);

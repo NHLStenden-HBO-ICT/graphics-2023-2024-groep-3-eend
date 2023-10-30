@@ -218,25 +218,25 @@ public class Main extends Application {
 
         Utility.loadWorld(world, lights, 0);
         uvSphere.ConvertToTriangles();
-        //world.add(uvSphere);
+        world.add(uvSphere);
 
         camera.setBackground(new Vector(.6,.6,.6));
         camera.setImageWidth(400);
         camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(2,0,4));
 
-        //cam1.cameraCenter = new Vector(-.5,20,40);
-        //cam1.lookat = new Vector(0,20,39);
+        //camera.setCameraCenter(new Vector(-.5,20,40));
+        //camera.setLookat(new Vector(0,20,39));
 
         world = new HittableList(new BBNode(world));
-        camera.setSamplesPerPixel(3);
+        camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
 
         var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
         //cam1.render(true, world, lights);
         //cam1.multiRender(true, world, lights);
-        //cam1.multiRenderLines(true, world, lights);
+        camera.multiRenderLines(true, world, lights);
         var endTime = System.currentTimeMillis() - startTime;
         var minutes = endTime/60_000.0;
         var hours = minutes/60.0;
@@ -246,6 +246,6 @@ public class Main extends Application {
         System.out.println(minutes);
         System.out.println("hours:\t\t\t" + hours);
 
-        launch(args);
+        //launch(args);
     }
 }

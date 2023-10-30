@@ -28,6 +28,7 @@ public class ObjectLoader {
         List<Vector> vertexes = new ArrayList<>();
         List<Integer> vertexIndexes = new ArrayList<>();
         List<Integer> faces = new ArrayList<>();
+        vertexes.add(new Vector());
 
         Scanner scanner = new Scanner(new File(filepath));
         parseVerticesAndFaces(scanner, vertexes, vertexIndexes, faces);
