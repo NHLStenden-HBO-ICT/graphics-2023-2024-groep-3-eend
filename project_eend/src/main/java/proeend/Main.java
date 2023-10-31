@@ -130,7 +130,7 @@ public class Main extends Application {
         world.add(uvSphere);*/
 
 
-        camera.setBackground(Color.LIGHTPINK);
+        camera.setBackground(Color.BLACK);
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(0,0,2));
@@ -141,7 +141,7 @@ public class Main extends Application {
         //camera.setCameraCenter(new Vector(-.5,20,40));
         //camera.setLookat(new Vector(0,20,39));
 
-        Utility.loadWorld(world, lights, 0);
+        Utility.loadWorld(world, lights, 8);
         world = new HittableList(new BBNode(world));
 
         camera.setSamplesPerPixel(1);

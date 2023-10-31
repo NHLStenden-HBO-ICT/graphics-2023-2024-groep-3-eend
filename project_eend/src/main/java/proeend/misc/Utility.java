@@ -5,6 +5,7 @@ import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
 import proeend.math.Vector;
 import proeend.material.texture.Image;
+import proeend.material.texture.*;
 import proeend.material.texture.Image_Texture;
 
 /**
@@ -26,12 +27,16 @@ public class Utility {
         Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.4,0.7));
         Mirror redMirror = new Mirror(new Vector(1,.5,.5), 1);
 
-        Image earth = new Image("project_eend/ModelTextureImages/1.jpg");
+        Image_Texture earthTexture = new Image_Texture("project_eend/ModelTextureImages/world.jpeg");
+        Lambertian earth_surface = new Lambertian(earthTexture);
+
+        Image_Texture sunTexture = new Image_Texture("project_eend/ModelTextureImages/zon.jpg");
+        Emitter sunEmitter = new Emitter(sunTexture);
 
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
         Normal normal = new Normal();
-        CheckerTexture checkerTexture = new CheckerTexture(10, new Vector(.6,.1,.7), new Vector());
+        CheckerTexture checkerTexture = new CheckerTexture(0.1, new Vector(1,1,1), new Vector(.5,.5,.5));
         Lambertian errorCheckers = new Lambertian(checkerTexture);
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Emitter blueLight = new Emitter(new Vector(.3,.8,.9));
@@ -123,12 +128,12 @@ public class Utility {
                 //world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
                 //world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
 
-                world.add(new Sphere(new Vector(1.5, 0, 3), 2, whiteLight));
+                world.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
 
-                lights.add(new Sphere(new Vector(1.5, 0, 3), 2, whiteLight));
+                lights.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
 
                 //Texture test
-                world.add(new Sphere(new Vector(0, 0, -1), 1, earth));
+                world.add(new Sphere(new Vector(1, 0, -1.5), 1.2, earth_surface));
             }
 
             default -> {

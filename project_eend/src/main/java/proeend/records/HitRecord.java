@@ -11,10 +11,12 @@ public class HitRecord {
     public Vector p;
     public Vector normal;
     public double t;
+    public double u;
+    public double v;
     public boolean frontFace;
 
     // Voor driehoeken en textures
-    public double u,v,w = 0.0;
+    public double w; //was u,v,w
     public double pdf = 1;
     public Material material;
 

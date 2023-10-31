@@ -6,7 +6,7 @@ import proeend.math.Vector;
 /**
  * Bepaald de textuur van een object.
  */
-public abstract class Texture extends Material {
+public abstract class Texture {
 
     /**
      * Maakt de kleur.
