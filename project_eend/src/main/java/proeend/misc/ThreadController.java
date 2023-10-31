@@ -4,7 +4,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import proeend.Main;
 import proeend.hittable.Hittable;
-import proeend.windows.StartScreen;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

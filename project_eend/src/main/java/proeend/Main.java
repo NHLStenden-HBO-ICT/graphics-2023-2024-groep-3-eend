@@ -21,6 +21,7 @@ import proeend.math.Vector;
 import proeend.material.*;
 import proeend.misc.*;
 import proeend.windows.StartScreen;
+import javafx.application.Platform;
 
 import java.io.IOException;
 
@@ -33,12 +34,18 @@ public class Main extends Application {
     private static final Camera camera = new Camera();
     private static HittableList world = new HittableList();
     private static final HittableList lights = new HittableList();
+    private int BlockSize;
 
     final ImageView frame = new ImageView();
     final StackPane stackPane = new StackPane();
     WritableImage previousImage;
     public static StartScreen startScreen = new StartScreen();
     public static int caseSelector;
+
+    public static int setButtonClicked(int i){
+        caseSelector = i;
+        return caseSelector;
+    }
 
 
     /**
@@ -48,9 +55,51 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+
+/*        stage.setOnCloseRequest(event -> {
+
+            startScreen = new StartScreen();
+
+        });
+
         if(!stackPane.getChildren().contains(frame)){
            startScreen.setInfoLabel("Loading...");
         }
+        camera.setBackground(Color.LIGHTPINK);
+        camera.setImageWidth(400);
+        camera.setCameraCenter(new Vector(0, 0, 2));
+
+        camera.setSamplesPerPixel(1);
+        camera.setMaxDepth(3);
+
+        updateFrame();
+        setupUI(stage);
+        setupAnimation(stage);
+        stage.setTitle("RayTracer");
+        stage.show();
+
+        if(stackPane.getChildren().contains(frame)){
+            startScreen.setInfoLabel("");
+        }*/
+    }
+
+    public void newScene(Stage stage) {
+
+        stage.setOnCloseRequest(event -> {
+            Platform.exit();
+            startScreen = new StartScreen();
+
+        });
+
+        if(!stackPane.getChildren().contains(frame)){
+            startScreen.setInfoLabel("Loading...");
+        }
+        camera.setBackground(Color.LIGHTPINK);
+        camera.setImageWidth(400);
+        camera.setCameraCenter(new Vector(0, 0, 2));
+
+        camera.setSamplesPerPixel(1);
+        camera.setMaxDepth(3);
 
         updateFrame();
         setupUI(stage);
@@ -62,6 +111,7 @@ public class Main extends Application {
             startScreen.setInfoLabel("");
         }
     }
+
     /**
      * Configureert de gebruikersinterface voor het hoofdvenster van het programma.
      *
@@ -112,8 +162,6 @@ public class Main extends Application {
         camera.setHasMovedSinceLastFrame(false);
     }
 
-
-
     /**
      * Initialiseert het programma en start de JavaFX-toepassing.
      *
@@ -121,16 +169,6 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
-            camera.setBackground(Color.LIGHTPINK);
-            camera.setImageWidth(400);
-            //camera.setCameraCenter(camOrigin);
-            camera.setCameraCenter(new Vector(0, 0, 2));
-
-            camera.setSamplesPerPixel(1);
-            camera.setMaxDepth(3);
-
-            //camera.setCameraCenter(new Vector(-.5,20,40));
-            //camera.setLookat(new Vector(0,20,39));
     }
 
     public static void renderDuck(){
@@ -161,16 +199,23 @@ public class Main extends Application {
 
         uvSphere.ConvertToTriangles();
         world.add(uvSphere);
-        launch();
+
+        Platform.runLater(() -> {
+        Main mainStart = new Main();
+        mainStart.start(new Stage());});
     }
 
-    public static void caseButtonClicked(){
+    public void caseButtonClicked(){
         Utility.loadWorld(world, lights, caseSelector);
         world = new HittableList(new BBNode(world));
 
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
-        launch();
-    }
 
+        Platform.runLater(() -> {
+            newScene(new Stage());
+              });
+
+        startScreen.dispose();
+    }
 }

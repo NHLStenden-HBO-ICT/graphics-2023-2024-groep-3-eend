@@ -1,5 +1,7 @@
 package proeend.windows;
 
+import proeend.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JButton;
@@ -12,7 +14,6 @@ public class StartScreen extends JFrame {
     private JButton badeend;
 
     public StartScreen() {
-
         setTitle("Project Eend");
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -39,7 +40,7 @@ public class StartScreen extends JFrame {
 
 
         add(panel);
-        setSize(700, 700);
+        setSize(600, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);

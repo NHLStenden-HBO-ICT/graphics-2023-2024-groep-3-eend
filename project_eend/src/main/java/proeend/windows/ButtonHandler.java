@@ -15,20 +15,20 @@ public class ButtonHandler implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getActionCommand().equals("Badeend")) {
-            Main.caseSelector = 1;
+            Main.setButtonClicked(1);
             Main.renderDuck();
         }
 
         if (e.getActionCommand().equals("Button0")) {
-            Main.caseSelector = 0;
-            Main.caseButtonClicked();
+            Main.setButtonClicked(0);
+            new Main().caseButtonClicked();
+            //Main.caseButtonClicked();
         }
 
         if (e.getActionCommand().equals("Button1")) {
-            Main.caseSelector = 1;
-            Main.caseButtonClicked();
+            Main.setButtonClicked(1);
+            new Main().caseButtonClicked();
+            //Main.caseButtonClicked();
         }
-
-
     }
 }
