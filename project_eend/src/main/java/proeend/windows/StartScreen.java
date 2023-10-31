@@ -1,7 +1,4 @@
 package proeend.windows;
-
-import proeend.Main;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JButton;
@@ -21,7 +18,7 @@ public class StartScreen extends JFrame {
 
         panel.add(title());
 
-        ButtonHandler buttonHandler = new ButtonHandler(this);
+        ButtonHandler buttonHandler = new ButtonHandler();
 
         badeend = createButton("Badeend scene renderen");
         badeend.setActionCommand("Badeend");

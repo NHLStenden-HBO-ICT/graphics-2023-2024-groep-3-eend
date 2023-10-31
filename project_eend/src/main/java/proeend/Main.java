@@ -34,8 +34,6 @@ public class Main extends Application {
     private static final Camera camera = new Camera();
     private static HittableList world = new HittableList();
     private static final HittableList lights = new HittableList();
-    private int BlockSize;
-
     final ImageView frame = new ImageView();
     final StackPane stackPane = new StackPane();
     WritableImage previousImage;
@@ -86,9 +84,8 @@ public class Main extends Application {
     public void newScene(Stage stage) {
 
         stage.setOnCloseRequest(event -> {
-            Platform.exit();
+            stop();
             startScreen = new StartScreen();
-
         });
 
         if(!stackPane.getChildren().contains(frame)){
@@ -212,10 +209,20 @@ public class Main extends Application {
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
 
+
+        Platform.setImplicitExit(false);
+
         Platform.runLater(() -> {
             newScene(new Stage());
               });
 
         startScreen.dispose();
+    }
+
+    @Override
+    public void stop(){
+        Platform.setImplicitExit(false);
+        Platform.exit();
+        //TODO Deze geeft nog de Application Thread exception
     }
 }
