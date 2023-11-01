@@ -24,8 +24,6 @@ import proeend.material.*;
 import proeend.misc.*;
 import proeend.windows.StartScreen;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -46,7 +44,6 @@ public class Main extends Application {
         caseSelector = i;
     }
 
-
     /**
      * Start het programma en configureert de besturingselementen.
      *
@@ -54,14 +51,6 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-
-/*
-     stage.setOnCloseRequest(event -> {
-
-            startScreen = new StartScreen(this);
-
-        });
-*/
 
         if(stackPane.getChildren().contains(startScreen)){
           startScreen.setInfoLabel("Loading...");
@@ -81,6 +70,7 @@ public class Main extends Application {
 
             stage.setScene(scene);
         }
+
         else {
         camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
@@ -93,7 +83,6 @@ public class Main extends Application {
         setupUI(stage);
         setupAnimation(stage);
         }
-
 
         stage.setTitle("RayTracer");
         stage.show();
@@ -163,6 +152,8 @@ public class Main extends Application {
     }
 
     public void renderDuck(){
+        stackPane = new StackPane();
+        stackPane.getChildren().removeAll();
 
         Lambertian white = new Lambertian(new Vector(1, .5, .5));
         Emitter white2 = new Emitter(new Vector(1,1,1));
@@ -191,7 +182,19 @@ public class Main extends Application {
         uvSphere.ConvertToTriangles();
         world.add(uvSphere);
 
-        start(new Stage());
+        camera.setBackground(Color.LIGHTPINK);
+        camera.setImageWidth(400);
+        camera.setCameraCenter(new Vector(0, 0, 2));
+
+        camera.setSamplesPerPixel(1);
+        camera.setMaxDepth(3);
+
+        updateFrame();
+        Stage stage = new Stage();
+        setupUI(stage);
+        setupAnimation(stage);
+
+        Renderer.render(camera, true, world, lights);
 
     }
 
@@ -204,13 +207,6 @@ public class Main extends Application {
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
 
-
-
         start(new Stage());
-
-    }
-
-    @Override
-    public void stop(){
     }
 }
