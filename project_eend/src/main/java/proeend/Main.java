@@ -3,6 +3,7 @@ package proeend;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -10,6 +11,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -21,9 +23,9 @@ import proeend.math.Vector;
 import proeend.material.*;
 import proeend.misc.*;
 import proeend.windows.StartScreen;
-import javafx.application.Platform;
-
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -35,14 +37,13 @@ public class Main extends Application {
     private static HittableList world = new HittableList();
     private static final HittableList lights = new HittableList();
     final ImageView frame = new ImageView();
-    final StackPane stackPane = new StackPane();
+     StackPane stackPane = new StackPane();
     WritableImage previousImage;
-    public static StartScreen startScreen = new StartScreen();
+    public static StartScreen startScreen;
     public static int caseSelector;
 
-    public static int setButtonClicked(int i){
+    public static void setButtonClicked(int i){
         caseSelector = i;
-        return caseSelector;
     }
 
 
@@ -54,15 +55,33 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
 
-/*        stage.setOnCloseRequest(event -> {
+/*
+     stage.setOnCloseRequest(event -> {
 
-            startScreen = new StartScreen();
+            startScreen = new StartScreen(this);
 
         });
+*/
 
-        if(!stackPane.getChildren().contains(frame)){
-           startScreen.setInfoLabel("Loading...");
+        if(stackPane.getChildren().contains(startScreen)){
+          startScreen.setInfoLabel("Loading...");
         }
+
+        if (world.getObjects().isEmpty()) {
+
+            VBox root = new VBox(10);
+            BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTBLUE, null, null);
+            Background background = new Background(backgroundFill);
+
+            root.setBackground(background);
+
+            StartScreen startScreen = new StartScreen(this);
+            root.getChildren().add(startScreen);
+            Scene scene = new Scene(root, 600, 700);
+
+            stage.setScene(scene);
+        }
+        else {
         camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
@@ -73,38 +92,13 @@ public class Main extends Application {
         updateFrame();
         setupUI(stage);
         setupAnimation(stage);
-        stage.setTitle("RayTracer");
-        stage.show();
-
-        if(stackPane.getChildren().contains(frame)){
-            startScreen.setInfoLabel("");
-        }*/
-    }
-
-    public void newScene(Stage stage) {
-
-        stage.setOnCloseRequest(event -> {
-            stop();
-            startScreen = new StartScreen();
-        });
-
-        if(!stackPane.getChildren().contains(frame)){
-            startScreen.setInfoLabel("Loading...");
         }
-        camera.setBackground(Color.LIGHTPINK);
-        camera.setImageWidth(400);
-        camera.setCameraCenter(new Vector(0, 0, 2));
 
-        camera.setSamplesPerPixel(1);
-        camera.setMaxDepth(3);
 
-        updateFrame();
-        setupUI(stage);
-        setupAnimation(stage);
         stage.setTitle("RayTracer");
         stage.show();
 
-        if(stackPane.getChildren().contains(frame)){
+        if(stackPane.getChildren().contains(startScreen)){
             startScreen.setInfoLabel("");
         }
     }
@@ -165,10 +159,10 @@ public class Main extends Application {
      * @param args Argumenten die aan het programma kunnen worden meegegeven.
      */
     public static void main(String[] args) {
-
+        launch(args);
     }
 
-    public static void renderDuck(){
+    public void renderDuck(){
 
         Lambertian white = new Lambertian(new Vector(1, .5, .5));
         Emitter white2 = new Emitter(new Vector(1,1,1));
@@ -197,12 +191,13 @@ public class Main extends Application {
         uvSphere.ConvertToTriangles();
         world.add(uvSphere);
 
-        Platform.runLater(() -> {
-        Main mainStart = new Main();
-        mainStart.start(new Stage());});
+        start(new Stage());
+
     }
 
     public void caseButtonClicked(){
+        stackPane = new StackPane();
+        stackPane.getChildren().removeAll();
         Utility.loadWorld(world, lights, caseSelector);
         world = new HittableList(new BBNode(world));
 
@@ -210,19 +205,12 @@ public class Main extends Application {
         camera.setMaxDepth(5);
 
 
-        Platform.setImplicitExit(false);
 
-        Platform.runLater(() -> {
-            newScene(new Stage());
-              });
+        start(new Stage());
 
-        startScreen.dispose();
     }
 
     @Override
     public void stop(){
-        Platform.setImplicitExit(false);
-        Platform.exit();
-        //TODO Deze geeft nog de Application Thread exception
     }
 }

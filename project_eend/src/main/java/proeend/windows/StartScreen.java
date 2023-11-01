@@ -1,78 +1,85 @@
 package proeend.windows;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
-public class StartScreen extends JFrame {
-    private JLabel infoLabel;
-    private JButton badeend;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import proeend.Main;
 
-    public StartScreen() {
-        setTitle("Project Eend");
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.setBackground(new Color(180, 245,250));
+public class StartScreen extends VBox {
+    private Label infoLabel;
+    private Button badeend;
+    private Button case1;
+    private Button case2;
+    private Button case3;
 
-        panel.add(title());
+    public StartScreen(Main main) {
 
-        ButtonHandler buttonHandler = new ButtonHandler();
+        this.setAlignment(javafx.geometry.Pos.CENTER);
 
-        badeend = createButton("Badeend scene renderen");
-        badeend.setActionCommand("Badeend");
-        badeend.addActionListener(buttonHandler);
-        panel.add(badeend);
-
-        for (int i = 0; i < 8; i++) {
-            JButton button = createButton("Case " + i + " live bekijken");
-            button.setActionCommand("Button" + i);
-            button.addActionListener(buttonHandler);
-            panel.add(button);
-        }
-
-        infoLabel = print();
-        panel.add(infoLabel);
+        infoLabel = new Label();
+        infoLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: blue;");
+        infoLabel.setPadding(new javafx.geometry.Insets(20));
 
 
-        add(panel);
-        setSize(600, 700);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+        badeend = new Button("Badeend scene renderen");
+        badeend.setStyle("-fx-background-color: white; -fx-text-fill: blue;");
+        badeend.setMinSize(300, 50);
+        badeend.setOnAction(e -> {
+            main.setButtonClicked(1);
+            main.renderDuck();
+        });
+
+        case1 = new Button("Scene 1 renderen");
+        case1.setStyle("-fx-background-color: white; -fx-text-fill: blue;");
+        case1.setMinSize(300, 50);
+        case1.setOnAction(e -> {
+            main.setButtonClicked(1);
+            main.caseButtonClicked();
+        });
+
+        case2 = new Button("Scene 2 renderen");
+        case2.setStyle("-fx-background-color: white; -fx-text-fill: blue;");
+        case2.setMinSize(300, 50);
+        case2.setOnAction(e -> {
+            main.setButtonClicked(2);
+            main.caseButtonClicked();
+        });
+
+        case3 = new Button("Scene 3 renderen");
+        case3.setStyle("-fx-background-color: white; -fx-text-fill: blue;");
+        case3.setMinSize(300, 50);
+        case3.setOnAction(e -> {
+            main.setButtonClicked(3);
+            main.caseButtonClicked();
+        });
+
+        this.getChildren().addAll(
+                title(),
+                badeend,
+                case1,
+                case2,
+                case3,
+                infoLabel
+        );
+
+        VBox.setMargin(badeend, new Insets(10));
+        VBox.setMargin(case1, new Insets(10));
+        VBox.setMargin(case2, new Insets(10));
+        VBox.setMargin(case3, new Insets(10));
     }
 
-    private JLabel title(){
-        JLabel title = new JLabel("Project Graphics");
-        title.setFont(new Font("Segoe UI", Font.ITALIC, 50));
-        title.setForeground(Color.BLUE);
-        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private Label title(){
+        Label title = new Label("Project Graphics");
+        title.setStyle("-fx-font-size: 50px; -fx-text-fill: blue;");
+        title.setPadding(new javafx.geometry.Insets(20));
         return title;
     }
 
-    private JButton createButton(String label) {
-        JButton button = new JButton(label);
-        button.setMaximumSize(new Dimension(300, 50));
-        button.setBackground(Color.WHITE);
-        button.setForeground(Color.BLUE);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button.setBorder(BorderFactory.createLineBorder(new Color(180, 245, 250), 5, false));
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setFocusPainted(false);
-        return button;
-    }
 
-
-    private JLabel print(){
-        JLabel infoLabel = new JLabel();
-        infoLabel.setFont(new Font("Segoe UI", Font.ITALIC, 20));
-        infoLabel.setForeground(Color.BLUE);
-        infoLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return infoLabel;
-    }
 
     public void setInfoLabel(String info){
         infoLabel.setText(info);
