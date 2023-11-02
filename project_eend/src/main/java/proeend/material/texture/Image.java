@@ -34,28 +34,35 @@ public class Image extends Material {
         load(imageFilename);
     }
 
-    /**
+    /** Laad alle gegevens van de gegeven foto van type jpg of jpeg
      *
      * @param imageFilename De naam van het afbeeldingsbestand om te laden.
      * @throws IOException Als er een fout optreed bij t laden van de foto.
+     *
      */
     public boolean load(String imageFilename){
         try{
 
             // Laden van afbeeldingsgegevens uit het opgegeven bestand
             byte[] imageBytes = Files.readAllBytes(Path.of(imageFilename));
+            //Vang het op en stop het in een array
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageBytes);
+            //Geef de info aan een BufferedImage zodat die data wel ingelezen kan worden (reden hiervoor is omdat jpg en jpeg gecomprimeerde bestanden zijn)
             image = ImageIO.read(byteArrayInputStream);
+            //Lees die info en stop dat in een raster
             raster = image.getData();
 
+            //Als er geen foto gegeven word is data null
+            //Ook als de foto van het verkeerde type is word er null terug gegeven
             if (image == null){
                 data = null;
                 return false;
             }
-
+            //imageWidth wordt de groote van de gebruikte foto
             imageWidth = image.getWidth();
+            //Zie imageWidth
             imageHeight = image.getHeight();
-
+            //Word verdeeld in Bytes per line zodat alle data in 1 lange Array kan gezet worden
             bytesPerScanLine = imageWidth * bytesPerPixel;
 
         }catch (IOException e){
@@ -78,50 +85,50 @@ public class Image extends Material {
     public int height(){  return imageHeight; }
 
     /**
-     * Geeft de pixelgegevens van specifieke locatie in de afbeelding terug.
+     * Geeft de pixelgegevens van specifieke x y locatie in de 2d afbeelding terug.
      *
-     * @param x De x-coordinaat van de pixel.
-     * @param y De y-coordinaat van de pixel.
-     * @return Een array van bytes dat de kleurgegevens van de pixel bevat in RGB.(Uiteindelijk in 0 t/m 1)
+     * @param x De x-coordinaat van de pixel in de afbeelding.
+     * @param y De y-coordinaat van de pixel in de afbeelding.
+     * @return Een array van bytes dat de kleurgegevens van de pixel bevat in RGB.(0/255)(0/255)(0/255)
      */
     public int[] pixelData(int x, int y){
+        //Als er geen foto is of de verkeerde bestandstype dan word er een standaard kleur teruggegeven. In dit geval magenta.
         if (image == null){
             return new int[] { 255, 0, 255};
         }
 
-        //int cx = clamp(x, 0, imageWidth);
-        //int cy = clamp(y, 0, imageHeight);
 
-        //int pixelIndex = (cy * bytesPerScanLine) + (cx);
-
-
-        int numBands = raster.getNumBands();
-        byte[] pixelData = new byte[numBands];
-        
+        //De array die de RGB waarde opslaat van de gekozen pixel
         int[] pixel = new int[3];
 
-       raster.getPixel(x,y, pixel);
+        //getPixel haalt de data op van de gekozen pixel
+        //x,y is de gekozen pixel en pixel wordt de RGB waarden
+        raster.getPixel(x,y, pixel);
 
-
+        //Stuur de RGB waarden terug die je hebt opgehaald
         return pixel;
     }
 
     /**
      * Beperkt een waarde tot het opgegeven bereik.
      *
-     * @param xy De waarde om te beperken.
+     * @param xy De waarde om te beperken. Dit kan óf x zijn óf y die meegegeven word.
      * @param low De ondergrens van het bereik.
      * @param high de Bovengrens van het bereik.
      * @return De waarde, beperkt tot het opgegeven bereik.
      */
-    private int clamp(int xy ,int low , int high){
-        if (xy < low){
-            return low;
-        } else if (xy < high) {
-            return xy;
-        } else {
-            return high - 1;
-        }
+    int clamp(int xy, int low, int high){
+
+        if (high > low){
+            if (xy < low){
+                return low;
+            } else if (xy < high) {
+                return xy;
+            } else {
+                return high - 1;
+            }
+        }else {System.out.println("ERROR: De waardes die bij clamp zijn meegegeven zijn fout en verkeerd om: Low = "+ low + " ,High = " + high );
+        return 0;}
     }
 
 

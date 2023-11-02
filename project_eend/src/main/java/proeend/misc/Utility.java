@@ -33,6 +33,13 @@ public class Utility {
         Image_Texture sunTexture = new Image_Texture("project_eend/ModelTextureImages/zon.jpg");
         Emitter sunEmitter = new Emitter(sunTexture);
 
+        Image_Texture iceTexture = new Image_Texture("project_eend/ModelTextureImages/IceTexture.jpg");
+        Lambertian ice_surface = new Lambertian(iceTexture);
+        Image_Texture backgroundTexture = new Image_Texture("project_eend/ModelTextureImages/ijsmeer.jpg");
+        Lambertian background_surface = new Lambertian(backgroundTexture);
+
+        Mirror iceMirror = new Mirror(new Vector(0,0.7,1),0.15);
+
         Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
         Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
         Normal normal = new Normal();
@@ -41,8 +48,24 @@ public class Utility {
         Emitter whiteLight = new Emitter(new Vector(4,4,4));
         Emitter blueLight = new Emitter(new Vector(.3,.8,.9));
         Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
+
+        //Dielectric ice = new Dielectric(1.31);
         Dielectric ice = new Dielectric(1.31);
         Dielectric salt = new Dielectric(1.54);
+
+        //Driehoekig vlak voor ondergrond
+        Vector vect1 = new Vector(-30,-1.1,10);
+        Vector vect2 = new Vector(30,-1.1,10);
+        Vector vect3 = new Vector(0,-1.1,-30);
+        //Laag ijs erbovenop
+        Vector vect4 = new Vector(-30,-1.101,10);
+        Vector vect5 = new Vector(30,-1.101,10);
+        Vector vect6 = new Vector(0,-1.101,-30);
+
+        //Driehoekig vlak achtergrond
+        Vector vect7 = new Vector(-300,-100,-40);
+        Vector vect8 = new Vector(300,-100,-40);
+        Vector vect9 = new Vector(0,400,-40);
 
 
         Vector v0 = new Vector(-1,-1,-2);
@@ -128,12 +151,37 @@ public class Utility {
                 //world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
                 //world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
 
-                world.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
+                //world.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
 
-                lights.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
+                //Zon
+                //world.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
+                //lights.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
+                world.add(new Sphere(new Vector(3.5, 2, -2), 0.5, sunEmitter));
+                lights.add(new Sphere(new Vector(3.5, 2, -2), 0.5, sunEmitter));
+                world.add(new Sphere(new Vector(3.5, 2, -1), 0.5, sunEmitter));
+                lights.add(new Sphere(new Vector(3.5, 2, -1), 0.5, sunEmitter));
 
-                //Texture test
+
+                //Witte bol
+                //world.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
+                //lights.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
+
+                world.add(new Sphere(new Vector(1.5, 6, -2), 3, whiteLight));
+                lights.add(new Sphere(new Vector(1.5, 6, -2), 3, whiteLight));
+
+                //Aarde bol
                 world.add(new Sphere(new Vector(1, 0, -1.5), 1.2, earth_surface));
+                //Ijs ondergrond
+                //world.add(new Triangle(vect1, vect2, vect3, ice_surface));
+                world.add(new Triangle(vect1, vect2, vect3, ice));
+                world.add(new Triangle(vect4, vect5, vect6, ice_surface));
+                //lights.add(new Triangle(vect4,vect5,vect6,whiteLight));
+                //Achtergrond
+                world.add(new Triangle(vect7, vect8, vect9, background_surface));
+
+
+                //world.add(new Sphere(new Vector(0, -203.5, -3.55), 200, ice_surface));
+
             }
 
             default -> {
