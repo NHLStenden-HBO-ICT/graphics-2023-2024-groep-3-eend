@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import proeend.Main;
 import proeend.hittable.Hittable;
 import proeend.math.Vector;
 
@@ -23,6 +24,7 @@ public class EventHandler {
     private final Label coordY;
     private final Label coordZ;
     public static boolean ExitProgram;
+    private boolean renderingInProgress;
 
     public EventHandler() {
         coordX = new Label(Double.toString(INITIAL_CAMERA_POSITION.getX()));
@@ -143,9 +145,9 @@ public class EventHandler {
                     }
                     case C -> {
                         camera.setSamplesPerPixel(100);
-                        camera.setMaxDepth(10);
-                        camera.setImageWidth(400);
-                        Renderer.render(camera, true, world, lights);
+
+                        Renderer.render(camera, Main.getThreadController(), true);
+
                     }
                     case ESCAPE -> {
                         ExitProgram = true;
@@ -156,6 +158,8 @@ public class EventHandler {
         });
 
     }
+
+
 
     /**
      * Stelt resize listeners in voor het aanpassen van het afbeeldingsframe bij wijzigingen in venstergrootte.

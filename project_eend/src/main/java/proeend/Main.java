@@ -1,11 +1,11 @@
 package proeend;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
@@ -14,16 +14,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
 import proeend.hittable.ObjectLoader;
 import proeend.hittable.PolygonMesh;
+import proeend.material.Emitter;
+import proeend.material.Lambertian;
 import proeend.math.Vector;
-import proeend.material.*;
 import proeend.misc.*;
 import proeend.windows.StartScreen;
+
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -39,6 +42,21 @@ public class Main extends Application {
     WritableImage previousImage;
     public static StartScreen startScreen;
     public static int caseSelector;
+    private static final int numberOfThreads = Runtime.getRuntime().availableProcessors();
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads - 4);
+    private static ThreadController threadController;
+    private Scene startScene;
+    private Scene renderScene;
+    private Stage stage;
+    private static EventHandler eventHandler;
+
+    public static ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public static ThreadController getThreadController() {
+        return threadController;
+    }
 
     public static void setButtonClicked(int i){
         caseSelector = i;
@@ -51,74 +69,118 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        this.stage = stage != null ? stage : new Stage();
 
-        if(stackPane.getChildren().contains(startScreen)){
-          startScreen.setInfoLabel("Loading...");
-        }
+        camera.init();
+        threadController = new ThreadController(1, world, lights, executorService);
 
-        if (world.getObjects().isEmpty()) {
+        createScenes();
 
-            VBox root = new VBox(10);
-            BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTBLUE, null, null);
-            Background background = new Background(backgroundFill);
-
-            root.setBackground(background);
-
-            StartScreen startScreen = new StartScreen(this);
-            root.getChildren().add(startScreen);
-            Scene scene = new Scene(root, 600, 700);
-
-            stage.setScene(scene);
-        }
-
-        else {
-        camera.setBackground(Color.LIGHTPINK);
-        camera.setImageWidth(400);
-        camera.setCameraCenter(new Vector(0, 0, 2));
-
-        camera.setSamplesPerPixel(1);
-        camera.setMaxDepth(3);
-
-        updateFrame();
-        setupUI(stage);
-        setupAnimation(stage);
-        }
-
+        // Toon het startscherm
+        stage.setScene(startScene);
         stage.setTitle("RayTracer");
         stage.show();
 
-        if(stackPane.getChildren().contains(startScreen)){
-            startScreen.setInfoLabel("");
+        if (stackPane.getChildren().contains(startScreen)) {
+            startScreen.setInfoLabel("Loading...");
+
         }
+
     }
 
-    /**
-     * Configureert de gebruikersinterface voor het hoofdvenster van het programma.
-     *
-     * @param stage Het JavaFX-venster voor de gebruikersinterface.
-     */
-    private void setupUI(Stage stage) {
+    private void createScenes() {
+        // Creëer en configureer scènes voor startscherm en renderingsscherm
+        startScene = createStartScene();
+        renderScene = createRenderScene();
 
-        Scene scene = new Scene(stackPane, camera.getImageWidth(), camera.getHeight());
-        stackPane.getChildren().add(frame);
+        stage.setScene(startScene);
+    }
 
-        StackPane.setAlignment(frame, Pos.CENTER);
-        stackPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-        stage.setScene(scene);
+    private Scene createStartScene() {
+        // Lay-out van het startscherm
+        VBox startLayout = new VBox(10);
+        startLayout.setAlignment(Pos.CENTER);
+
+        StartScreen startScreen = new StartScreen(this);
+        startLayout.getChildren().add(startScreen);
+
+        Label titleLabel = new Label("Welcome to RayTracer");
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: blue;");
+
+
+
+        Button startRenderingButton = new Button("Start Rendering");
+        startRenderingButton.setStyle("-fx-background-color: white; -fx-text-fill: blue; -fx-font-size: 16px;");
+        startRenderingButton.setMinSize(200, 50);
+        startRenderingButton.setOnAction(e -> showRenderScene());
+
+        startLayout.getChildren().addAll(titleLabel, startRenderingButton);
+
+        BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTBLUE, null, null);
+        Background background = new Background(backgroundFill);
+        startLayout.setBackground(background);
+
+        return new Scene(startLayout, 600, 700);
+    }
+
+    private Scene createRenderScene() {
+        // Lay-out van het renderingsscherm
+        VBox renderLayout = new VBox(10);
+        renderLayout.setAlignment(Pos.CENTER);
+
+        /*Label renderLabel = new Label("Rendering Scene");
+        renderLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: blue;");*/
+
+        Button returnToStartButton = new Button("Terug naar Startscherm");
+        returnToStartButton.setStyle("-fx-background-color: white; -fx-text-fill: blue; -fx-font-size: 16px;");
+        returnToStartButton.setMinSize(200, 50);
+        returnToStartButton.setOnAction(e -> {
+            if (!executorService.isTerminated()) {
+                threadController.cancelAllTasks();
+            }
+            showStartScene();
+        });
+
+
+        // Voeg het frame toe aan de renderLayout
+        renderLayout.getChildren().addAll(/*renderLabel*/ returnToStartButton, frame);
+
+        BackgroundFill backgroundFill = new BackgroundFill(Color.WHITE, null, null);
+        Background background = new Background(backgroundFill);
+        renderLayout.setBackground(background);
+
+        return new Scene(renderLayout, camera.getImageWidth(), camera.getHeight());
+    }
+
+    private void showStartScene() {
+        stage.setScene(startScene);
+    }
+
+    private void showRenderScene() {
+        stage.setScene(renderScene);
+        setupAnimation();
     }
 
     /**
      * Configureert de animatie voor het bijwerken van het frame.
      */
-    private void setupAnimation(Stage stage) {
-        EventHandler eventHandler = new EventHandler();
+    private void setupAnimation() {
+        eventHandler = new EventHandler();
         eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
-        StackPane.setAlignment(frame, Pos.CENTER);
-        Duration interval = Duration.seconds(INITIAL_FRAME_RATE);
-        KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> updateFrame());
-        Timeline timeline = new Timeline(keyFrame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+
+        final long[] previousTime = {System.nanoTime()};
+        double frameRate = 24; // Set your desired frame rate
+        double frameTime = 1.0 / frameRate;
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (now - previousTime[0] > frameTime * 1e9) {
+                    // Only update frame if necessary
+                    updateFrame();
+                    previousTime[0] = now;
+                }
+            }
+        }.start();
     }
 
     /**
@@ -126,18 +188,14 @@ public class Main extends Application {
      */
     private void updateFrame() {
 
-        WritableImage newImage = Renderer.render(camera, false, world, lights);
+        WritableImage newImage = Renderer.render(camera, threadController, false);
 
-        if(previousImage == null){
-            previousImage = newImage;
-            return;
-        }
-
-        if (!camera.isMoving() && !camera.hasMovedSinceLastFrame()) {
+        if (!camera.isMoving() && !camera.hasMovedSinceLastFrame() && previousImage != null) {
             // Blend the previous image with the new image
             newImage = ImageBlender.blendImages(previousImage, newImage, .035, 3);
         }
         previousImage = newImage;
+
         frame.setImage(newImage);
         camera.setHasMovedSinceLastFrame(false);
     }
@@ -186,27 +244,25 @@ public class Main extends Application {
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
 
-        camera.setSamplesPerPixel(1);
+        camera.setSamplesPerPixel(100);
         camera.setMaxDepth(3);
 
-        updateFrame();
-        Stage stage = new Stage();
-        setupUI(stage);
-        setupAnimation(stage);
-
-        Renderer.render(camera, true, world, lights);
+        Renderer.render(camera, threadController, true);
 
     }
 
+
     public void caseButtonClicked(){
-        stackPane = new StackPane();
-        stackPane.getChildren().removeAll();
         Utility.loadWorld(world, lights, caseSelector);
         world = new HittableList(new BBNode(world));
 
-        camera.setSamplesPerPixel(1);
-        camera.setMaxDepth(5);
+        camera.setBackground(Color.LIGHTPINK);
+        camera.setImageWidth(400);
+        camera.setCameraCenter(new Vector(0, 0, 2));
 
-        start(new Stage());
+        setupAnimation();
+        showRenderScene();
+
+
     }
 }

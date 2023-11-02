@@ -11,6 +11,7 @@ import proeend.material.pdf.MixturePDF;
 import proeend.math.*;
 import proeend.records.HitRecord;
 import proeend.records.ScatterRecord;
+
 /**
  * Deze klasse is verantwoordelijk voor het renderen van scènes en het genereren van afbeeldingen.
  */
@@ -24,10 +25,9 @@ public class Renderer {
      * @param lights De lichtbronnen in de scène.
      * @return Een WritableImage dat de weergave van de scène bevat.
      */
-    public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
+    public static WritableImage render(Camera camera, ThreadController threadController, boolean save) {
         camera.init();
-        ThreadController threadController = new ThreadController(1, camera, world, lights);
-        return threadController.renderAndSave(save);
+        return threadController.renderAndSave(save, camera);
     }
     /**
      * Render een horizontale lijn van pixels in de afbeelding.

@@ -113,7 +113,17 @@ public class Utility {
                 world.add(new Sphere(new Vector(0, 0, -1), 1, normal));
                 lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
             }
-            default -> System.out.println("foute wereldkeuze");
+            default -> {
+                world.add(new Sphere(new Vector(0, 0, -1), 0.5, redMirror));
+                world.add(new Sphere(new Vector(0, -100.5, -1), 100, blueLambertian));
+                world.add(new Sphere(new Vector(0, 0, 0.5), .9, ice));
+                world.add(new Sphere(new Vector(-1, 0, -1), 0.5, greyLambertian));
+
+                // Voeg een willekeurig lichtobject toe
+                Hittable light0 = new Sphere(new Vector(1, 0, 0), 0.5, blueLight);
+                world.add(light0);
+                lights.add(light0);
+            }
         }
     }
 }
