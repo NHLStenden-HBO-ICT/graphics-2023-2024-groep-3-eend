@@ -95,8 +95,7 @@ public class Main extends Application {
             startScreen.setInfoLabel("Loading...");
         }
 
-        EventHandler eventHandler = new EventHandler();
-        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
+        EventHandler.setupEventHandlers(stage, frame, camera, world, lights);
     }
 
     private void createScenes() {
@@ -151,7 +150,7 @@ public class Main extends Application {
 
         setCamera();
         setupAnimation();
-        frame.setImage(Renderer.render(camera, threadController, false));
+        // frame.setImage(Renderer.render(camera, threadController, false));
 
 
         // Voeg het frame toe aan de renderLayout
@@ -209,14 +208,25 @@ public class Main extends Application {
      * Update het weergegeven frame met de nieuwste gerenderde afbeelding.
      */
     public static void updateFrame() {
-        camera.init();
+        if(camera.hasMovedSinceLastFrame()){
+            camera.init();
+        }
 
         WritableImage newImage = Renderer.render(camera, threadController, false);
+        if (previousImage != null){
+            if (!camera.isMoving() && !camera.hasMovedSinceLastFrame()) {
+                // Blend the previous image with the new image
+                newImage = ImageBlender.blendImages(previousImage, newImage, 0.035, 3);
+            }
+        }
 
+        previousImage = newImage;
+
+        WritableImage finalNewImage = newImage;
         Platform.runLater(() -> {
-            frame.setImage(newImage);
-            camera.setHasMovedSinceLastFrame(false);
+            frame.setImage(finalNewImage);
         });
+        camera.setHasMovedSinceLastFrame(false);
     }
 
 
@@ -274,10 +284,11 @@ public class Main extends Application {
         setupAnimation();
         // Renderer.render(camera, threadController, true);
 
+        EventHandler.setupEventHandlers(stage, frame, camera, world, lights);
+
         showRenderScene();
 
     }
-
 
     /**
      * Initialiseert het programma en start de JavaFX-toepassing.

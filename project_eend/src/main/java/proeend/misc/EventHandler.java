@@ -54,7 +54,7 @@ public class EventHandler {
      * @param world  Het 3D-wereldobject met verschillende objecten
      * @param lights De lichtbronnen in de wereld
      */
-    public void setupEventHandlers(Stage stage, ImageView frame, Camera camera, Hittable world, Hittable lights) {
+    public static void setupEventHandlers(Stage stage, ImageView frame, Camera camera, Hittable world, Hittable lights) {
         setKeyReleasedEventHandler(stage, camera);
         setKeyPressedEventHandler(stage, camera, world, lights);
         setResizeListeners(stage, frame, camera);
@@ -67,7 +67,7 @@ public class EventHandler {
      * @param stage  Het JavaFX-venster
      * @param camera De camera
      */
-    private void setKeyPressedEventHandler(Stage stage, Camera camera, Hittable world, Hittable lights) {
+    private static void setKeyPressedEventHandler(Stage stage, Camera camera, Hittable world, Hittable lights) {
         Scene scene = stage.getScene();
         scene.setOnKeyPressed(new javafx.event.EventHandler<>() {
             int shiftMult = 1;
@@ -106,39 +106,33 @@ public class EventHandler {
                     case UP -> {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
-                        coordZ.setText(Double.toString(Double.parseDouble(coordZ.getText()) - 0.04 * shiftMult));
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, 0, -0.04 * shiftMult)));
                         camera.setLookat(camera.getLookat().rotateY(-ROTATION_UNIT * shiftMult));
                     }
                     case LEFT -> {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
-                        coordX.setText(Double.toString(Double.parseDouble(coordX.getText()) - 0.02 * shiftMult));
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(-0.02 * shiftMult, 0, 0)));
                     }
                     case RIGHT -> {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
-                        coordX.setText(Double.toString(Double.parseDouble(coordX.getText()) + 0.02 * shiftMult));
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0.02 * shiftMult, 0, 0)));
                     }
                     case DOWN -> {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
-                        coordZ.setText(Double.toString(Double.parseDouble(coordZ.getText()) + 0.04 * shiftMult));
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, 0, 0.04 * shiftMult)));
                         camera.setLookat(camera.getLookat().add(new Vector(0, 0, 0.04 * shiftMult)));
                     }
                     case SPACE -> {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
-                        coordY.setText(Double.toString(Double.parseDouble(coordY.getText()) + 0.1 * shiftMult));
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, .1 * shiftMult, 0)));
                     }
                     case Z -> {
                         camera.setCameraMoving(true);
                         camera.setHasMovedSinceLastFrame(true);
-                        coordY.setText(Double.toString(Double.parseDouble(coordY.getText()) - 0.1 * shiftMult));
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, -.1 * shiftMult, 0)));
                     }
                     case C -> {
@@ -170,7 +164,7 @@ public class EventHandler {
      * @param frame  Het afbeeldingsframe
      * @param camera De camera
      */
-    private void setResizeListeners(Stage stage, ImageView frame, Camera camera) {
+    private static void setResizeListeners(Stage stage, ImageView frame, Camera camera) {
         ChangeListener<Number> resizeListener = (observableValue, oldValue, newValue) -> {
             double newWidth = stage.getWidth();
             double newHeight = (newValue.doubleValue() == stage.widthProperty().doubleValue()) ? newWidth * (1.0 / camera.getAspectRatio()) : stage.getHeight();
@@ -190,7 +184,7 @@ public class EventHandler {
      * @param stage  Het JavaFX-venster
      * @param camera De camera
      */
-    private void setKeyReleasedEventHandler(Stage stage, Camera camera) {
+    private static void setKeyReleasedEventHandler(Stage stage, Camera camera) {
         Scene scene = stage.getScene();
         scene.setOnKeyReleased(event -> {
             switch (event.getCode()) {
