@@ -114,9 +114,6 @@ public class Camera {
         return new Vector(bg.getRed(), bg.getGreen(), bg.getBlue());
     }
 
-    public Camera() {
-    }
-
     public int getHeight() {
         return imageHeight;
     }
@@ -131,6 +128,10 @@ public class Camera {
 
     public double getAspectRatio() {
         return aspectRatio;
+    }
+
+    public Camera(){
+        init();
     }
 
     /**

@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
@@ -77,13 +76,13 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setFullScreen(true);
+        //primaryStage.setFullScreenExitHint("Exit");
+
         stage = primaryStage;
 
-        threadController = new ThreadController(1, world, lights, executorService);
+        threadController = new ThreadController(10, world, lights, executorService);
         createScenes();
-
-        EventHandler eventHandler = new EventHandler();
-        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
 
         // Toon het startscherm
         if (stage != null) {
@@ -94,11 +93,10 @@ public class Main extends Application {
 
         if (stackPane.getChildren().contains(startScreen)) {
             startScreen.setInfoLabel("Loading...");
-
         }
 
-
-
+        EventHandler eventHandler = new EventHandler();
+        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
     }
 
     private void createScenes() {
@@ -112,7 +110,7 @@ public class Main extends Application {
     public void setCamera(){
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
-        camera.setSamplesPerPixel(10);
+        camera.setSamplesPerPixel(5);
         camera.setMaxDepth(3);
     }
 
@@ -123,25 +121,12 @@ public class Main extends Application {
 
         StartScreen startScreen = new StartScreen(this);
         startLayout.getChildren().add(startScreen);
-        Label titleLabel = new Label("Welcome to RayTracer");
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: blue;");
-
-
-
-        Button startRenderingButton = new Button("Start Rendering");
-        startRenderingButton.setStyle("-fx-background-color: white; -fx-text-fill: blue; -fx-font-size: 16px;");
-        startRenderingButton.setMinSize(200, 50);
-        startRenderingButton.setOnAction(e -> {
-            showRenderScene();
-        });
-
-        startLayout.getChildren().addAll(titleLabel, startRenderingButton);
 
         BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTBLUE, null, null);
         Background background = new Background(backgroundFill);
         startLayout.setBackground(background);
 
-        return new Scene(startLayout, 600, 700);
+        return new Scene(startLayout);
     }
 
     public Scene createRenderScene() {
@@ -164,7 +149,8 @@ public class Main extends Application {
             showStartScene();
         });
 
-
+        setCamera();
+        setupAnimation();
         frame.setImage(Renderer.render(camera, threadController, false));
 
 
@@ -175,7 +161,7 @@ public class Main extends Application {
         Background background = new Background(backgroundFill);
         renderLayout.setBackground(background);
 
-        return new Scene(renderLayout, camera.getImageWidth(), camera.getHeight());
+        return new Scene(renderLayout);
     }
 
     private void showStartScene() {
@@ -184,6 +170,7 @@ public class Main extends Application {
     }
 
     public void showRenderScene() {
+        camera.init();
         stage.setScene(renderScene);
     }
 
@@ -222,21 +209,10 @@ public class Main extends Application {
      * Update het weergegeven frame met de nieuwste gerenderde afbeelding.
      */
     public static void updateFrame() {
-
         camera.init();
-        /*if(camera.hasMovedSinceLastFrame()){
-        }
-*/
-        // Render a new image
+
         WritableImage newImage = Renderer.render(camera, threadController, false);
 
-       /* if (!camera.isMoving() && !camera.hasMovedSinceLastFrame() && previousImage != null) {
-            // Blend the previous image with the new image
-            newImage = ImageBlender.blendImages(previousImage, newImage, 0.035, 3);
-        }*/
-        previousImage = newImage;
-
-        // Update the JavaFX ImageView with the new image
         Platform.runLater(() -> {
             frame.setImage(newImage);
             camera.setHasMovedSinceLastFrame(false);
@@ -294,8 +270,10 @@ public class Main extends Application {
         world = new HittableList(new BBNode(world));
 
         setCamera();
-        camera.init();
+
         setupAnimation();
+        // Renderer.render(camera, threadController, true);
+
         showRenderScene();
 
     }

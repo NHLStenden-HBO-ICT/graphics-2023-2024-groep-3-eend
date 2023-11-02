@@ -24,7 +24,6 @@ public class EventHandler {
     private final Label coordY;
     private final Label coordZ;
     public static boolean ExitProgram;
-    private boolean renderingInProgress;
 
     public EventHandler() {
         coordX = new Label(Double.toString(INITIAL_CAMERA_POSITION.getX()));

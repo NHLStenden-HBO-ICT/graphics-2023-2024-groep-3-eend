@@ -96,27 +96,6 @@ public class ThreadController {
         return writableImage;
     }
 
-    /**
-     * Sluit de executor service af en wacht tot alle threads zijn voltooid.
-     */
-    public void shutdown() {
-        for (Future<?> future : futureList) {
-            future.cancel(true); // Annuleer de taak
-        }
-
-        executorService.shutdown();
-
-        // Wacht tot alle threads voltooid zijn
-        try {
-            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                // Als threads niet binnen 60 seconden zijn voltooid, forceer het afsluiten
-                executorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            logError("Thread execution was interrupted: " + e.getMessage());
-        }
-    }
-
     private void logError(String message) {
         System.err.println("Error: " + message);
     }
