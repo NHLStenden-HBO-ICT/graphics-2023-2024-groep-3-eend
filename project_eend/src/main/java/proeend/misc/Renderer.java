@@ -26,7 +26,6 @@ public class Renderer {
      * @return Een WritableImage dat de weergave van de scène bevat.
      */
     public static WritableImage render(Camera camera, ThreadController threadController, boolean save) {
-        camera.init();
         return threadController.renderAndSave(save, camera);
     }
     /**

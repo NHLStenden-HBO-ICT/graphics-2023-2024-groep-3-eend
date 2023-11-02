@@ -5,8 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import proeend.Main;
-import proeend.hittable.HittableList;
-import proeend.misc.Utility;
 
 public class StartScreen extends VBox {
     private final Label infoLabel = new Label();

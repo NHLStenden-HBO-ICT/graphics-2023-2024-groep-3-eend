@@ -2,6 +2,7 @@ package proeend;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,27 +29,33 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
  */
 public class Main extends Application {
-
-    private static final double INITIAL_FRAME_RATE = 0.1;
     private static final Camera camera = new Camera();
+
     private static HittableList world = new HittableList();
     private static final HittableList lights = new HittableList();
-    final ImageView frame = new ImageView();
-     StackPane stackPane = new StackPane();
-    WritableImage previousImage;
+    final static ImageView frame = new ImageView();
+    StackPane stackPane = new StackPane();
+    private static WritableImage previousImage;
     public static StartScreen startScreen;
     public static int caseSelector;
     private static final int numberOfThreads = Runtime.getRuntime().availableProcessors();
     private static final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads - 4);
     private static ThreadController threadController;
     private Scene startScene;
-    private Scene renderScene;
-    private Stage stage;
-    private static EventHandler eventHandler;
+    public Scene renderScene;
+    private static Stage stage;
+    private static long lastFrameTime = 0;
+    private static final double TARGET_FRAME_RATE = 24;
+    private AnimationTimer animationTimer;
+
+    public static ImageView getFrame() {
+        return frame;
+    }
 
     public static ExecutorService getExecutorService() {
         return executorService;
@@ -62,38 +69,51 @@ public class Main extends Application {
         caseSelector = i;
     }
 
+
     /**
      * Start het programma en configureert de besturingselementen.
      *
-     * @param stage Het venster waarin het programma wordt weergegeven.
+     * @param primaryStage Het venster waarin het programma wordt weergegeven.
      */
     @Override
-    public void start(Stage stage) {
-        this.stage = stage != null ? stage : new Stage();
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
 
-        camera.init();
         threadController = new ThreadController(1, world, lights, executorService);
-
         createScenes();
 
+        EventHandler eventHandler = new EventHandler();
+        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
+
         // Toon het startscherm
-        stage.setScene(startScene);
-        stage.setTitle("RayTracer");
-        stage.show();
+        if (stage != null) {
+            stage.setScene(startScene);
+            stage.setTitle("RayTracer");
+            stage.show();
+        }
 
         if (stackPane.getChildren().contains(startScreen)) {
             startScreen.setInfoLabel("Loading...");
 
         }
 
+
+
     }
 
     private void createScenes() {
         // Creëer en configureer scènes voor startscherm en renderingsscherm
+
         startScene = createStartScene();
         renderScene = createRenderScene();
-
         stage.setScene(startScene);
+    }
+
+    public void setCamera(){
+        camera.setImageWidth(400);
+        camera.setCameraCenter(new Vector(0, 0, 2));
+        camera.setSamplesPerPixel(10);
+        camera.setMaxDepth(3);
     }
 
     private Scene createStartScene() {
@@ -103,7 +123,6 @@ public class Main extends Application {
 
         StartScreen startScreen = new StartScreen(this);
         startLayout.getChildren().add(startScreen);
-
         Label titleLabel = new Label("Welcome to RayTracer");
         titleLabel.setStyle("-fx-font-size: 24px; -fx-text-fill: blue;");
 
@@ -112,7 +131,9 @@ public class Main extends Application {
         Button startRenderingButton = new Button("Start Rendering");
         startRenderingButton.setStyle("-fx-background-color: white; -fx-text-fill: blue; -fx-font-size: 16px;");
         startRenderingButton.setMinSize(200, 50);
-        startRenderingButton.setOnAction(e -> showRenderScene());
+        startRenderingButton.setOnAction(e -> {
+            showRenderScene();
+        });
 
         startLayout.getChildren().addAll(titleLabel, startRenderingButton);
 
@@ -123,7 +144,8 @@ public class Main extends Application {
         return new Scene(startLayout, 600, 700);
     }
 
-    private Scene createRenderScene() {
+    public Scene createRenderScene() {
+
         // Lay-out van het renderingsscherm
         VBox renderLayout = new VBox(10);
         renderLayout.setAlignment(Pos.CENTER);
@@ -138,12 +160,16 @@ public class Main extends Application {
             if (!executorService.isTerminated()) {
                 threadController.cancelAllTasks();
             }
+            stopAnimation();
             showStartScene();
         });
 
 
+        frame.setImage(Renderer.render(camera, threadController, false));
+
+
         // Voeg het frame toe aan de renderLayout
-        renderLayout.getChildren().addAll(/*renderLabel*/ returnToStartButton, frame);
+        renderLayout.getChildren().addAll(returnToStartButton, frame);
 
         BackgroundFill backgroundFill = new BackgroundFill(Color.WHITE, null, null);
         Background background = new Background(backgroundFill);
@@ -154,60 +180,69 @@ public class Main extends Application {
 
     private void showStartScene() {
         stage.setScene(startScene);
+        stopAnimation();
     }
 
-    private void showRenderScene() {
+    public void showRenderScene() {
         stage.setScene(renderScene);
-        setupAnimation();
     }
 
     /**
      * Configureert de animatie voor het bijwerken van het frame.
      */
-    private void setupAnimation() {
-        eventHandler = new EventHandler();
-        eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
+    public void setupAnimation() {
 
-        final long[] previousTime = {System.nanoTime()};
-        double frameRate = 24; // Set your desired frame rate
-        double frameTime = 1.0 / frameRate;
-        new AnimationTimer() {
+
+        lastFrameTime = System.nanoTime();
+        animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (now - previousTime[0] > frameTime * 1e9) {
-                    // Only update frame if necessary
+                // Calculate the time passed since the last frame
+                long elapsedNanos = now - lastFrameTime;
+                double elapsedSeconds = elapsedNanos / 1e9;
+
+                // Update the frame if enough time has passed for the target frame rate
+                if (elapsedSeconds >= 1.0 / TARGET_FRAME_RATE) {
                     updateFrame();
-                    previousTime[0] = now;
+                    lastFrameTime = now;
                 }
             }
-        }.start();
+        };
+
+        animationTimer.start();
+    }
+
+    private void stopAnimation() {
+        if (animationTimer != null) {
+            animationTimer.stop();
+        }
     }
 
     /**
      * Update het weergegeven frame met de nieuwste gerenderde afbeelding.
      */
-    private void updateFrame() {
+    public static void updateFrame() {
 
+        camera.init();
+        /*if(camera.hasMovedSinceLastFrame()){
+        }
+*/
+        // Render a new image
         WritableImage newImage = Renderer.render(camera, threadController, false);
 
-        if (!camera.isMoving() && !camera.hasMovedSinceLastFrame() && previousImage != null) {
+       /* if (!camera.isMoving() && !camera.hasMovedSinceLastFrame() && previousImage != null) {
             // Blend the previous image with the new image
-            newImage = ImageBlender.blendImages(previousImage, newImage, .035, 3);
-        }
+            newImage = ImageBlender.blendImages(previousImage, newImage, 0.035, 3);
+        }*/
         previousImage = newImage;
 
-        frame.setImage(newImage);
-        camera.setHasMovedSinceLastFrame(false);
+        // Update the JavaFX ImageView with the new image
+        Platform.runLater(() -> {
+            frame.setImage(newImage);
+            camera.setHasMovedSinceLastFrame(false);
+        });
     }
 
-    /**
-     * Initialiseert het programma en start de JavaFX-toepassing.
-     *
-     * @param args Argumenten die aan het programma kunnen worden meegegeven.
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     public void renderDuck(){
         stackPane = new StackPane();
@@ -240,12 +275,13 @@ public class Main extends Application {
         uvSphere.ConvertToTriangles();
         world.add(uvSphere);
 
-        camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
 
         camera.setSamplesPerPixel(100);
         camera.setMaxDepth(3);
+
+        camera.init();
 
         Renderer.render(camera, threadController, true);
 
@@ -253,16 +289,24 @@ public class Main extends Application {
 
 
     public void caseButtonClicked(){
+
         Utility.loadWorld(world, lights, caseSelector);
         world = new HittableList(new BBNode(world));
 
-        camera.setBackground(Color.LIGHTPINK);
-        camera.setImageWidth(400);
-        camera.setCameraCenter(new Vector(0, 0, 2));
-
+        setCamera();
+        camera.init();
         setupAnimation();
         showRenderScene();
 
+    }
 
+
+    /**
+     * Initialiseert het programma en start de JavaFX-toepassing.
+     *
+     * @param args Argumenten die aan het programma kunnen worden meegegeven.
+     */
+    public static void main(String[] args) {
+        launch(args);
     }
 }

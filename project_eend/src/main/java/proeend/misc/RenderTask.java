@@ -3,6 +3,7 @@ package proeend.misc;
 import javafx.scene.image.PixelWriter;
 import proeend.hittable.Hittable;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,6 +19,7 @@ public class RenderTask implements Runnable  {
     private final Camera camera;
     private final AtomicInteger completedLines;
     private final Runnable updateProgress;
+    private final CountDownLatch renderingLatch;
 
     /**
      * Initialiseert een RenderTask met de opgegeven parameters.
@@ -32,7 +34,7 @@ public class RenderTask implements Runnable  {
      * @param completedLines Een AtomicInteger om het aantal voltooide lijnen bij te houden.
      * @param updateProgress Een Runnable om de voortgang bij te werken.
      */
-    public RenderTask(Camera camera, Hittable world, Hittable lights, int startLine, int endLine, boolean save, PixelWriter pixelWriter, AtomicInteger completedLines, Runnable updateProgress) {
+    public RenderTask(Camera camera, Hittable world, Hittable lights, int startLine, int endLine, boolean save, PixelWriter pixelWriter, AtomicInteger completedLines, CountDownLatch renderingLatch, Runnable updateProgress) {
         this.world = world;
         this.lights = lights;
         this.startLine = startLine;
@@ -42,6 +44,7 @@ public class RenderTask implements Runnable  {
         this.camera = camera;
         this.completedLines = completedLines;
         this.updateProgress = updateProgress;
+        this.renderingLatch = renderingLatch;
     }
 
     /**
@@ -58,5 +61,9 @@ public class RenderTask implements Runnable  {
             if (save && updateProgress != null) {
                     updateProgress.run();
             }}
+
+        // Notify completion and count down the latch
+        renderingLatch.countDown();
+
     }
 }

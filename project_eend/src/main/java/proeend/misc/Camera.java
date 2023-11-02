@@ -14,11 +14,11 @@ public class Camera {
     private Vector lookat = new Vector(0, 0, -1);
     private Vector up = new Vector(0, 1, 0);
     private double verticalFOV = Math.PI / 2;
-    private int samplesPerPixel = 1;
+    private int samplesPerPixel;
     private int rootSPP = (int) Math.sqrt(samplesPerPixel);
-    private int maxDepth = 50;
+    private int maxDepth = 3;
     private double aspectRatio = 16.0 / 9.0;
-    private int imageWidth = 800;
+    private int imageWidth = 400;
     private int imageHeight = (int) (imageWidth / aspectRatio);
     private double viewportHeight;
     private double viewportWidth = viewportHeight * (double) imageWidth / (double) imageHeight;
@@ -27,7 +27,7 @@ public class Camera {
     private Vector pixelDeltaU = viewportU.scale(1.0 / imageWidth);
     private Vector pixelDeltaV = viewportV.scale(1.0 / imageHeight);
     private Vector topLeftPixel;
-    private Vector background = new Vector();
+    private final Vector background =  colorToVector(Color.CORNFLOWERBLUE);
 
     public void setCameraMoving(boolean cameraIsMoving) {
         this.cameraIsMoving = cameraIsMoving;
@@ -110,8 +110,8 @@ public class Camera {
         this.aspectRatio = aspectRatio;
     }
 
-    public void setBackground(Color bg) {
-        this.background = new Vector(bg.getRed(), bg.getGreen(), bg.getBlue());
+    public Vector colorToVector(Color bg) {
+        return new Vector(bg.getRed(), bg.getGreen(), bg.getBlue());
     }
 
     public Camera() {

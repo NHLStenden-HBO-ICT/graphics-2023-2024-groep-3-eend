@@ -80,7 +80,6 @@ public class EventHandler {
              */
             @Override
             public void handle(KeyEvent event) {
-
                 if (event.isShiftDown()) {
                     shiftMult = 10;
                 } else shiftMult = 1;
@@ -144,8 +143,10 @@ public class EventHandler {
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, -.1 * shiftMult, 0)));
                     }
                     case C -> {
+                        Main.getThreadController().cancelAllTasks();
                         camera.setSamplesPerPixel(100);
-
+                        //WritableImage image = Main.getFrame().snapshot(new SnapshotParameters(), null);
+                        //ImageSaver.saveImage(image, camera.getSamplesPerPixel());
                         Renderer.render(camera, Main.getThreadController(), true);
 
                     }
@@ -158,6 +159,8 @@ public class EventHandler {
         });
 
     }
+
+
 
 
 

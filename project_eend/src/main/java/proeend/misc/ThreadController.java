@@ -2,14 +2,11 @@ package proeend.misc;
 
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import proeend.Main;
 import proeend.hittable.Hittable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 /**
  * De `ThreadController` klasse beheert multi-threading voor het rendering proces.
@@ -19,10 +16,9 @@ public class ThreadController {
     private final int blockSize;
     private final Hittable world;
     private final Hittable lights;
-    private WritableImage writableImage;
     private PixelWriter pixelWriter;
     private final ExecutorService executorService;
-    private List<Future<?>> futureList = new ArrayList<>();
+    private final List<Future<?>> futureList = new ArrayList<>();
 
 
     /**
@@ -38,6 +34,7 @@ public class ThreadController {
         this.world = world;
         this.lights = lights;
         this.executorService = executorService;
+
     }
 
 
@@ -49,8 +46,11 @@ public class ThreadController {
      */
 
     public WritableImage renderAndSave(boolean save, Camera camera) {
-        writableImage = new WritableImage(camera.getImageWidth(), camera.getHeight());
+        CountDownLatch renderingLatch = new CountDownLatch(camera.getHeight() / blockSize);
+
+        WritableImage writableImage = new WritableImage(camera.getImageWidth(), camera.getHeight());
         pixelWriter = writableImage.getPixelWriter();
+
 
         if(save){
             startTime = System.nanoTime();
@@ -62,29 +62,37 @@ public class ThreadController {
             final int lineStart = i;
             final int lineEnd = Math.min(i + blockSize, camera.getHeight());
             Future<?> future = executorService.submit(() -> {
-                RenderTask task = new RenderTask(camera, world, lights, lineStart, lineEnd, save, pixelWriter, completedLines, () -> {
+                RenderTask task = new RenderTask(camera, world, lights, lineStart, lineEnd, save, pixelWriter, completedLines, renderingLatch, () -> {
                     double progress = (completedLines.get() / (double) camera.getHeight()) * 100.0;
                     String info = String.format("Render progress: %.0f\r", progress) + "%";
-                    Main.startScreen.setInfoLabel(info);
+                    //Main.startScreen.setInfoLabel(info);
                 });
                 task.run();
             });
+
             futureList.add(future);
         }
 
-        //shutdown(executorService);
+        try {
+            // Wacht tot alle taken zijn voltooid
+            renderingLatch.await();
+        } catch (InterruptedException e) {
+            logError("Error during rendering or saving: " + e.getMessage());
+        }
 
-        if(save) {
+        if (save) {
+
+
             ImageSaver.saveImage(writableImage, camera.getSamplesPerPixel());
             long endTime = System.nanoTime();
-
             long elapsedTime = endTime - startTime;
             long seconds = TimeUnit.NANOSECONDS.toSeconds(elapsedTime);
             long millis = TimeUnit.NANOSECONDS.toMillis(elapsedTime) - TimeUnit.SECONDS.toMillis(seconds);
 
             System.out.println("Rendering completed in " + seconds + " seconds and " + millis + " milliseconds.");
-            camera.setSamplesPerPixel(100);
         }
+
+
         return writableImage;
     }
 
