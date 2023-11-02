@@ -165,7 +165,6 @@ public class Utility {
                 //Witte bol
                 //world.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
                 //lights.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
-
                 world.add(new Sphere(new Vector(1.5, 6, -2), 3, whiteLight));
                 lights.add(new Sphere(new Vector(1.5, 6, -2), 3, whiteLight));
 
