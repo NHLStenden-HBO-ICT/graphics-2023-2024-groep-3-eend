@@ -16,10 +16,10 @@ verschillende perspectieven te bekijken.
 ## Materialen
 Er zijn verschillende materialen beschikbaar binnen de raytracer, waaronder:
 
-Dielectric: Voor transparante materialen.
-Emitter: Voor lichtbronnen.
-Lambertian: Voor ruige materialen.
-Mirror: Voor reflecterende materialen.
+- Dielectric: Voor transparante materialen.
+- Emitter: Voor lichtbronnen.
+- Lambertian: Voor ruige materialen.
+- Mirror: Voor reflecterende materialen.
 
 ## Textures
 Ook zijn er verschillende texturen te gebruiken, 
