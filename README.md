@@ -1,50 +1,62 @@
 # Graphics Raytracer: Project Eend
-Dit project is een Monte Carlo-stijl raytracer dat voor elk pixel meerdere willekeurige lichtstralen afvuurt en de gemiddelde kleur berekent van de resulterende kleuren. Project Eend biedt een scala aan functies om realistische en gedetailleerde 3D-scènes te renderen.
+Dit project is een Monte Carlo-stijl raytracer die voor elke pixel een ray schiet die op willekeurige wijs afkaatst
+en de gemiddelde kleur van het totaal gevonden resultaat neemt.
+In deze readme worden de onderdelen van dit project beschreven.
 
-# Basiscomponenten
-In de kern van Project Eend vind je essentiële componenten die de basis vormen van de raytracer:
+## Basiscomponenten
+Om te beginnen vormen deze onderdelen de basis van de raytracer:
 
 - Rays: Deze vertegenwoordigen de lichtstralen die door de scène worden geschoten.
-- Vectoren: Definiëerd de positie, richting en eigenschappen van objecten en lichtstralen in de 3D-scène.
+- Vectoren: Definiëren de positie, richting en eigenschappen van objecten en lichtstralen in de 3D-scène.
 - Scènes: De scènes bevatten de 3D-objecten en materialen die worden weergegeven 
 en zijn het canvas waarop de raytracer werkt.
-- Camera: Hiermee kun je de kijkhoek en positie aanpassen om je scène vanuit verschillende perspectieven te bekijken.
+- Camera: Hiermee kunnen de kijkhoek en positie worden aangepast om de scène vanuit 
+verschillende perspectieven te bekijken.
 
-# Camera bewegen
-Met de toetsen Spatie en Z, Q en E kan de positie van de camera worden aangepast tijdens de live-render.
+## Materialen
+Er zijn verschillende materialen beschikbaar binnen de raytracer, waaronder:
 
-# Render genereren en opslaan
-Door op de toets C te drukken tijdens de live-render, kan er een afbeelding worden gerenderd in hoge kwaliteit 
-en opgeslagen in de renders folder.
+Dielectric: Voor transparante materialen.
+Emitter: Voor lichtbronnen.
+Lambertian: Voor ruige materialen.
+Mirror: Voor reflecterende materialen.
 
-# Materialen
-Project Eend biedt een verscheidenheid aan materialen die de eigenschappen van objecten in de scène definiëren. 
-Enkele van de beschikbare materialen zijn:
+## Textures
+Ook zijn er verschillende texturen te gebruiken, 
+inclusief CheckerTexture, SolidTexture en ImageTexture voor gedetailleerde oppervlaktetexturen.
 
-Dielectric: Voor transparante en reflecterende materialen.
-Emitter: Voor lichtbronnen die licht in de scène uitstralen.
-Lambertian: Voor diffuse materialen met natuurlijke kleurverspreiding.
-Mirror: Voor spiegelachtige reflecties.
-Normal: Een materiaal om de normaalvector van objecten weer te geven.
-Textures: Inclusief CheckerTexture, SolidTexture en ImageTexture voor gedetailleerde oppervlaktetexturen.
+## Anti-Aliasing
+Anti-aliasing is geïmplementeerd om kartelranden in de beelden te verminderen, 
+door middel van subpixel-raysampling.
 
-# Anti-Aliasing
-Anti-aliasing is geïmplementeerd om kartelranden in de beelden te verminderen. Dit project maakt gebruik van willekeurige lichtstraalsampling om realistische en vloeiende resultaten te bereiken.
+## Triangle & Mesh
+Om complexe geometrieën in de scène te kunnen renderen wordt er gebruik gemaakt van driehoeken.
+Hiermee kun je gedetailleerde 3D-modellen weergeven.
 
-# Triangle & Mesh
-Project Eend ondersteunt de weergave van complexe geometrieën in de scène, waaronder driehoeken en mesh-objecten. Hiermee kun je gedetailleerde 3D-modellen renderen.
+## Real Time GUI
+Een Real Time grafische gebruikersinterface maakt het mogelijk om de scène live te bekijken. 
+Met de toetsen Spatie, Z, Q en E of de pijltjes kan de positie van de camera worden aangepast. 
+Bovendien kan er op de toets C gedrukt worden om een afbeelding te laten renderen in hogere kwaliteit.
 
-# Real-Time GUI met Capture-mogelijkheid
-Een realtime grafische gebruikersinterface (GUI) maakt het mogelijk om de scène te bekijken terwijl deze wordt gerenderd. Bovendien kun je met deze GUI schermafbeeldingen vastleggen om je renders te bewaren en te delen.
+## Multithreading
+Om de prestaties te verbeteren, wordt gebruik gemaakt van multithreading. 
+Dit maakt parallelle berekening van lichtstralen mogelijk, waardoor complexe scènes sneller kunnen worden gerenderd.
 
+## BVH met AABB
+Verder is er een Bounding Volume Hierarchy met Axis Aligned Bounding Boxes geïmplementeerd. 
+Deze structuur optimaliseert de intersectieberekeningen van lichtstralen en objecten in de scène. 
+In plaats van elk object afzonderlijk te controleren, 
+wordt een boomstructuur gebruikt om efficiëntere berekeningen mogelijk te maken.
 
-# Multithreading
-Om de prestaties te verbeteren, maakt Project Eend gebruik van multithreading. Dit maakt parallelle berekening van lichtstralen mogelijk, waardoor complexe scènes sneller kunnen worden gerenderd.
+## Importance-sampling
+Om indirect licht beter te kunnen nabootsen wordt in deze raytracer gebruik gemaakt van importance sampling.
+Dit houdt in dat er bij bepaalde objecten prioriteit gesteld kan worden van hoe 
+groot de kans is dat het licht richting het object gaat.
+Hiermee kan bepaald worden of bijvoorbeeld een ander object het licht zou blokkeren,
+waardoor in combinatie met de Monte Carlo-stijl van afkaatsing een realistische schaduw gerendered wordt.
 
-# BVH met AABB 🔗
-Een opvallende feature van dit project is de implementatie van een Bounding Volume Hierarchy (BVH) met Axis Aligned Bounding Boxes (AABB). Deze structuur optimaliseert de intersectieberekeningen tussen lichtstralen en objecten in de scène. In plaats van elk object afzonderlijk te controleren, wordt een boomstructuur gebruikt om efficiëntere berekeningen mogelijk te maken.
+## GEBRUIK
+- Open dit project in IntelliJ >>>
+- Ga in de Main class naar de functie main() >>>
+- Klik op het groene pijltje om het project op te starten.
 
-# Light en Object-sampling
-Project Eend bevat geavanceerde methoden voor licht- en object-sampling. Deze functies dragen bij aan de realistische weergave van licht en schaduwen in de scène.
-
-Deze readme biedt een beknopt overzicht van Project Eend en zijn functies. Raadpleeg de documentatie en de broncode voor meer gedetailleerde informatie en gebruiksinstructies. We hopen dat je geniet van het verkennen en gebruiken van deze krachtige raytracer!
