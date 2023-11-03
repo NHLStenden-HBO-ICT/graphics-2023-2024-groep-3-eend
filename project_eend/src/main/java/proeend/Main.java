@@ -27,8 +27,6 @@ import proeend.windows.StartScreen;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.io.IOException;
-
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
  */
