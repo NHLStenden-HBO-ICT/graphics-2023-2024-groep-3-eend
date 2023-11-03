@@ -2,6 +2,7 @@ package proeend.material;
 
 import proeend.records.ScatterRecord;
 import proeend.material.pdf.CosPDF;
+import proeend.material.texture.*;
 import proeend.material.texture.SolidColor;
 import proeend.material.texture.Texture;
 import proeend.records.HitRecord;
@@ -34,24 +35,9 @@ public class Lambertian extends Material{
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scatterRecord) {
 
-        scatterRecord.attenuation = albedo.value(rec.u, rec.v, rec.p);
+        scatterRecord.attenuation = albedo.value(rec.getU(), rec.getV(), rec.getP());
         scatterRecord.pdf = new CosPDF(rec.normal);
         scatterRecord.skipPDF = false;
-
-
-        /* oude scatter zonder pdf
-        Vector scatterDirection = Vector.add(rec.normal, Vector.randomUnitVec());
-        scattered.origin = rec.p;
-    public boolean scatter(Ray rayIn, HitRecord rec, Vector attenuation, Ray scattered) {
-        Vector scatterDirection = Vector.add(rec.getNormal(), Vector.randomUnitVec());
-        scattered.origin = rec.getP();
-        scattered.direction = scatterDirection;
-        attenuation.copy(albedo.value(rec.getU(), rec.getV(),rec.getP()));
-        //wat er eerst stond
-        //Global.scattered = new Ray(rec.p, scatterDirection);
-        //Global.attenuation = albedo;
-        attenuation.copy(albedo.value(rec.u, rec.v,rec.p));
-         */
 
         return true;
     }

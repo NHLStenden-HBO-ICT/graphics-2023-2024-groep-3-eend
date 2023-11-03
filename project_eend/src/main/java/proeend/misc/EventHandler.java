@@ -142,7 +142,7 @@ public class EventHandler {
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, -.1 * shiftMult, 0)));
                     }
                     case C -> {
-                        camera.setSamplesPerPixel(100);
+                        camera.setSamplesPerPixel(400);
                         camera.setMaxDepth(10);
                         camera.setImageWidth(400);
                         Renderer.render(camera, true, world, lights);

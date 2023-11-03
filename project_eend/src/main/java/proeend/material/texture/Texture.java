@@ -1,5 +1,6 @@
 package proeend.material.texture;
 
+import proeend.material.Material;
 import proeend.math.Vector;
 
 /**

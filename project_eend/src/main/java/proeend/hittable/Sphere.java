@@ -3,6 +3,7 @@ package proeend.hittable;
 import proeend.math.*;
 import proeend.records.HitRecord;
 import proeend.material.Material;
+import static java.lang.Math.PI;
 
 /**
  * Een sfeerobject dat kan worden geraakt door een lichtstraal in een 3D-scène.
@@ -69,6 +70,8 @@ public class Sphere extends Hittable {
         rec.setMaterial(material);
         Vector outwardNormal = (rec.getP().add(center.invert()).scale((1.0 / radius)));
         rec.setFaceNormal(ray, outwardNormal);
+        get_sphere_uv(outwardNormal, rec);
+
         return true;
     }
     /**
@@ -89,6 +92,21 @@ public class Sphere extends Hittable {
         double solidAngle = 2*Math.PI*(1-cosThetaMax);
 
         return 1.0/solidAngle;
+    }
+
+    /**
+     *
+     * @param p Gegeven punt op de sphere
+     * @param u Geeft waarde [0,1] van de angle rond de y as van X=-1
+     * @param v Geeft waarde [0,1] van angle van Y=-1 naar y=+1
+     */
+
+
+    public void get_sphere_uv(Vector p, HitRecord rec){ //krijgt u=0,0 en v=0,0 en word u=waarde boven 0 en v netzo alleen geeft hij de waarde niet terug
+        double theta = Math.acos(-p.getY());
+        double phi = Math.atan2(-p.getZ(), p.getX()) + PI;
+        rec.setU( phi / (2 * PI));
+        rec.setV(theta / PI);
     }
 
     /**

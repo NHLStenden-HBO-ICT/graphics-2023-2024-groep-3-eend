@@ -15,8 +15,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
+import proeend.hittable.ObjectLoader;
+import proeend.hittable.PolygonMesh;
+import proeend.material.Lambertian;
 import proeend.math.Vector;
 import proeend.misc.*;
+
+import java.io.IOException;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -102,14 +107,14 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
-        //Lambertian white = new Lambertian(new Vector(1, .5, .5));
+        Lambertian white = new Lambertian(new Vector(1, 1, 0));
         //Emitter white = new Emitter(new Vector(1,1,1));
-        /*PolygonMesh duck = null;
+        PolygonMesh duck = null;
         PolygonMesh icoSphere = null;
         PolygonMesh uvSphere = null;
 
         try {
-            duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
+            duck = ObjectLoader.loadObj("project_eend/Models/Rubber_Duck_obj.obj", white);
         } catch (IOException e) {
             System.out.println("load failed");
         }
@@ -122,18 +127,21 @@ public class Main extends Application {
             uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
         } catch (IOException e) {
             System.out.println("load failed");
-        } */
+        }
 
-    /*    Utility.loadWorld(world, lights, 1);
+        Utility.loadWorld(world, lights, 8);
 
-       uvSphere.ConvertToTriangles();
-        world.add(uvSphere);*/
+        duck.ConvertToTriangles();
+
+        duck.translate(new Vector(-0.1,-0.2,3.8));
+
+        //world.add(duck);
 
 
-        camera.setBackground(Color.LIGHTPINK);
+        camera.setBackground(Color.BLACK);
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
-        camera.setCameraCenter(new Vector(0,0,2));
+        camera.setCameraCenter(new Vector(0,0,4));
 
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(3);
@@ -141,11 +149,8 @@ public class Main extends Application {
         //camera.setCameraCenter(new Vector(-.5,20,40));
         //camera.setLookat(new Vector(0,20,39));
 
-        Utility.loadWorld(world, lights, 0);
+        //Utility.loadWorld(world, lights, 8);
         world = new HittableList(new BBNode(world));
-
-        camera.setSamplesPerPixel(1);
-        camera.setMaxDepth(5);
 
         /*var startTime = System.currentTimeMillis();
         System.out.println(LocalDateTime.now());
