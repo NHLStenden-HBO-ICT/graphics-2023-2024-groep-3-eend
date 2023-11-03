@@ -13,15 +13,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
-import proeend.hittable.ObjectLoader;
-import proeend.hittable.PolygonMesh;
-import proeend.material.Lambertian;
-import proeend.math.Vector;
 import proeend.misc.*;
-
-import java.io.IOException;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -106,38 +99,6 @@ public class Main extends Application {
      * @param args Argumenten die aan het programma kunnen worden meegegeven.
      */
     public static void main(String[] args) {
-
-
-
-        camera.setBackground(Color.BLACK);
-        camera.setImageWidth(400);
-        //camera.setCameraCenter(camOrigin);
-        camera.setCameraCenter(new Vector(0,0,4));
-
-        camera.setSamplesPerPixel(64);
-        camera.setMaxDepth(3);
-
-        //camera.setCameraCenter(new Vector(-.5,20,40));
-        //camera.setLookat(new Vector(0,20,39));
-
-        Utility.loadWorld(world, lights, 9);
-        world = new HittableList(new BBNode(world));
-
-        /*var startTime = System.currentTimeMillis();
-        System.out.println(LocalDateTime.now());
-        //cam1.render(true, world, lights);
-        //cam1.multiRender(true, world, lights);
-        camera.multiRenderLines(true, world, lights);
-        var endTime = System.currentTimeMillis() - startTime;
-        var minutes = endTime/60_000.0;
-        var hours = minutes/60.0;
-        System.out.print("seconds:\t\t");
-        System.out.println(endTime/1000.0);
-        System.out.print("minutes:\t\t");
-        System.out.println(minutes);
-        System.out.println("hours:\t\t\t" + hours);*/
-        Renderer.render(camera, true, world, lights);
-
-       // launch(args);
+        launch();
     }
 }
