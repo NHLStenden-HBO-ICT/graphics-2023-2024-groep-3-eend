@@ -47,24 +47,12 @@ public class Main extends Application {
     private Stage currentStage;
     private static boolean startScreenVisible;
 
-    public static Timeline getTimeline() {
-        return timeline;
-    }
-
-    public static ImageView getFrame(){
-        return frame;
-    }
-
     public static boolean isStartScreenVisible(){
         return startScreenVisible;
     }
-
     public static void setStartScreenVisible(boolean value){
         startScreenVisible = value;
     }
-
-
-
     public static void setButtonClicked(int i){
         caseSelector = i;
     }
@@ -118,12 +106,14 @@ public class Main extends Application {
 
         stage.setScene(scene);
     }
+    /**
+     * Toont het startscherm van de applicatie en configureert de weergave-instellingen.
+     */
     private void showStartScreen() {
 
         currentStage.setFullScreenExitHint("");
         currentStage.setFullScreen(true);
         startScreenVisible = true;
-
 
 
         if(timeline != null){
@@ -143,9 +133,6 @@ public class Main extends Application {
         Scene scene = new Scene(root, 600, 700);
 
         currentStage.setScene(scene);
-
-
-
     }
     /**
      * Configureert de animatie voor het bijwerken van het frame.
@@ -210,6 +197,9 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * Render de badeend en configureer de weergave-instellingen voor de weergave van de badeend.
+     */
     public void renderDuck(){
         stackPane = new StackPane();
         stackPane.getChildren().removeAll();
@@ -248,13 +238,13 @@ public class Main extends Application {
         camera.setSamplesPerPixel(10);
         camera.setMaxDepth(3);
 
-        //setupUI(currentStage);
-        //setupAnimation(currentStage);
-
         Renderer.render(camera, true, world, lights);
 
     }
-
+    /**
+     * Verwerkt het evenement wanneer een van de cases wordt geselecteerd door de gebruiker.
+     * Het configureert de weergave en animatie voor de geselecteerde case / wereld.
+     */
     public void caseButtonClicked(){
 
 
