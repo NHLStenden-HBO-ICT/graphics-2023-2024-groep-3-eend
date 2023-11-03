@@ -138,7 +138,7 @@ public class Main extends Application {
         //world.add(duck);
 
 
-        camera.setBackground(Color.LIGHTGRAY);
+        camera.setBackground(Color.BLACK);
         camera.setImageWidth(400);
         //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(0,0,4));
