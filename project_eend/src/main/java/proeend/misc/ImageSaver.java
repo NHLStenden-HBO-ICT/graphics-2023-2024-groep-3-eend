@@ -1,6 +1,7 @@
 package proeend.misc;
 
 import javafx.scene.image.WritableImage;
+import proeend.Main;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -8,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 /**
  * Deze klasse biedt methoden om een gegenereerde afbeelding op te slaan als een PNG-bestand.
  */
@@ -39,5 +41,11 @@ public class ImageSaver {
         }
 
         System.out.println("Image saved in " + filename);
+        if(Main.isStartScreenVisible()){
+            System.exit(0);
+        }
+
+
     }
+
 }

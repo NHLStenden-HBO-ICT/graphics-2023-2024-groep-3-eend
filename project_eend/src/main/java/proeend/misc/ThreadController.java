@@ -40,6 +40,7 @@ public class ThreadController {
         writableImage = new WritableImage(camera.getImageWidth(), camera.getHeight());
         pixelWriter = writableImage.getPixelWriter();
         this.executorService = Executors.newFixedThreadPool(numberOfThreads - 4);
+
     }
 
     /**
@@ -48,7 +49,9 @@ public class ThreadController {
      * @param save  Geeft aan of de afbeelding moet worden opgeslagen.
      * @return Een `WritableImage` die de gerenderde afbeelding bevat.
      */
+
     public WritableImage renderAndSave(boolean save) {
+
         if(save){
             startTime = System.nanoTime();
         }
@@ -62,7 +65,9 @@ public class ThreadController {
             executorService.submit(() -> {
                 RenderTask task = new RenderTask(camera, world, lights, lineStart, lineEnd, save, pixelWriter, completedLines, () -> {
                     double progress = (completedLines.get() / (double) camera.getHeight()) * 100.0;
-                    System.out.printf("Render progress: %.2f%%\r", progress);
+                    String info = String.format("Render progress: %.0f\r", progress) + "%";
+                    // Platform.runLater(() -> Main.infoLabel.setText(info));
+
                 });
                 task.run();
             });
@@ -81,8 +86,6 @@ public class ThreadController {
             System.out.println("Rendering completed in " + seconds + " seconds and " + millis + " milliseconds.");
             camera.setSamplesPerPixel(1);
         }
-
-
         return writableImage;
     }
 
