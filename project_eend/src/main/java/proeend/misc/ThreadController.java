@@ -2,7 +2,6 @@ package proeend.misc;
 
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import proeend.Main;
 import proeend.hittable.Hittable;
 
 import java.util.concurrent.ExecutorService;
@@ -52,6 +51,7 @@ public class ThreadController {
      */
 
     public WritableImage renderAndSave(boolean save) {
+
         if(save){
             startTime = System.nanoTime();
         }
@@ -66,7 +66,8 @@ public class ThreadController {
                 RenderTask task = new RenderTask(camera, world, lights, lineStart, lineEnd, save, pixelWriter, completedLines, () -> {
                     double progress = (completedLines.get() / (double) camera.getHeight()) * 100.0;
                     String info = String.format("Render progress: %.0f\r", progress) + "%";
-                    Main.startScreen.setInfoLabel(info);
+                    // Platform.runLater(() -> Main.infoLabel.setText(info));
+
                 });
                 task.run();
             });

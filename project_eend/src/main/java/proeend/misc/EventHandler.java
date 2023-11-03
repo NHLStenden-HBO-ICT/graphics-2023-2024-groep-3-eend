@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import proeend.Main;
 import proeend.hittable.Hittable;
 import proeend.math.Vector;
 
@@ -54,9 +55,11 @@ public class EventHandler {
      * @param lights De lichtbronnen in de wereld
      */
     public void setupEventHandlers(Stage stage, ImageView frame, Camera camera, Hittable world, Hittable lights) {
-        setKeyReleasedEventHandler(stage, camera);
-        setKeyPressedEventHandler(stage, camera, world, lights);
-        setResizeListeners(stage, frame, camera);
+        if (!Main.isStartScreenVisible()) {
+            setKeyReleasedEventHandler(stage, camera);
+            setKeyPressedEventHandler(stage, camera, world, lights);
+            setResizeListeners(stage, frame, camera);
+        }
     }
 
 
@@ -67,6 +70,8 @@ public class EventHandler {
      * @param camera De camera
      */
     private void setKeyPressedEventHandler(Stage stage, Camera camera, Hittable world, Hittable lights) {
+
+
         Scene scene = stage.getScene();
         scene.setOnKeyPressed(new javafx.event.EventHandler<>() {
             int shiftMult = 1;
@@ -78,7 +83,6 @@ public class EventHandler {
              */
             @Override
             public void handle(KeyEvent event) {
-
                 if (event.isShiftDown()) {
                     shiftMult = 10;
                 } else shiftMult = 1;
@@ -145,11 +149,14 @@ public class EventHandler {
                         camera.setSamplesPerPixel(100);
                         camera.setMaxDepth(10);
                         camera.setImageWidth(400);
-                        Renderer.render(camera, true, world, lights);
+                        Main.updateFrame(true);
                     }
                     case ESCAPE -> {
                         ExitProgram = true;
                         Platform.exit();
+                    }
+                    case BACK_SPACE -> {
+                        Main.setStartScreenVisible(true);
                     }
                 }
             }
@@ -166,16 +173,20 @@ public class EventHandler {
      */
     private void setResizeListeners(Stage stage, ImageView frame, Camera camera) {
         ChangeListener<Number> resizeListener = (observableValue, oldValue, newValue) -> {
-            double newWidth = stage.getWidth();
-            double newHeight = (newValue.doubleValue() == stage.widthProperty().doubleValue()) ? newWidth * (1.0 / camera.getAspectRatio()) : stage.getHeight();
-            frame.setFitWidth(newWidth);
-            frame.setFitHeight(newHeight);
-            camera.setAspectRatio(newWidth / newHeight);
-            camera.setHasMovedSinceLastFrame(true);
+            changeWindowSize(stage, frame, camera, newValue);
         };
 
         stage.widthProperty().addListener(resizeListener);
         stage.heightProperty().addListener(resizeListener);
+    }
+
+    public static void changeWindowSize(Stage stage, ImageView frame, Camera camera, Number newValue) {
+        double newWidth = stage.getWidth();
+        double newHeight = (newValue.doubleValue() == stage.widthProperty().doubleValue()) ? newWidth * (1.0 / camera.getAspectRatio()) : stage.getHeight();
+        frame.setFitWidth(newWidth);
+        frame.setFitHeight(newHeight);
+        camera.setAspectRatio(newWidth / newHeight);
+        camera.setHasMovedSinceLastFrame(true);
     }
 
     /**
