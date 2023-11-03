@@ -107,35 +107,6 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
-        Lambertian white = new Lambertian(new Vector(1, 1, 0));
-        //Emitter white = new Emitter(new Vector(1,1,1));
-        PolygonMesh duck = null;
-        PolygonMesh icoSphere = null;
-        PolygonMesh uvSphere = null;
-
-        try {
-            duck = ObjectLoader.loadObj("project_eend/Models/Rubber_Duck_obj.obj", white);
-        } catch (IOException e) {
-            System.out.println("load failed");
-        }
-        try {
-            icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
-        } catch (IOException e) {
-            System.out.println("load failed");
-        }
-        try {
-            uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
-        } catch (IOException e) {
-            System.out.println("load failed");
-        }
-
-        Utility.loadWorld(world, lights, 8);
-
-        duck.ConvertToTriangles();
-
-        duck.translate(new Vector(-0.1,-0.2,3.8));
-
-        //world.add(duck);
 
 
         camera.setBackground(Color.BLACK);
@@ -143,13 +114,13 @@ public class Main extends Application {
         //camera.setCameraCenter(camOrigin);
         camera.setCameraCenter(new Vector(0,0,4));
 
-        camera.setSamplesPerPixel(1);
+        camera.setSamplesPerPixel(64);
         camera.setMaxDepth(3);
 
         //camera.setCameraCenter(new Vector(-.5,20,40));
         //camera.setLookat(new Vector(0,20,39));
 
-        //Utility.loadWorld(world, lights, 8);
+        Utility.loadWorld(world, lights, 9);
         world = new HittableList(new BBNode(world));
 
         /*var startTime = System.currentTimeMillis();
@@ -165,8 +136,8 @@ public class Main extends Application {
         System.out.print("minutes:\t\t");
         System.out.println(minutes);
         System.out.println("hours:\t\t\t" + hours);*/
-        //Renderer.render(camera, true, world, lights);
+        Renderer.render(camera, true, world, lights);
 
-        launch(args);
+       // launch(args);
     }
 }

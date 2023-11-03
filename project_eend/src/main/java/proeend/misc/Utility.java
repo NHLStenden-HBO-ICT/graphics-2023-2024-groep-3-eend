@@ -8,6 +8,8 @@ import proeend.material.texture.Image;
 import proeend.material.texture.*;
 import proeend.material.texture.Image_Texture;
 
+import java.io.IOException;
+
 /**
  * Beheerd de instellingen van de wereld.
  */
@@ -86,6 +88,36 @@ public class Utility {
         Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
         Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
 
+        Lambertian white = new Lambertian(new Vector(1, 1, 0));
+        //Emitter white = new Emitter(new Vector(1,1,1));
+
+        PolygonMesh duck = null;
+        PolygonMesh icoSphere = null;
+        PolygonMesh uvSphere = null;
+
+        try {
+            duck = ObjectLoader.loadObj("project_eend/Models/Rubber_Duck_obj.obj", white);
+        } catch (IOException e) {
+            System.out.println("load failed");
+        }
+        try {
+            icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
+        } catch (IOException e) {
+            System.out.println("load failed");
+        }
+        try {
+            uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
+        } catch (IOException e) {
+            System.out.println("load failed");
+        }
+
+        icoSphere.ConvertToTriangles();
+        duck.ConvertToTriangles();
+
+        duck.translate(new Vector(.3,-0.2,3.2));
+        //new Vector(1, 0.2, -1.5);
+
+
         switch (selector) {
             case 0 -> {
                 // Voeg willekeurige objecten toe aan de wereld
@@ -102,9 +134,13 @@ public class Utility {
             case 1 -> {
                 world.add(new Sphere(new Vector(2, 0, -.55), .5, yellowLambertian));
                 world.add(new Sphere(new Vector(1.5, 0, 1.55), .5, salt));
-                world.add(new Sphere(new Vector(0, -103.5, -.55), 100, greyLambertian));
-                world.add(new Sphere(new Vector(1, 2, -.55), .5, whiteLight));
-                lights.add(new Sphere(new Vector(1, 2, -.55), .5, whiteLight));
+                world.add(new Sphere(new Vector(0, -100.5, -.55), 100, greyLambertian));
+                world.add(new Sphere(new Vector(0, 0, -.55), .5, perfectMirror));
+                world.add(new Sphere(new Vector(-2.5, 1.5, -.55), 1, redMirror));
+
+
+                world.add(new Sphere(new Vector(1, 4, -.55), .5, whiteLight));
+                lights.add(new Sphere(new Vector(1, 4, -.55), .5, whiteLight));
             }
             case 2 -> {
                 world.add(new Triangle(v0, v1, v2, normal));
@@ -173,7 +209,8 @@ public class Utility {
                 world.add(new Sphere(new Vector(55,55,-48),-.5,blueLambertian));
 
                 //Aarde bol
-                world.add(new Sphere(new Vector(1, 0.2, -1.5), 1.2, earth_surface));
+                //world.add(new Sphere(new Vector(1, 0.2, -1.5), 1.2, earth_surface));
+                world.add(duck);
 
                 //Ijs ondergrond
                 //world.add(new Triangle(vect1, vect2, vect3, ice_surface));
@@ -190,6 +227,12 @@ public class Utility {
                 world.add(new Quad(new Vector(-20,-2,-5),new Vector(50,0,-5),new Vector(0,30,-5), background_surface));
                 //world.add(new Sphere(new Vector(0, -203.5, -3.55), 200, ice_surface));
 
+            }
+            case 9 -> {
+                world.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
+                lights.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
+
+                world.add(icoSphere);
             }
 
             default -> {
