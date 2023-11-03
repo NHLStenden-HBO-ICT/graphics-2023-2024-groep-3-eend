@@ -21,24 +21,25 @@ public class Quad extends Hittable {
     private double D;
     private Vector w;
 
+    /**
+     * Maakt een vlak aan.
+     * @param _Q Het beginpunt.
+     * @param _u Het u coördinaat.
+     * @param _v Het v coördinaat.
+     * @param m Een materiaal.
+     */
     public Quad(Vector _Q, Vector _u, Vector _v, Material m) {
         Q = _Q;
         u = _u;
         v = _v;
         mat = m;
+        bbox = new BoundingBox(Q, Q.add(u).add(v)).pad();
 
         Vector n = Vector.cross(u,v);
         normal = Vector.unitVector(n);
         D = Vector.dot(normal, Q);
         w = n.scale(1.0 / Vector.dot(n,n));
-
-        setBoundingBox();
     }
-
-        public void setBoundingBox() {
-        bbox = new BoundingBox(Q, Q.add(u).add(v)).pad();
-    }
-
 
     @Override
     public BoundingBox getBoundingbox() {
@@ -77,9 +78,14 @@ public class Quad extends Hittable {
 
     }
 
-    // You may want to implement hashCode() and equals() for this class
-
-    public boolean isInterior(double a, double b, HitRecord rec){
+    /**
+     * Bekijkt of de coördinaten binnen het vlak vallen.
+     * @param a Het a coördinaat.
+     * @param b Het b coördinaat.
+     * @param rec Informatie over de hits.
+     * @return
+     */
+    private boolean isInterior(double a, double b, HitRecord rec){
         if (a < 0 || 1 < a || b < 0 || 1 < b){
             return false;
         }

@@ -11,6 +11,10 @@ import proeend.records.HitRecord;
  */
 public abstract class Hittable{
 
+    /**
+     * Methode om een bounding box mee op te vragen.
+     * @return Geeft een bounding box terug.
+     */
     public abstract BoundingBox getBoundingbox();
 
     /**
@@ -51,9 +55,4 @@ public abstract class Hittable{
     public Vector random(Vector origin) {
         return new Vector(1,0,0);
     }
-
-
-
-
-
 }
