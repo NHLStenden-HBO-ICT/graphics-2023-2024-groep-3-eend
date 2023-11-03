@@ -15,7 +15,7 @@ public class PolygonMesh extends Hittable {
     private final BoundingBox boundingBox;
     private Integer[] faceArray;
     private Integer[] vertexIndexArray;
-    private final Vector[] vertexArray;
+    private Vector[] vertexArray;
     private final Material material;
 
     /**
@@ -54,6 +54,19 @@ public class PolygonMesh extends Hittable {
             j += 3;
         }
         return tempHit;
+    }
+
+    public void translate(Vector translation){
+        Vector[] newVertexArray = vertexArray;
+        int i = 0;
+
+        for (Vector vertex : vertexArray) {
+            newVertexArray[i] = vertex.add(translation);
+            i++;
+        }
+
+        vertexArray = newVertexArray;
+
     }
 
     /**

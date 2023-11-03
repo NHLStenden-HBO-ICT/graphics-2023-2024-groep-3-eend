@@ -27,6 +27,8 @@ import proeend.windows.StartScreen;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.io.IOException;
+
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
  */
@@ -194,6 +196,7 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
+
         System.setOut(new PrintStream(System.out) {
             @Override
             public void write(byte[] buf, int off, int len) {
@@ -254,6 +257,7 @@ public class Main extends Application {
 
     public void caseButtonClicked(){
 
+
         stackPane = new StackPane();
         stackPane.getChildren().removeAll();
         Utility.loadWorld(world, lights, caseSelector);
@@ -271,7 +275,6 @@ public class Main extends Application {
         currentStage.setFullScreenExitHint("Press backspace to return to home screen");
 
         currentStage.setFullScreen(true);
-
 
     }
 

@@ -11,6 +11,7 @@ import proeend.records.HitRecord;
  */
 public class Dielectric extends Material {
     private final double refractionIndex; // Index of Refraction
+    private Vector color = new Vector(1,1,1);
 
     /**
      * Construeert een dielectric materiaal met de gegeven hoeveelheid lichtbreking
@@ -18,11 +19,17 @@ public class Dielectric extends Material {
      */
     public Dielectric(double indexOfRefraction) {
         refractionIndex = indexOfRefraction;
+
+    }
+    public Dielectric(double indexOfRefraction, Vector color) {
+        refractionIndex = indexOfRefraction;
+        this.color = color;
+
     }
 
     @Override
     public boolean scatter(Ray rayIn, HitRecord rec, ScatterRecord scRecord) {
-        scRecord.attenuation = new Vector(1,1,1);
+        scRecord.attenuation = color;
         scRecord.pdf = null;
         scRecord.skipPDF = true;
         double refractionRatio = rec.isFrontFace() ? (1.0 / refractionIndex) : refractionIndex;

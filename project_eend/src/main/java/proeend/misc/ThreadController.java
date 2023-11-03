@@ -95,7 +95,7 @@ public class ThreadController {
     public void shutdown() {
         executorService.shutdown();
         try {
-            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS)) {
                 logError("Thread execution did not complete in time.");
             }
         } catch (InterruptedException e) {
