@@ -30,7 +30,7 @@ public class StartScreen extends VBox {
         badeend.setStyle("-fx-background-color: white; -fx-text-fill: black;");
         badeend.setMinSize(300, 50);
         badeend.setOnAction(e -> {
-            Main.setButtonClicked(1);
+            Main.setButtonClicked(8);
             main.renderDuck();
         });
 
@@ -38,7 +38,7 @@ public class StartScreen extends VBox {
         case1.setStyle("-fx-background-color: white; -fx-text-fill: black;");
         case1.setMinSize(300, 50);
         case1.setOnAction(e -> {
-            Main.setButtonClicked(1);
+            Main.setButtonClicked(0);
             main.caseButtonClicked();
         });
 
@@ -46,7 +46,7 @@ public class StartScreen extends VBox {
         case2.setStyle("-fx-background-color: white; -fx-text-fill: black;");
         case2.setMinSize(300, 50);
         case2.setOnAction(e -> {
-            Main.setButtonClicked(2);
+            Main.setButtonClicked(1);
             main.caseButtonClicked();
         });
 
@@ -54,7 +54,7 @@ public class StartScreen extends VBox {
         case3.setStyle("-fx-background-color: white; -fx-text-fill: black;");
         case3.setMinSize(300, 50);
         case3.setOnAction(e -> {
-            Main.setButtonClicked(3);
+            Main.setButtonClicked(2);
             main.caseButtonClicked();
         });
 

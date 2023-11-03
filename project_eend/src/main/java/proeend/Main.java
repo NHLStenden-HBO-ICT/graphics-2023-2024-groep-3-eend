@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
 import proeend.hittable.ObjectLoader;
 import proeend.hittable.PolygonMesh;
@@ -165,10 +166,9 @@ public class Main extends Application {
         }
 
         if (!camera.isMoving() && !camera.hasMovedSinceLastFrame() && !save) {
-            // Blend the previous image with the new image
             newImage = ImageBlender.blendImages(previousImage, newImage, .035, 3);
         }
-            previousImage = newImage;
+        previousImage = newImage;
         frame.setImage(newImage);
         camera.setHasMovedSinceLastFrame(false);
     }
@@ -179,18 +179,6 @@ public class Main extends Application {
      * @param args Argumenten die aan het programma kunnen worden meegegeven.
      */
     public static void main(String[] args) {
-
-
-        System.setOut(new PrintStream(System.out) {
-            @Override
-            public void write(byte[] buf, int off, int len) {
-                super.write(buf, off, len);
-
-                String msg = new String(buf, off, len);
-                Main.startScreen.setInfoLabel(msg);
-            }
-        });
-
         launch(args);
     }
 
@@ -201,32 +189,7 @@ public class Main extends Application {
         stackPane = new StackPane();
         stackPane.getChildren().removeAll();
 
-        Lambertian white = new Lambertian(new Vector(1, .5, .5));
-        Emitter white2 = new Emitter(new Vector(1,1,1));
-        PolygonMesh duck = null;
-        PolygonMesh icoSphere = null;
-        PolygonMesh uvSphere = null;
-
-        try {
-            duck = ObjectLoader.loadObj("project_eend/Models/uploads_files_4534682_Duck.obj", white);
-        } catch (IOException e) {
-            Main.startScreen.setInfoLabel("load failed");
-        }
-        try {
-            icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
-        } catch (IOException e) {
-            Main.startScreen.setInfoLabel("load failed");
-        }
-        try {
-            uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
-        } catch (IOException e) {
-            Main.startScreen.setInfoLabel("load failed");
-        }
-
         Utility.loadWorld(world, lights, caseSelector);
-
-        uvSphere.ConvertToTriangles();
-        world.add(uvSphere);
 
         camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
@@ -244,7 +207,6 @@ public class Main extends Application {
      */
     public void caseButtonClicked(){
 
-
         stackPane = new StackPane();
         stackPane.getChildren().removeAll();
         Utility.loadWorld(world, lights, caseSelector);
@@ -252,7 +214,11 @@ public class Main extends Application {
 
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
-        camera.setBackground(Color.LIGHTPINK);
+        if(caseSelector == 2){
+            camera.setBackground(Color.BLACK);
+        } else {
+            camera.setBackground(Color.LIGHTBLUE);
+        }
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
 
@@ -262,8 +228,6 @@ public class Main extends Application {
         currentStage.setFullScreenExitHint("Press backspace to return to home screen");
 
         currentStage.setFullScreen(true);
-
-=======
         launch();
 
     }

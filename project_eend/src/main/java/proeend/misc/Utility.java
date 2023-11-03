@@ -14,87 +14,78 @@ import java.io.IOException;
  * Beheerd de instellingen van de wereld.
  */
 public class Utility {
+    private static Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
+    private static Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
+    private static Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.4,0.7));
+    private static Mirror redMirror = new Mirror(new Vector(1,.5,.5), 1);
 
-    /**
-     * Maakt de wereld aan.
-     * @param world De scene.
-     * @param lights De lichten binnen de scene.
-     * @param selector De geselecteerde wereld.
-     */
-    public static void loadWorld(HittableList world, HittableList lights,int selector) {
-        world.clear();
-        lights.clear();
-        Lambertian greyLambertian = new Lambertian(new Vector(.5,.5,.5));
-        Lambertian yellowLambertian = new Lambertian(new Vector(1,1,0));
-        Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.4,0.7));
-        Mirror redMirror = new Mirror(new Vector(1,.5,.5), 1);
+    private static final Image_Texture earthTexture = new Image_Texture("project_eend/ModelTextureImages/world.jpeg");
+    Lambertian earth_surface = new Lambertian(earthTexture);
 
-        Image_Texture earthTexture = new Image_Texture("project_eend/ModelTextureImages/world.jpeg");
-        Lambertian earth_surface = new Lambertian(earthTexture);
+    private static final Image_Texture sunTexture = new Image_Texture("project_eend/ModelTextureImages/zon.jpg");
+    Emitter sunEmitter = new Emitter(sunTexture);
 
-        Image_Texture sunTexture = new Image_Texture("project_eend/ModelTextureImages/zon.jpg");
-        Emitter sunEmitter = new Emitter(sunTexture);
+    private static final Image_Texture iceTexture = new Image_Texture("project_eend/ModelTextureImages/IceTexture.jpg");
+    private static final Lambertian ice_surface = new Lambertian(iceTexture);
 
-        Image_Texture iceTexture = new Image_Texture("project_eend/ModelTextureImages/IceTexture.jpg");
-        Lambertian ice_surface = new Lambertian(iceTexture);
+    private static final Image_Texture backgroundTexture = new Image_Texture("project_eend/ModelTextureImages/BergBeter.jpg");
+    static Lambertian background_surface = new Lambertian(backgroundTexture);
 
-        Image_Texture backgroundTexture = new Image_Texture("project_eend/ModelTextureImages/BergBeter.jpg");
-        Lambertian background_surface = new Lambertian(backgroundTexture);
+    Mirror iceMirror = new Mirror(new Vector(0,0.7,1),0.15);
 
-        Mirror iceMirror = new Mirror(new Vector(0,0.7,1),0.15);
+    private static final Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
+    Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
+    static Normal normal = new Normal();
+    static CheckerTexture checkerTexture = new CheckerTexture(0.1, new Vector(1,1,1), new Vector(.5,.5,.5));
+    static Lambertian errorCheckers = new Lambertian(checkerTexture);
+    static Emitter whiteLight = new Emitter(new Vector(4,4,4));
+    static Emitter blueLight = new Emitter(new Vector(.3,.8,.9));
+    static Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
 
-        Mirror perfectMirror = new Mirror(new Vector(1,1,1),0);
-        Mirror halfMirror = new Mirror(new Vector(100,100,100),.5);
-        Normal normal = new Normal();
-        CheckerTexture checkerTexture = new CheckerTexture(0.1, new Vector(1,1,1), new Vector(.5,.5,.5));
-        Lambertian errorCheckers = new Lambertian(checkerTexture);
-        Emitter whiteLight = new Emitter(new Vector(4,4,4));
-        Emitter blueLight = new Emitter(new Vector(.3,.8,.9));
-        Lambertian whiteLambertian = new Lambertian(new Vector(1,1,1));
+    //Dielectric ice = new Dielectric(1.31);
+    static Dielectric ice = new Dielectric(1.31, new Vector(1,1,1));
+    static Dielectric salt = new Dielectric(1.54);
 
-        //Dielectric ice = new Dielectric(1.31);
-        Dielectric ice = new Dielectric(1.31, new Vector(1,1,1));
-        Dielectric salt = new Dielectric(1.54);
+    //Driehoekig vlak voor ondergrond
+    Vector vect1 = new Vector(-35,-1.1,20);
+    Vector vect2 = new Vector(35,-1.1,20);
+    Vector vect3 = new Vector(0,-1.1,-40);
+    //Laag ijs erbovenop
+    Vector vect4 = new Vector(-35,-1.101,20);
+    Vector vect5 = new Vector(35,-1.101,20);
+    Vector vect6 = new Vector(0,-1.101,-40);
 
-        //Driehoekig vlak voor ondergrond
-        Vector vect1 = new Vector(-35,-1.1,20);
-        Vector vect2 = new Vector(35,-1.1,20);
-        Vector vect3 = new Vector(0,-1.1,-40);
-        //Laag ijs erbovenop
-        Vector vect4 = new Vector(-35,-1.101,20);
-        Vector vect5 = new Vector(35,-1.101,20);
-        Vector vect6 = new Vector(0,-1.101,-40);
-
-        //Driehoekig vlak achtergrond
-        Vector vect7 = new Vector(-150,-5,-50);
-        Vector vect8 = new Vector(150,-5,-50);
-        Vector vect9 = new Vector(0,155,-50);
+    //Driehoekig vlak achtergrond
+    Vector vect7 = new Vector(-150,-5,-50);
+    Vector vect8 = new Vector(150,-5,-50);
+    Vector vect9 = new Vector(0,155,-50);
 
 
-        Vector v0 = new Vector(-1,-1,-2);
-        Vector v1 = new Vector(1,-1,-2);
-        Vector v2 = new Vector(0,.3,-2);
-        Vector v3 = new Vector(-1,1,-2);
-        Vector v4 = new Vector(1,1,-2);
+    static Vector v0 = new Vector(-1,-1,-2);
+    static Vector v1 = new Vector(1,-1,-2);
+    static Vector v2 = new Vector(0,.3,-2);
+    static Vector v3 = new Vector(-1,1,-2);
+    static Vector v4 = new Vector(1,1,-2);
 
-        Vector v5 = new Vector(-250,-50,5);
-        Vector v6 = new Vector(250, -50, 5);
-        Vector v7 = new Vector(-250, -50, -105);
-        Vector v8 = new Vector(250,-50,-105);
-        Vector v9 = new Vector(250, 50, -105);
-        Vector v10 = new Vector(-250, 50, -105);
+    static Vector v5 = new Vector(-250,-50,5);
+    static Vector v6 = new Vector(250, -50, 5);
+    static Vector v7 = new Vector(-250, -50, -105);
+    static Vector v8 = new Vector(250,-50,-105);
+    static Vector v9 = new Vector(250, 50, -105);
+    static Vector v10 = new Vector(-250, 50, -105);
 
-        Integer[] faceArray = {3,3,3};
-        Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
-        Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
+    static Integer[] faceArray = {3,3,3};
+    static Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
+    static Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
 
-        Lambertian white = new Lambertian(new Vector(1, 1, 0));
-        //Emitter white = new Emitter(new Vector(1,1,1));
+    Lambertian white = new Lambertian(new Vector(1, 1, 0));
+    //Emitter white = new Emitter(new Vector(1,1,1));
 
-        PolygonMesh duck = null;
-        PolygonMesh icoSphere = null;
-        PolygonMesh uvSphere = null;
+    private static PolygonMesh duck = null;
+    private static PolygonMesh icoSphere = null;
+    private PolygonMesh uvSphere = null;
 
+    private void loadObjects() {
         try {
             duck = ObjectLoader.loadObj("project_eend/Models/Rubber_Duck_obj.obj", white);
         } catch (IOException e) {
@@ -111,11 +102,22 @@ public class Utility {
             System.out.println("load failed");
         }
 
-        icoSphere.ConvertToTriangles();
-        duck.ConvertToTriangles();
-
         duck.translate(new Vector(.3,-0.2,3.2));
-        //new Vector(1, 0.2, -1.5);
+
+    }
+
+    /**
+     * Maakt de wereld aan.
+     * @param world De scene.
+     * @param lights De lichten binnen de scene.
+     * @param selector De geselecteerde wereld.
+     */
+    public static void loadWorld(HittableList world, HittableList lights,int selector) {
+        world.clear();
+        lights.clear();
+
+
+
 
 
         switch (selector) {
@@ -143,10 +145,17 @@ public class Utility {
                 lights.add(new Sphere(new Vector(1, 4, -.55), .5, whiteLight));
             }
             case 2 -> {
-                world.add(new Triangle(v0, v1, v2, normal));
-                world.add(new Triangle(v0, v2, v3, normal));
-                world.add(new Triangle(v1, v4, v2, normal));
-                lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
+
+                // Voeg willekeurige objecten toe aan de wereld
+                world.add(new Sphere(new Vector(0, 0, -1), 0.5, redMirror));
+                world.add(new Sphere(new Vector(0, -100.5, -1), 100, blueLambertian));
+                world.add(new Sphere(new Vector(0, 0, 0.5), .9, ice));
+                world.add(new Sphere(new Vector(-1, 0, -1), 0.5, greyLambertian));
+
+                // Voeg een willekeurig lichtobject toe
+                Hittable light0 = new Sphere(new Vector(1, 0, 0), 0.5, blueLight);
+                world.add(light0);
+                lights.add(light0);
             }
             case 3 -> {
                 faceArray = new Integer[]{3, 3, 3};
@@ -183,7 +192,8 @@ public class Utility {
                 world.add(new Sphere(new Vector(0, 0, -1), 1, normal));
                 lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
             }
-            case 8 -> { //Textures test
+            case 8 -> {
+                duck.ConvertToTriangles();
                 //world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
                 //world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
                 //world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
@@ -231,7 +241,7 @@ public class Utility {
             case 9 -> {
                 world.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
                 lights.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
-
+                icoSphere.ConvertToTriangles();
                 world.add(icoSphere);
             }
 
