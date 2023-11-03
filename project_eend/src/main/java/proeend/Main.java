@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
 import proeend.hittable.ObjectLoader;
 import proeend.hittable.PolygonMesh;
@@ -263,6 +262,9 @@ public class Main extends Application {
         currentStage.setFullScreenExitHint("Press backspace to return to home screen");
 
         currentStage.setFullScreen(true);
+
+=======
+        launch();
 
     }
 
