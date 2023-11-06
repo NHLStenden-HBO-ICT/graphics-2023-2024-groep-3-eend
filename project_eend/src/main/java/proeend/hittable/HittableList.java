@@ -37,11 +37,13 @@ public class HittableList extends Hittable {
      * @param object Het hittable object dat aan de lijst wordt toegevoegd.
      */
     public void add(Hittable object) {
-        objects.add(object);
-        if(boundingBox == null){
-            boundingBox = object.getBoundingbox().pad();
-        }else{
-            boundingBox = new BoundingBox(boundingBox, object.getBoundingbox()).pad();
+        if(object != null){
+            objects.add(object);
+            if(boundingBox == null){
+                boundingBox = object.getBoundingbox().pad();
+            }else{
+                boundingBox = new BoundingBox(boundingBox, object.getBoundingbox()).pad();
+            }
         }
     }
 
@@ -104,3 +106,5 @@ public class HittableList extends Hittable {
         return new Vector(1,0,0);
     }
 }
+
+

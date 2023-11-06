@@ -5,18 +5,19 @@ import proeend.math.Interval;
 import proeend.math.Ray;
 import proeend.math.Vector;
 import proeend.records.HitRecord;
+
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Een klasse die een verzameling driehoeken vertegenwoordigt als een hittable object.
  */
 public class PolygonMesh extends Hittable {
-    private final boolean isObj = true;
-    private final BoundingBox boundingBox;
     private Integer[] faceArray;
     private Integer[] vertexIndexArray;
     private Vector[] vertexArray;
-    private final Material material;
+    private Material material;
+    private BoundingBox boundingBox;
 
     /**
      * Maakt een nieuw TriangleMesh-object met de opgegeven geometrische en een materiaal.
@@ -31,43 +32,110 @@ public class PolygonMesh extends Hittable {
         this.vertexIndexArray = vertexIndexArray;
         this.vertexArray = vertexArray;
         this.material = material;
-        this.boundingBox = getBoundingbox();
+        if(vertexArray.length != 0){
+            setBounddingBox();
+        }
+    }
+
+    public void setBounddingBox() {
+
+        Vector min = vertexArray[0];
+        Vector max = vertexArray[0];
+
+        for (Vector vertex : vertexArray) {
+            min = Vector.min(min, vertex);
+            max = Vector.max(max, vertex);
+        }
+
+        boundingBox = new BoundingBox(min, max);
+    }
+
+    public void setMaterial(Material material){
+        this.material = material;
+    }
+
+    @Override
+    public BoundingBox getBoundingbox() {
+        return boundingBox;
     }
 
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
-        //TODO Vreemd effect met meerdere kruisende objecten oplossen.
-        boolean tempHit = false;
-        double closest = rayT.getMax();
-        int j = 0;
-        Vector v0,v1,v2;
-        for (int i = 0; i < faceArray.length; i++) {
-            v0 = vertexArray[vertexIndexArray[j]];
-            v1 = vertexArray[vertexIndexArray[j+1]];
-            v2 = vertexArray[vertexIndexArray[j+2]];
 
-            if (Triangle.MThit(ray, new Interval(rayT.getMin(),closest), rec, v0 ,v1, v2, material)){
-                closest = rec.t;
-                tempHit = true;
+        boolean hitAnything = false;
+
+        double closest = rayT.getMax();
+
+        Triangle triangle;
+
+        int vertexIndex = 0;
+
+        for (int i = 0; i < faceArray.length; i++) {
+
+            Vector vertexIndex0 = vertexArray[vertexIndexArray[vertexIndex]];
+            Vector vertexIndex1 = vertexArray[vertexIndexArray[vertexIndex + 1]];
+            Vector vertexIndex2 = vertexArray[vertexIndexArray[vertexIndex + 2]];
+
+            triangle = new Triangle(vertexIndex0, vertexIndex1, vertexIndex2, material);
+
+            if (triangle.hit(ray, new Interval(rayT.getMin(),closest), rec)){
+                closest = rec.getT();
+                hitAnything = true;
             }
 
-            j += 3;
+            vertexIndex += 3;
         }
-        return tempHit;
+        return hitAnything;
     }
 
     public void translate(Vector translation){
-        Vector[] newVertexArray = vertexArray;
-        int i = 0;
+        for (int i = 0; i < vertexArray.length; i++) {
+            vertexArray[i] = vertexArray[i].add(translation);
+        }
+    }
 
-        for (Vector vertex : vertexArray) {
-            newVertexArray[i] = vertex.add(translation);
-            i++;
+    public void rotate(double angle) {
+         Vector center = calculateCenter();
+
+        // Verschuif de vertices zodat het centrum het oorsprongspunt wordt
+        for (int i = 0; i < vertexArray.length; i++) {
+            vertexArray[i] = vertexArray[i].add(center.invert());
         }
 
-        vertexArray = newVertexArray;
+        // Voer de rotatie uit
+        double angleInRadians = Math.toRadians(angle);
+        double cosTheta = Math.cos(angleInRadians);
+        double sinTheta = Math.sin(angleInRadians);
 
+        for (int i = 0; i < vertexArray.length; i++) {
+            double x = vertexArray[i].getX();
+            double z = vertexArray[i].getZ();
+            vertexArray[i] = new Vector(x * cosTheta - z * sinTheta, vertexArray[i].getY(), x * sinTheta + z * cosTheta);
+        }
+
+        // Verschuif de vertices terug naar hun oorspronkelijke positie
+        for (int i = 0; i < vertexArray.length; i++) {
+            vertexArray[i] = vertexArray[i].add(center);
+        }
     }
+
+    private Vector calculateCenter() {
+        int length = vertexArray.length;
+        if (length == 0) {
+            return new Vector(0, 0, 0); // Geen centrum als er geen vertices zijn
+        }
+
+        double sumX = 0, sumY = 0, sumZ = 0;
+
+        for (Vector vertex : vertexArray) {
+            sumX += vertex.getX();
+            sumY += vertex.getY();
+            sumZ += vertex.getZ();
+        }
+
+        return new Vector(sumX / length, sumY / length, sumZ / length);
+    }
+
 
     /**
      * Zet veelhoekige vlakken om in driehoeken.
@@ -93,7 +161,6 @@ public class PolygonMesh extends Hittable {
 
         this.faceArray = newFaceList.toArray(new Integer[0]);
         this.vertexIndexArray = newVertexIndexList.toArray(new Integer[0]);
-        System.out.println("Converted to triangles");
     }
 
     private void addFirstThreeFaces(List<Integer> newFaceList, List<Integer> newVertexIndexList, int i) {
@@ -103,26 +170,6 @@ public class PolygonMesh extends Hittable {
         newVertexIndexList.add(vertexIndexArray[i +2]);
     }
 
-    /**
-     * Haalt de bounding box van de mesh op.
-     * @return De bounding box van de mesh of null als er geen vertices zijn.
-     */
-    public BoundingBox getBoundingbox() {
 
-        if (vertexArray.length == 0) {
-            return null; // Als er geen vertices zijn wordt er null teruggegeven
-        }
-
-        Vector min = vertexArray[0];
-        Vector max = vertexArray[0];
-
-        // Dit zorgt voor de minimale en maximale coördinaten.
-        for (Vector vertex : vertexArray) {
-            min = Vector.min(min, vertex);
-            max = Vector.max(max, vertex);
-        }
-
-       return new BoundingBox(min, max);
-    }
 
 }

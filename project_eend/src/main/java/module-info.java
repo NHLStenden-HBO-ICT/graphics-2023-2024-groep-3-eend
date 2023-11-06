@@ -1,5 +1,6 @@
 module com.example.project_eend {
     requires javafx.controls;
+    requires javafx.swing;
     requires java.desktop;
 
     exports proeend;

@@ -3,7 +3,6 @@ package proeend;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -16,16 +15,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import proeend.hittable.BBNode;
 import proeend.hittable.HittableList;
-import proeend.hittable.ObjectLoader;
-import proeend.hittable.PolygonMesh;
-import proeend.material.Emitter;
-import proeend.material.Lambertian;
 import proeend.math.Vector;
 import proeend.misc.*;
 import proeend.windows.StartScreen;
-
-import java.io.IOException;
-import java.io.PrintStream;
 
 /**
  * De `Main` klasse vertegenwoordigt de hoofdklasse van het RayTracer-programma.
@@ -33,11 +25,11 @@ import java.io.PrintStream;
 public class Main extends Application {
 
     private static final double INITIAL_FRAME_RATE = 0.1;
-    private static Camera camera = new Camera();
+    private static final Camera camera = new Camera();
     private static HittableList world = new HittableList();
     private static final HittableList lights = new HittableList();
     private static final ImageView frame = new ImageView();
-     StackPane stackPane = new StackPane();
+    private StackPane stackPane = new StackPane();
     private static WritableImage previousImage;
     public static StartScreen startScreen;
     public static int caseSelector;
@@ -55,6 +47,10 @@ public class Main extends Application {
         caseSelector = i;
     }
 
+    public static Timeline getTimeLine(){
+        return timeline;
+    }
+
     /**
      * Start het programma en configureert de besturingselementen.
      *
@@ -67,19 +63,17 @@ public class Main extends Application {
         this.currentStage = stage;
 
         currentStage.setFullScreenExitHint("Press escape to exit full screen model");
-        currentStage.setFullScreen(true);
-        stage.setFullScreen(true);
-
-        if (world.getObjects().isEmpty()) {
-            showStartScreen();
-        }
+        //currentStage.setFullScreen(true);
 
         currentStage.setTitle("RayTracer");
+
+        showStartScreen();
         currentStage.show();
 
         if(stackPane.getChildren().contains(startScreen)){
             startScreen.setInfoLabel("");
         }
+
     }
 
     /**
@@ -89,20 +83,17 @@ public class Main extends Application {
      */
     private void setupUI(Stage stage) {
 
-        stackPane.getChildren().removeAll();
+        Scene scene = new Scene(stackPane);
+
+        updateFrame(false);
+        stackPane.getChildren().add(frame);
 
         startScreenVisible = false;
 
-        Scene scene = new Scene(stackPane);
-        updateFrame(false);
-
-        stage.setFullScreen(true);
-
-        StackPane.setAlignment(frame, Pos.CENTER);
-
-        stackPane.getChildren().add(frame);
-
         stage.setScene(scene);
+
+
+
     }
     /**
      * Toont het startscherm van de applicatie en configureert de weergave-instellingen.
@@ -110,47 +101,59 @@ public class Main extends Application {
     private void showStartScreen() {
 
         currentStage.setFullScreenExitHint("");
-        currentStage.setFullScreen(true);
-        startScreenVisible = true;
-
 
         if(timeline != null){
             timeline.stop();
         }
-        stackPane.getChildren().remove(frame);
-        camera = new Camera();
 
-        VBox root = new VBox(10);
-        BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTBLUE, null, null);
+        stackPane.getChildren().remove(frame);
+
+        BackgroundFill backgroundFill = new BackgroundFill(Color.LIGHTSTEELBLUE, null, null);
         Background background = new Background(backgroundFill);
 
+        VBox root = new VBox(0);
         root.setBackground(background);
 
-        startScreen = new StartScreen(this);
-        root.getChildren().addAll(startScreen);
-        Scene scene = new Scene(root, 600, 700);
+        if (startScreen == null) {
+            startScreen = new StartScreen(this);
+        }
+
+        root.getChildren().add(startScreen);
+        Scene scene = new Scene(root);
 
         currentStage.setScene(scene);
+        currentStage.setFullScreen(true);
+
+        startScreenVisible = true;
+
     }
     /**
      * Configureert de animatie voor het bijwerken van het frame.
      */
     private void setupAnimation(Stage stage) {
+
         EventHandler eventHandler = new EventHandler();
         eventHandler.setupEventHandlers(stage, frame, camera, world, lights);
-        StackPane.setAlignment(frame, Pos.CENTER);
-        Duration interval = Duration.seconds(INITIAL_FRAME_RATE);
-        KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> {
-            updateFrame(false);
-            if(startScreenVisible){
-                showStartScreen();
-                currentStage.setFullScreen(true);
-                stage.setFullScreen(true);
-            }
-        });
-        timeline = new Timeline(keyFrame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        if(timeline == null){
+            Duration interval = Duration.seconds(INITIAL_FRAME_RATE);
+            KeyFrame keyFrame = new KeyFrame(interval, actionEvent -> handleKeyFrame(stage));
+
+            timeline = new Timeline(keyFrame);
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+            return;
+        }
+
         timeline.play();
+
+    }
+
+    private void handleKeyFrame(Stage stage){
+        updateFrame(false);
+        if(startScreenVisible){
+            showStartScreen();
+        }
     }
 
     /**
@@ -160,15 +163,25 @@ public class Main extends Application {
 
         WritableImage newImage = Renderer.render(camera, save, world, lights);
 
+       // newImage = ImageBlender.applyACESAndTonemap(newImage);
+        //TODO: (OPTIONEEL) Tonemapping om afbeelding lichter / meer gesatureerd te maken werkt niet na behoren.
+
         if(previousImage == null){
             previousImage = newImage;
             return;
         }
 
-        if (!camera.isMoving() && !camera.hasMovedSinceLastFrame() && !save) {
-            newImage = ImageBlender.blendImages(previousImage, newImage, .035, 3);
+        if (camera.isMoving() || camera.hasMovedSinceLastFrame() || save) {
+            previousImage = newImage;
+            timeline.pause();
+            camera.setSamplesPerPixel(1);
+        } else {
+            newImage = ImageBlender.blendImages(previousImage, newImage, 0.035, 3);
+            previousImage = newImage;
         }
-        previousImage = newImage;
+
+        if (!save) timeline.play();
+
         frame.setImage(newImage);
         camera.setHasMovedSinceLastFrame(false);
     }
@@ -179,7 +192,10 @@ public class Main extends Application {
      * @param args Argumenten die aan het programma kunnen worden meegegeven.
      */
     public static void main(String[] args) {
+
+        new Thread(Utility::loadImages).start();
         launch(args);
+
     }
 
     /**
@@ -190,45 +206,60 @@ public class Main extends Application {
         stackPane.getChildren().removeAll();
 
         Utility.loadWorld(world, lights, caseSelector);
+        world = new HittableList(new BBNode(world));
 
         camera.setBackground(Color.LIGHTPINK);
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
 
-        camera.setSamplesPerPixel(10);
-        camera.setMaxDepth(3);
+        camera.setSamplesPerPixel(5);
 
-        Renderer.render(camera, true, world, lights);
+        //WritableImage image = Renderer.render(camera, true, world, lights);
+
+        Scene scene = new Scene(stackPane);
+
+        updateFrame(true);
+        stackPane.getChildren().add(frame);
+
+        startScreenVisible = false;
+
+        camera.setSamplesPerPixel(1);
+
+
+        currentStage.setScene(scene);
+
 
     }
     /**
      * Verwerkt het evenement wanneer een van de cases wordt geselecteerd door de gebruiker.
      * Het configureert de weergave en animatie voor de geselecteerde case / wereld.
      */
-    public void caseButtonClicked(){
+    public void caseButtonClicked(int caseSelector){
 
         stackPane = new StackPane();
-        stackPane.getChildren().removeAll();
         Utility.loadWorld(world, lights, caseSelector);
         world = new HittableList(new BBNode(world));
 
         camera.setSamplesPerPixel(1);
         camera.setMaxDepth(5);
+
         if(caseSelector == 2){
             camera.setBackground(Color.BLACK);
         } else {
             camera.setBackground(Color.LIGHTBLUE);
         }
+
         camera.setImageWidth(400);
         camera.setCameraCenter(new Vector(0, 0, 2));
+
+        updateFrame(true);
 
         setupUI(currentStage);
         setupAnimation(currentStage);
 
         currentStage.setFullScreenExitHint("Press backspace to return to home screen");
-
         currentStage.setFullScreen(true);
-        launch();
+
 
     }
 

@@ -18,7 +18,7 @@ public class Camera {
     private int rootSPP = (int) Math.sqrt(samplesPerPixel);
     private int maxDepth = 50;
     private double aspectRatio = 16.0 / 9.0;
-    private int imageWidth = 800;
+    private int imageWidth = 400;
     private int imageHeight = (int) (imageWidth / aspectRatio);
     private double viewportHeight;
     private double viewportWidth = viewportHeight * (double) imageWidth / (double) imageHeight;
@@ -27,7 +27,7 @@ public class Camera {
     private Vector pixelDeltaU = viewportU.scale(1.0 / imageWidth);
     private Vector pixelDeltaV = viewportV.scale(1.0 / imageHeight);
     private Vector topLeftPixel;
-    private Vector background = new Vector();
+    private Vector background = new Vector(1,1,1);
 
     public void setCameraMoving(boolean cameraIsMoving) {
         this.cameraIsMoving = cameraIsMoving;

@@ -1,14 +1,11 @@
 package proeend.misc;
 
+import javafx.scene.image.Image;
 import proeend.hittable.*;
 import proeend.material.*;
 import proeend.material.texture.CheckerTexture;
-import proeend.math.Vector;
-import proeend.material.texture.Image;
-import proeend.material.texture.*;
 import proeend.material.texture.Image_Texture;
-
-import java.io.IOException;
+import proeend.math.Vector;
 
 /**
  * Beheerd de instellingen van de wereld.
@@ -19,17 +16,7 @@ public class Utility {
     private static Lambertian blueLambertian = new Lambertian(new Vector(0.1,0.4,0.7));
     private static Mirror redMirror = new Mirror(new Vector(1,.5,.5), 1);
 
-    private static final Image_Texture earthTexture = new Image_Texture("project_eend/ModelTextureImages/world.jpeg");
-    Lambertian earth_surface = new Lambertian(earthTexture);
 
-    private static final Image_Texture sunTexture = new Image_Texture("project_eend/ModelTextureImages/zon.jpg");
-    Emitter sunEmitter = new Emitter(sunTexture);
-
-    private static final Image_Texture iceTexture = new Image_Texture("project_eend/ModelTextureImages/IceTexture.jpg");
-    private static final Lambertian ice_surface = new Lambertian(iceTexture);
-
-    private static final Image_Texture backgroundTexture = new Image_Texture("project_eend/ModelTextureImages/BergBeter.jpg");
-    static Lambertian background_surface = new Lambertian(backgroundTexture);
 
     Mirror iceMirror = new Mirror(new Vector(0,0.7,1),0.15);
 
@@ -47,13 +34,13 @@ public class Utility {
     static Dielectric salt = new Dielectric(1.54);
 
     //Driehoekig vlak voor ondergrond
-    Vector vect1 = new Vector(-35,-1.1,20);
-    Vector vect2 = new Vector(35,-1.1,20);
-    Vector vect3 = new Vector(0,-1.1,-40);
+    static Vector vect1 = new Vector(-35,-1.1,20);
+    static Vector vect2 = new Vector(35,-1.1,20);
+    static Vector vect3 = new Vector(0,-1.1,-40);
     //Laag ijs erbovenop
-    Vector vect4 = new Vector(-35,-1.101,20);
-    Vector vect5 = new Vector(35,-1.101,20);
-    Vector vect6 = new Vector(0,-1.101,-40);
+    static Vector vect4 = new Vector(-35,-1.101,20);
+    static Vector vect5 = new Vector(35,-1.101,20);
+    static Vector vect6 = new Vector(0,-1.101,-40);
 
     //Driehoekig vlak achtergrond
     Vector vect7 = new Vector(-150,-5,-50);
@@ -78,31 +65,38 @@ public class Utility {
     static Integer[] vertexIndexArray = {0,1,2,0,2,3,1,4,2};
     static Vector[] vertexArray = {v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10};
 
-    Lambertian white = new Lambertian(new Vector(1, 1, 0));
+    private static final Lambertian white = new Lambertian(new Vector(1, 1, 0));
     //Emitter white = new Emitter(new Vector(1,1,1));
 
-    private static PolygonMesh duck = null;
-    private static PolygonMesh icoSphere = null;
-    private PolygonMesh uvSphere = null;
+    private static Lambertian earth_surface;
+    private static Emitter sunEmitter;
+    private static Lambertian ice_surface;
+    private static Lambertian background_surface;
+    private static Lambertian bergenSurface;
 
-    private void loadObjects() {
+    public static Image getImage(String pathname) {
         try {
-            duck = ObjectLoader.loadObj("project_eend/Models/Rubber_Duck_obj.obj", white);
-        } catch (IOException e) {
-            System.out.println("load failed");
+            return new Image("file:" + pathname);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        try {
-            icoSphere = ObjectLoader.loadObj("project_eend/Models/icotest.obj", white);
-        } catch (IOException e) {
-            System.out.println("load failed");
-        }
-        try {
-            uvSphere = ObjectLoader.loadObj("project_eend/Models/uvSphere.obj", white);
-        } catch (IOException e) {
-            System.out.println("load failed");
-        }
+    }
 
-        duck.translate(new Vector(.3,-0.2,3.2));
+    public static void loadImages() {
+        Image_Texture earthTexture = new Image_Texture(Utility.getImage("project_eend/ModelTextureImages/world.jpeg"));
+        earth_surface = new Lambertian(earthTexture);
+
+        Image_Texture sunTexture = new Image_Texture(Utility.getImage("project_eend/ModelTextureImages/zon.jpg"));
+        sunEmitter = new Emitter(sunTexture);
+
+        Image_Texture iceTexture = new Image_Texture(Utility.getImage("project_eend/ModelTextureImages/IceTexture.jpeg"));
+        ice_surface = new Lambertian(iceTexture);
+
+        Image_Texture backgroundTexture = new Image_Texture(Utility.getImage("project_eend/ModelTextureImages/BergBeter.jpg"));
+        background_surface = new Lambertian(backgroundTexture);
+
+        Image_Texture bergenTexture = new Image_Texture(Utility.getImage("project_eend/ModelTextureImages/bergen.jpg"));
+        bergenSurface = new Lambertian(bergenTexture);
 
     }
 
@@ -116,10 +110,8 @@ public class Utility {
         world.clear();
         lights.clear();
 
-
-
-
-
+        PolygonMesh object = null;
+        PolygonMesh object2 = null;
         switch (selector) {
             case 0 -> {
                 // Voeg willekeurige objecten toe aan de wereld
@@ -146,72 +138,6 @@ public class Utility {
             }
             case 2 -> {
 
-                // Voeg willekeurige objecten toe aan de wereld
-                world.add(new Sphere(new Vector(0, 0, -1), 0.5, redMirror));
-                world.add(new Sphere(new Vector(0, -100.5, -1), 100, blueLambertian));
-                world.add(new Sphere(new Vector(0, 0, 0.5), .9, ice));
-                world.add(new Sphere(new Vector(-1, 0, -1), 0.5, greyLambertian));
-
-                // Voeg een willekeurig lichtobject toe
-                Hittable light0 = new Sphere(new Vector(1, 0, 0), 0.5, blueLight);
-                world.add(light0);
-                lights.add(light0);
-            }
-            case 3 -> {
-                faceArray = new Integer[]{3, 3, 3};
-                vertexIndexArray = new Integer[]{0, 1, 2, 0, 2, 3, 1, 4, 2};
-                world.add(new PolygonMesh(faceArray, vertexIndexArray, vertexArray, normal));
-                world.add(new Sphere(v1, .3, whiteLight));
-                lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
-            }
-            case 4 -> {
-                faceArray = new Integer[]{4};
-                vertexIndexArray = new Integer[]{0, 1, 2, 4};
-                vertexArray = new Vector[]{v0, v1, v2, v3, v4};
-                //world.add(new TriangleMesh(faceArray, vertexIndexArray, vertexArray, redMirror).toTriangleMesh());
-
-                lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
-            }
-            case 5 -> {
-                world.add(new Sphere(new Vector(1, 0, -2), .5, whiteLambertian));
-                world.add(new Sphere(v1, .3, whiteLight));
-                lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
-            }
-            case 6 -> { //box
-                faceArray = new Integer[]{3, 3, 3, 3};
-                vertexIndexArray = new Integer[]{5, 6, 7, 6, 8, 7, 8, 9, 10, 7, 8, 10};
-                world.add(new PolygonMesh(faceArray, vertexIndexArray, vertexArray, errorCheckers));
-                lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
-            }
-            case 7 -> {
-                Vector bv1 = new Vector(0, 0, -1.5);
-                Vector bv2 = new Vector(0, .5, -1.5);
-                Vector bv3 = new Vector(1, .5, -1.5);
-                Triangle behindSphere = new Triangle(bv1, bv3, bv2, whiteLight);
-                world.add(behindSphere);
-                world.add(new Sphere(new Vector(0, 0, -1), 1, normal));
-                lights.add(new Sphere(new Vector(1, 2, -.55), 500, whiteLambertian));
-            }
-            case 8 -> {
-                duck.ConvertToTriangles();
-                //world.add(new Sphere(new Vector(0,0,-1),0.5, redMirror));
-                //world.add(new Sphere(new Vector(0,-100.5,-1), 100, halfMirror));
-                //world.add(new Sphere(new Vector(0,0,0.5),.2,glass));
-
-                //world.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
-
-                //Zon
-                //world.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
-                //lights.add(new Sphere(new Vector(1.5, 0, 3), 3, sunEmitter));
-                //world.add(new Sphere(new Vector(3.5, 2, -2), 0.5, sunEmitter));
-                //lights.add(new Sphere(new Vector(3.5, 2, -2), 0.5, sunEmitter));
-                //world.add(new Sphere(new Vector(3.5, 2, -1), 0.5, sunEmitter));
-                //lights.add(new Sphere(new Vector(3.5, 2, -1), 0.5, sunEmitter));
-
-
-                //Witte bol
-                //world.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
-                //lights.add(new Sphere(new Vector(1.5, 0, 3), 3, whiteLight));
                 world.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
                 lights.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
 
@@ -219,30 +145,47 @@ public class Utility {
                 world.add(new Sphere(new Vector(55,55,-48),-.5,blueLambertian));
 
                 //Aarde bol
-                //world.add(new Sphere(new Vector(1, 0.2, -1.5), 1.2, earth_surface));
-                world.add(duck);
+                world.add(new Sphere(new Vector(1, 0.2, -2), 1.2, earth_surface));
+                world.add(new Sphere(new Vector(.7, 0, 1.7), .5, ice));
+
 
                 //Ijs ondergrond
-                //world.add(new Triangle(vect1, vect2, vect3, ice_surface));
-                //world.add(new Triangle(vect1, vect2, vect3, ice));
-                //world.add(new Triangle(vect4, vect5, vect6, ice_surface));
-
                 world.add(new Quad(new Vector(-20,-1.0,3),new Vector(50,0,0),new Vector(0,0,-20),ice));
                 world.add(new Quad(new Vector(-20,-1.001,3),new Vector(50,0,0),new Vector(0,0,-20),ice_surface));
 
-                //lights.add(new Triangle(vect4,vect5,vect6,whiteLight));
-                //Achtergrond
-                //world.add(new Triangle(vect7, vect8, vect9, background_surface));
-
-                world.add(new Quad(new Vector(-20,-2,-5),new Vector(50,0,-5),new Vector(0,30,-5), background_surface));
-                //world.add(new Sphere(new Vector(0, -203.5, -3.55), 200, ice_surface));
+                // Achtergrond
+                world.add(new Quad(new Vector(-20,-5,-5),new Vector(50,0,-5),new Vector(0,30,-5), bergenSurface));
 
             }
-            case 9 -> {
+            case 3 -> {
+                object = ObjectLoader.loadObj(ObjectPaths.DUCK, yellowLambertian);
+                if(object != null /*&& object2 != null*/){
+                    object.rotate(90);
+                    object.translate(new Vector(0, -.1, 1.8));
+                    object.setBounddingBox();
+                    world.add(object);
+                }
+
                 world.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
                 lights.add(new Sphere(new Vector(0, 14, 6), 6, whiteLight));
-                icoSphere.ConvertToTriangles();
-                world.add(icoSphere);
+
+                //Catch bol
+                world.add(new Sphere(new Vector(55,55,-48),-.5,blueLambertian));
+
+                //Aarde bol
+                world.add(new Sphere(new Vector(1, 0.2, -2), 1.2, earth_surface));
+
+                // Ijs bol
+                world.add(new Sphere(new Vector(.7, 0, 1.7), .5, ice));
+
+                // Ijs plaat
+                world.add(new Quad(new Vector(-20,-1.0,3),new Vector(50,0,0),new Vector(0,0,-20),ice));
+                // Ijs plaat texture onder het ijs
+                world.add(new Quad(new Vector(-20,-1.001,3),new Vector(50,0,0),new Vector(0,0,-20),ice_surface));
+
+                // Achtergrond
+                world.add(new Quad(new Vector(-20,-5,-5),new Vector(50,0,-5),new Vector(0,30,-5), bergenSurface));
+
             }
 
             default -> {

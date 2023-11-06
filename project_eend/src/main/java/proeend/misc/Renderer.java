@@ -25,6 +25,11 @@ public class Renderer {
      * @return Een WritableImage dat de weergave van de scène bevat.
      */
     public static WritableImage render(Camera camera, boolean save, Hittable world, Hittable lights) {
+        if(!save && camera.hasMovedSinceLastFrame()){
+            camera.setSamplesPerPixel(1);
+            camera.setImageWidth(400);
+        }
+
         camera.init();
         ThreadController threadController = new ThreadController(1, camera, world, lights);
         return threadController.renderAndSave(save);
@@ -52,7 +57,7 @@ public class Renderer {
         synchronized (pixelWriter) {
             for (int x = 0; x < imageWidth; ++x) {
                 Vector colorVec = lineBuffer[x];
-                Color color = ColorParser.toColor(camera.getSamplesPerPixel(), save, colorVec);
+                Color color = ColorParser.toColor(camera.getSamplesPerPixel(), colorVec, save);
                 pixelWriter.setColor(x, y, color);
             }
         }

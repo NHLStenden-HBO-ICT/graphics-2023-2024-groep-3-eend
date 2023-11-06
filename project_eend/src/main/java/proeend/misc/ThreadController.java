@@ -84,7 +84,6 @@ public class ThreadController {
             long millis = TimeUnit.NANOSECONDS.toMillis(elapsedTime) - TimeUnit.SECONDS.toMillis(seconds);
 
             System.out.println("Rendering completed in " + seconds + " seconds and " + millis + " milliseconds.");
-            camera.setSamplesPerPixel(1);
         }
         return writableImage;
     }

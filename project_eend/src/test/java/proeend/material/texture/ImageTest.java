@@ -35,7 +35,7 @@ class ImageTest{
         Image image = new Image();
         String placeholder2 = "../project_eend/ModelTextureImages/world.png";
         var verwachting2 = false;
-        assertEquals(verwachting2, image.load(placeholder2));
+        assertEquals(verwachting2, image(placeholder2));
     }
 
     @Test

@@ -2,12 +2,11 @@ package proeend.hittable;
 
 import proeend.material.Material;
 import proeend.math.Vector;
+import proeend.misc.ObjectPaths;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Deze klasse is verantwoordelijk voor het inladen van geometrische objecten vanuit OBJ-bestanden
@@ -23,18 +22,34 @@ public class ObjectLoader {
      * @return Een {@link PolygonMesh} dat het geladen object representeert.
      * @throws IOException Als er een fout optreedt bij het lezen van het bestand.
      */
-    public static PolygonMesh loadObj(String filepath, Material material) throws IOException {
+    public static PolygonMesh loadObj(ObjectPaths objectPath, Material material) {
+        String path = objectPath.getPath();
+
+        if (path == null) {
+            System.out.println("Object path not found: " + objectPath);
+            return null;
+        }
+
 
         List<Vector> vertexes = new ArrayList<>();
         List<Integer> vertexIndexes = new ArrayList<>();
         List<Integer> faces = new ArrayList<>();
         vertexes.add(new Vector());
 
-        Scanner scanner = new Scanner(new File(filepath));
-        parseVerticesAndFaces(scanner, vertexes, vertexIndexes, faces);
+        try {
+            Scanner scanner = new Scanner(new File(path));
+            parseVerticesAndFaces(scanner, vertexes, vertexIndexes, faces);
 
-        System.out.println("Object \"" + filepath + "\" loaded from file");
-        return new PolygonMesh(faces.toArray(new Integer[0]), vertexIndexes.toArray(new Integer[0]), vertexes.toArray(new Vector[0]), material);
+            PolygonMesh objectMesh = new PolygonMesh(faces.toArray(new Integer[0]), vertexIndexes.toArray(new Integer[0]), vertexes.toArray(new Vector[0]), material);
+            objectMesh.ConvertToTriangles();
+
+            System.out.println("Object \"" + objectPath + "\" loaded from file");
+
+            return objectMesh;
+        } catch (IOException e){
+            System.out.println("Failed to load object: " + objectPath);
+            return null;
+        }
     }
 
     /**
@@ -70,14 +85,10 @@ public class ObjectLoader {
      */
     private static void parseVertex(String[] vertexData, List<Vector> vertexes) {
         // Controleer of de vertex-data de verwachte structuur heeft (x, y, z)
-        if (vertexData.length >= 4) {
             double x = Double.parseDouble(vertexData[1]);
             double y = Double.parseDouble(vertexData[2]);
             double z = Double.parseDouble(vertexData[3]);
             vertexes.add(new Vector(x, y, z));
-        } else {
-            System.out.println("Ongeldige vertex-gegevens: " + String.join(" ", vertexData));
-        }
     }
 
 
@@ -89,11 +100,6 @@ public class ObjectLoader {
      * @param faces De lijst met face-gegevens waar het aantal vertices van de face wordt toegevoegd.
      */
     private static void parseFace(String[] faceData, List<Integer> vertexIndexList, List<Integer> faces) {
-        // Controleer of de face-data te lang is
-        if (faceData.length > 5) {
-            System.out.println("Te veel gegevens in een face-regel (5+).");
-        }
-
         // Voeg het aantal vertices in de face toe aan de lijst met faces
         faces.add(faceData.length - 1);
 

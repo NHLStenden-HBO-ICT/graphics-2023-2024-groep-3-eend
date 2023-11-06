@@ -1,6 +1,5 @@
 package proeend.misc;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -83,6 +82,8 @@ public class EventHandler {
              */
             @Override
             public void handle(KeyEvent event) {
+                    Main.getTimeLine().play();
+
                 if (event.isShiftDown()) {
                     shiftMult = 10;
                 } else shiftMult = 1;
@@ -146,14 +147,20 @@ public class EventHandler {
                         camera.setCameraCenter(camera.getCameraCenter().add(new Vector(0, -.1 * shiftMult, 0)));
                     }
                     case C -> {
+                        Main.getTimeLine().pause();
                         camera.setSamplesPerPixel(50);
-                        camera.setMaxDepth(3);
                         camera.setImageWidth(400);
                         Main.updateFrame(true);
                     }
+                    case H -> {
+                        Main.getTimeLine().pause();
+                        camera.setSamplesPerPixel(50);
+                        camera.setImageWidth(1200);
+                        Main.updateFrame(true);
+                    }
                     case ESCAPE -> {
-                        ExitProgram = true;
-                        Platform.exit();
+                        //ExitProgram = true;
+                        //System.exit(0);
                     }
                     case BACK_SPACE -> {
                         Main.setStartScreenVisible(true);

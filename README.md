@@ -1,4 +1,7 @@
 # Graphics Raytracer: Project Eend
+
+![Render wereldbol op ijs](./renders/projectThumbnail.png "Render")
+
 Dit project is een Monte Carlo-stijl raytracer die voor elke pixel een ray schiet die op willekeurige wijs afkaatst
 en de gemiddelde kleur van het totaal gevonden resultaat neemt.
 In deze readme worden de onderdelen van dit project beschreven.
@@ -22,8 +25,8 @@ Er zijn verschillende materialen beschikbaar binnen de raytracer, waaronder:
 - Mirror: Voor reflecterende materialen.
 
 ## Textures
-Ook zijn er verschillende texturen te gebruiken, 
-inclusief CheckerTexture, SolidTexture en ImageTexture voor gedetailleerde oppervlaktetexturen.
+Ook zijn er verschillende texturen te gebruiken, inclusief CheckerTexture,
+SolidTexture en ImageTexture voor gedetailleerde oppervlakte texturen zoals ijs oppervlakte en een wereld bol.
 
 ## Anti-Aliasing
 Anti-aliasing is geïmplementeerd om kartelranden in de beelden te verminderen, 
@@ -54,6 +57,22 @@ Dit houdt in dat er bij bepaalde objecten prioriteit gesteld kan worden van hoe
 groot de kans is dat het licht richting het object gaat.
 Hiermee kan bepaald worden of bijvoorbeeld een ander object het licht zou blokkeren,
 waardoor in combinatie met de Monte Carlo-stijl van afkaatsing een realistische schaduw gerendered wordt.
+
+## Keyboard shortcuts in live view
+SHIFT (Samen met andere toetsen): 10x Sneller bewegen.  
+EQUALS/MINUS: Field of view veranderen.
+Q/E: draaien naar links / rechts.
+UP/LEFT/RIGHT/DOWN: Bewegen rondom. 
+Space: Omhoog kantelen.
+Z: Naar beneden kantelen.
+Backspace: Terug naar keuze menu / startscherm.
+
+## Renders 
+Tijdens live view kunnen renders worden gemaakt:
+C-key: Capture beeld (400px breed, samples per pixel: 50)
+H-key: Hogere resoltie (800px breed, samples per pixel: 50)
+Renders worden opgeslagen in de renders map van het project.
+Dit gebeurt met de datum/tijd, dimensies en samples per pixel in de naam.
 
 ## GEBRUIK
 - Open dit project in IntelliJ >>>

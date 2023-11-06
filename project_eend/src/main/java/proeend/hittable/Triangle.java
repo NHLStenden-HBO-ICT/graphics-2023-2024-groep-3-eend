@@ -14,7 +14,9 @@ import proeend.records.HitRecord;
  */
 public class Triangle extends Hittable{
 
-    private final Vector v0,v1,v2;
+    private Vector v0;
+    private Vector v1;
+    private Vector v2;
     private final Material material;
     private double area;
     private final BoundingBox boundingBox;
@@ -32,7 +34,12 @@ public class Triangle extends Hittable{
         this.v2 = v2;
         this.v0 = v0;
         this.material = material;
-        boundingBox = getBoundingbox();
+        boundingBox = setBoundingbox();
+    }
+
+    @Override
+    public BoundingBox getBoundingbox() {
+        return boundingBox;
     }
 
     /**
@@ -46,29 +53,29 @@ public class Triangle extends Hittable{
     @Override
     public boolean hit(Ray ray, Interval rayT, HitRecord rec) {
         Vector v0v1 = v1.add(v0.invert());
-        Vector v0v2 = v2.add(v0.invert());   //deze twee kloppen
+        Vector v0v2 = v2.add(v0.invert());
         Vector unitDir = ray.getDirection().toUnitVector();
-        //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
         Vector pvec = Vector.cross(unitDir, v0v2);
         double det = Vector.dot(v0v1, pvec);
+
         if (det<0) {
             return false;
         }
-        //determinant lijkt niet goed te zijn
-        //System.out.println(det);
-        double invDet = 1/det;
 
+        double invDet = 1/det;
         Vector tvec = ray.origin().add(v0.invert());
         double u = Vector.dot(tvec,pvec)*invDet;
+
         if (u < 0 || u > 1) return false;
 
         Vector qvec = Vector.cross(tvec, v0v1);
         double v = Vector.dot(unitDir, qvec)*invDet;
+
         if (v < 0 || u + v > 1) return false;
 
         double t = Vector.dot(v0v2, qvec)*invDet;
-        if (t < 0)
-            return false;
+
+        if (t < 0) return false;
 
         rec.setU(u);
         rec.setV(v);
@@ -77,58 +84,16 @@ public class Triangle extends Hittable{
         rec.setP(ray.origin().add(unitDir.scale(rec.getT())));
         Vector normal = Vector.cross(v0v1, v0v2).toUnitVector();
         rec.setNormal(normal);
-        rec.setFaceNormal(ray, rec.normal);
+        rec.setFaceNormal(ray, normal);
 
         return true;
     }
 
-    public BoundingBox getBoundingbox() {
+
+    public BoundingBox setBoundingbox() {
         Vector min = Vector.min(Vector.min(v0, v1), v2);
         Vector max = Vector.max(Vector.max(v0, v1), v2);
 
         return new BoundingBox(min, max).pad();
-    }
-
-    /**
-     * deze static method bestaat eigenlijk alleen voor de TriangleMesh hit method, als het nodig is, zou je via
-     * deze ook de andere kunnen doen
-     * @return of ie raakt of niet
-     */
-    public static boolean MThit(Ray ray, Interval rayT, HitRecord rec, Vector v0, Vector v1, Vector v2, Material material) {
-        Vector v0v1 = v1.add(v0.invert());
-        Vector v0v2 = v2.add(v0.invert());
-        Vector unitDir = ray.getDirection().toUnitVector();
-        //Vector pvec = Vector.cross(Vector.unitVector(ray.direction()), v0v2);
-        Vector pvec = Vector.cross(unitDir, v0v2);
-        double det = Vector.dot(v0v1, pvec);
-        if (det<0) {
-            return false;
-        }
-        //determinant lijkt niet goed te zijn
-        //System.out.println(det);
-        double invDet = 1/det;
-
-        Vector tvec = ray.origin().add(v0.invert());
-        double u = Vector.dot(tvec,pvec)*invDet;
-        if (u < 0 || u > 1) return false;
-
-        Vector qvec = Vector.cross(tvec, v0v1);
-        double v = Vector.dot(unitDir, qvec)*invDet;
-        if (v < 0 || u + v > 1) return false;
-
-        double t = Vector.dot(v0v2, qvec)*invDet;
-        if (t < 0)
-            return false;
-
-        rec.setU(u);
-        rec.setV(v);
-        rec.setT(t);
-        rec.setMaterial(material);
-        rec.setP(ray.origin().add(unitDir.scale(rec.getT())));
-        Vector normal = Vector.cross(v0v1, v0v2).toUnitVector();
-        rec.setNormal(normal);
-        rec.setFaceNormal(ray, rec.normal);
-
-        return true;
     }
 }

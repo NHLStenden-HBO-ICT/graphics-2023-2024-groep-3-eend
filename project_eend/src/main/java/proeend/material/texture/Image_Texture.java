@@ -1,15 +1,14 @@
 package proeend.material.texture;
 
-import proeend.material.texture.Image;
 import proeend.math.Interval;
 import proeend.math.Vector;
 
 
 public class Image_Texture extends Texture{
-    private Image image;
+    private final Image image;
     //Constructor maakt nieuwe image aan
-    public Image_Texture(String imageFilename){
-        this.image = new Image(imageFilename);
+    public Image_Texture(javafx.scene.image.Image image){
+        this.image = new Image(image);
     }
 
     /** Geeft de RGB waardes terug van een snijpunt
@@ -20,24 +19,18 @@ public class Image_Texture extends Texture{
      */
     @Override
     public Vector value(double u, double v, Vector p) {
-        if (image.height() <= 0){
+        if (image.getImage().getHeight() <= 0){
             return new Vector(0,1,1);
         }
-        //u coordinaat van een punt clampen zodat de waarde niet buiten de range word
+
         u = new Interval(0,1).clamp(u);
-        //y zie u
         v = 1.0 - new Interval(0,1).clamp(v);
 
         //Doe de punten * de hoogte of breedte
-        int i = (int)(u * image.width());
-        int j = (int)(v * image.height());
-        //Geef het punt mee en vraagt om de data van dat punt in klasse image
-        int[] pixel = image.pixelData(i,j);
+        int i = (int)(u * image.getImage().getWidth());
+        int j = (int)(v * image.getImage().getHeight());
 
-        //Verandert de Rgb scale naar de waarde die Utility snapt(0/1) ipv (0/255)
-        double colorScale = 1.0 / 255.0;
-        //Geeft alle rgb waarden terug in de andere waarde
-        return new Vector(colorScale * pixel[0], colorScale*pixel[1], colorScale*pixel[2]);
+        return image.pixelData(i,j);
 
     }
 }
