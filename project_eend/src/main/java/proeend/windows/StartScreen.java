@@ -58,7 +58,7 @@ public class StartScreen extends VBox {
 
         String[] scenes = {
                 "Gekleurde en glazen bal",
-                "Spiegelende bol, ",
+                "Spiegelende bol",
                 "Wereld bol, zonsondergang",
                 "Badeend op ijs",
         };

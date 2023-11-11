@@ -180,7 +180,9 @@ public class Main extends Application {
             previousImage = newImage;
         }
 
-        if (!save) timeline.play();
+        if (!save)
+            if (getTimeLine() != null)
+            {timeline.play();}
 
         frame.setImage(newImage);
         camera.setHasMovedSinceLastFrame(false);
